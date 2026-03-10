@@ -1,0 +1,265 @@
+/* =========================================================
+   RENOVTACANA - FEUILLE DE STYLE PRINCIPALE
+   ---------------------------------------------------------
+   Objectif :
+   - Code lisible
+   - Réutilisable sur plusieurs pages
+   - Facile à modifier
+   ========================================================= */
+
+
+/* =========================================================
+   1. VARIABLES GLOBALES
+   ---------------------------------------------------------
+   Permet de centraliser les couleurs, tailles, etc.
+   Si vous changez une couleur ici, elle change partout.
+   ========================================================= */
+:root {
+    --color-white: #ffffff;
+    --color-black: #111111;
+    --color-text: #1a1a1a;
+    --color-border: #222222;
+    --color-placeholder: #cfcfcf;
+    --color-overlay: rgba(255, 255, 255, 0.20);
+
+    --header-height: 160px;
+
+    --search-width: 620px;
+    --search-height: 62px;
+    --search-radius: 18px;
+
+    --font-main: Arial, Helvetica, sans-serif;
+
+    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   2. RESET DE BASE
+   ---------------------------------------------------------
+   Supprime les marges par défaut et améliore la cohérence.
+   ========================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   3. BASE GENERALE
+   ========================================================= */
+html,
+body {
+    height: 100%;
+    font-family: var(--font-main);
+    color: var(--color-text);
+}
+
+body {
+    background-color: #f5f5f5;
+}
+
+
+/* =========================================================
+   4. HEADER
+   ---------------------------------------------------------
+   Bandeau blanc en haut avec logo à gauche et titre à droite
+   ========================================================= */
+.site-header {
+    height: var(--header-height);
+    background-color: var(--color-white);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 50px;
+}
+
+.site-header__left,
+.site-header__right {
+    display: flex;
+    align-items: center;
+}
+
+.site-header__logo {
+    max-height: 95px;
+    width: auto;
+    display: block;
+}
+
+.site-header__title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--color-black);
+}
+
+
+/* =========================================================
+   5. SECTION HERO
+   ---------------------------------------------------------
+   Grande zone avec image de fond
+   ========================================================= */
+.hero {
+    position: relative;
+    min-height: calc(100vh - var(--header-height));
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Image de fond */
+    background-image: url("assets/images/fond_page_accueil.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-overlay);
+}
+
+.hero__content {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+    padding: 20px;
+}
+
+
+/* =========================================================
+   6. BARRE DE RECHERCHE
+   ---------------------------------------------------------
+   Pour l'instant purement visuelle (pas de JS)
+   ========================================================= */
+.search-bar {
+    width: min(var(--search-width), 90vw);
+    height: var(--search-height);
+
+    background-color: rgba(255, 255, 255, 0.88);
+    border: 2px solid var(--color-border);
+    border-radius: var(--search-radius);
+    box-shadow: var(--shadow-light);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 18px;
+}
+
+.search-bar__input {
+    flex: 1;
+    height: 100%;
+
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-size: 1.1rem;
+    color: var(--color-text);
+
+    padding: 0 14px;
+}
+
+.search-bar__input::placeholder {
+    color: var(--color-placeholder);
+    font-size: 1rem;
+}
+
+.search-bar__icon-button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-bar__icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.search-bar__icon--small {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* =========================================================
+   7. LIEN SOUS LA BARRE DE RECHERCHE
+   ========================================================= */
+.hero__map-link {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-black);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s ease;
+}
+
+.hero__map-link:hover {
+    opacity: 0.75;
+}
+
+
+/* =========================================================
+   8. RESPONSIVE
+   ---------------------------------------------------------
+   Ajustements pour tablettes et téléphones
+   ========================================================= */
+@media (max-width: 900px) {
+    .site-header {
+        padding: 20px 24px;
+        height: auto;
+        min-height: 120px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 12px;
+        text-align: center;
+    }
+
+    .site-header__logo {
+        max-height: 70px;
+    }
+
+    .site-header__title {
+        font-size: 1.8rem;
+    }
+
+    .hero {
+        min-height: calc(100vh - 120px);
+    }
+}
+
+@media (max-width: 600px) {
+    .site-header__title {
+        font-size: 1.5rem;
+    }
+
+    .search-bar {
+        height: 56px;
+        padding: 0 12px;
+    }
+
+    .search-bar__input {
+        font-size: 1rem;
+    }
+
+    .hero__map-link {
+        font-size: 0.95rem;
+        text-align: center;
+    }
+}

@@ -1,11 +1,63 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-    <link rel="icon" href="assets/favicon.png" sizes="192x192">
     <meta charset="UTF-8">
-    <title>RenovTaCana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenovTaCana - Accueil</title>
+
+    <!-- Lien vers la feuille de style principale -->
+    <link rel="stylesheet" href="code.css">
 </head>
+
 <body>
-    <h1>RenovTaCana</h1>
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+    <header class="site-header">
+        <div class="site-header__left">
+            <!-- Logo de l'entreprise / partenaire -->
+            <img src="assets/images/logo_entreprise.png" alt="Logo Métropole Nice Côte d’Azur"
+                class="site-header__logo">
+        </div>
+
+        <div class="site-header__right">
+            <h1 class="site-header__title">RENOVTACANA</h1>
+        </div>
+    </header>
+
+    <!-- =========================
+         SECTION HERO / ACCUEIL
+         ========================= -->
+    <main class="hero">
+        <!-- Overlay léger pour améliorer la lisibilité -->
+        <div class="hero__overlay"></div>
+
+        <!-- Contenu centré -->
+        <section class="hero__content">
+
+            <!-- Barre de recherche visuelle -->
+            <div class="search-bar">
+                <button class="search-bar__icon-button" aria-label="Rechercher">
+                    <img src="assets/icons/chercher.svg" alt="" class="search-bar__icon">
+                </button>
+
+                <input type="text" class="search-bar__input" placeholder="Entrer une adresse"
+                    aria-label="Entrer une adresse">
+
+                <button class="search-bar__icon-button" aria-label="Effacer">
+                    <img src="assets/icons/croix.svg" alt="" class="search-bar__icon search-bar__icon--small">
+                </button>
+            </div>
+
+            <!-- Lien / bouton vers la page carte -->
+            <a href="pages/carte.html" class="hero__map-link">
+                Rechercher directement sur la carte
+            </a>
+        </section>
+    </main>
+
 </body>
+
 </html>
