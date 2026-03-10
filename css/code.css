@@ -14,6 +14,8 @@
    Permet de centraliser les couleurs, tailles, etc.
    Si vous changez une couleur ici, elle change partout.
    ========================================================= */
+
+
 :root {
     --color-white: #ffffff;
     --color-black: #111111;
@@ -111,7 +113,7 @@ body {
     justify-content: center;
 
     /* Image de fond */
-    background-image: url("assets/images/fond_page_accueil.png");
+    background-image: url("../assets/images/fond_page_accueil.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
