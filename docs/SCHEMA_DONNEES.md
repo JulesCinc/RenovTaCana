@@ -177,6 +177,8 @@ En base SQL : on peut stocker ces polygones dans une table **secteurs** (ou **zo
 
 FACILITYID, DIAMETER, DIAMEXT, PRECISIOND, MATERIAL, PRECISIONM, INSTALLDAT, PRECISIONI, PERIODE_PO, WATERTYPE, DOMAINE, FONCTION, SENSIBILIT, PRESSION, OSSATURE, CONTRAT, NUM_OP, **COMMUNE**, ADRESSE, COTE_TN, PROFONDEUR, JOINT, EMPLACEMEN, LITDEPOSE, TYPE_SOL, ETAT_SOL, TRAFIC, ENVIR_ELEC, NB_BRANCHE, FABRICANT, TECHNIQUE_, PROTECT_IN, PROTECT_EX, PROTECT_CA, DEPOT, CORROSION, VALEUR_NEU, TRANSMISS, LASTUPDATE, LASTEDITOR, ENABLED, ACTIVEFLAG, OWNEDBY, MAINTBY, LONGSYS, COMMENTA, MAJ, ETAGPRESSI, IDADRESS, **INSEE**, SECTORISAT, PRECISLOCA, CLASSE_DIC, NOMCANAUX, SAISIE, SYMBOLOGIE, **UDI**, TYPE_POSE, DN, PROTECATHO, REGULATEUR, AGENCE, COMMENTA_D, PROSP_RENO, MAJREFGEOM, DATEMAJGEO, CONVENTION, DATEMAJH, SHAPE_Leng, **longueur**, OBJECTID, dense, ValoPat, Vetuste, nbFuites, nbAbo, sumConso, PRESSIONAV, DEM_EAU_LS, CATEGORIE_, Traffic, PrioMerlin, TXcasse, Altimetrie, Prediction, Predicti_1 + *geometry*.
 
+**Description détaillée (sens des colonnes, inféré des données) :** voir [COLONNES_WMAIN.md](COLONNES_WMAIN.md).
+
 **Liens :**  
 - **FACILITYID** ↔ pipe_ranking ; **COMMUNE** / **INSEE** / **UDI** pour lien avec Operations et chantiers (commune, secteur).
 
@@ -193,6 +195,8 @@ Ce ne sont **pas** des conduites mais des **polygones de secteurs**. Pas de FACI
 ### 5.4 `data/Abandonned_Lines/wAbandonedLine.shp` (et variantes UDI)
 
 **Colonnes :** LINETYPE, INSTALLDAT, ABANDATE, HS_CAUSE, MATERIAL, DIAMETER, **FACILITYID**, LASTUPDATE, LASTEDITOR, SAISIE, DEPOSE, COMMUNE, NUM_OP, WATERTYPE, MAINTBY, FONCTION, CAUSECOM, FACILITYKE, SHAPE_Leng.
+
+**Description détaillée (sens des colonnes, inférée des données) :** voir [COLONNES_WABANDONEDLINE.md](COLONNES_WABANDONEDLINE.md).
 
 **Liens :**  
 - **FACILITYID** : même identifiant que pour wMain (tronçons qui ont été abandonnés, donc plus dans wMain). Utile pour exclure de la priorisation ou pour l’historique.
@@ -352,6 +356,52 @@ Table unifiée : **wMain** + **wAbandonedLine**. Clé primaire : **FACILITYID**.
 | **LINETYPE** | TEXT | wAbandonedLine | Type de ligne — **NULL** si en service |
 | **geometry** | BLOB/TEXT | wMain / wAbandonedLine | Géométrie (WKT ou GeoJSON selon implémentation) |
 
+#### Colonnes absentes pour les conduites abandonnées (perte d’information par rapport au réseau en service)
+
+Pour les lignes avec **`abandoned = 1`** (source wAbandonedLine), le shapefile ne fournit **pas** les champs suivants. Ces colonnes sont donc **toujours NULL** pour les conduites abandonnées ; il y a une **perte de données** par rapport aux conduites en service (wMain).
+
+| Colonnes manquantes (NULL si `abandoned = 1`) | Rôle (pour les conduites en service) |
+|---------------------------------------------|-------------------------------------|
+| **longueur** | Longueur (m) — wAbandonedLine a seulement SHAPE_Leng ; le script pourrait la recopier, sinon NULL. |
+| **INSEE** | Code commune INSEE |
+| **UDI** | Unité de distribution |
+| **OBJECTID** | Identifiant interne |
+| **DIAMEXT** | Diamètre extérieur |
+| **PRECISIOND**, **PRECISIONM**, **PRECISIONI** | Précision / source (diamètre, matériau, date de pose) |
+| **PERIODE_PO** | Période de pose |
+| **DOMAINE** | Domaine (public / privé) |
+| **SENSIBILIT** | Zone sensible (0/1) |
+| **PRESSION**, **OSSATURE**, **CONTRAT** | Pression, niveau de réseau, contrat |
+| **ADRESSE**, **IDADRESS** | Adresse / libellé, identifiant adresse |
+| **COTE_TN**, **PROFONDEUR** | Cote TN, profondeur |
+| **JOINT**, **EMPLACEMEN**, **LITDEPOSE** | Type de joint, emplacement, lit de pose |
+| **TYPE_SOL**, **ETAT_SOL** | Type et état du sol |
+| **TRAFIC**, **Traffic**, **ENVIR_ELEC** | Trafic routier, environnement électrique |
+| **NB_BRANCHE** | Nombre de branchements |
+| **FABRICANT**, **TECHNIQUE_** | Fabricant, technique de pose |
+| **PROTECT_IN**, **PROTECT_EX**, **PROTECT_CA** | Protections (intérieure, extérieure, cathodique) |
+| **CORROSION**, **VALEUR_NEU**, **TRANSMISS** | Corrosion, valeur à neuf, transmissible |
+| **ENABLED**, **ACTIVEFLAG**, **OWNEDBY** | Actif, indicateur actif, propriétaire |
+| **LONGSYS** | Longueur système |
+| **COMMENTA**, **MAJ**, **ETAGPRESSI** | Commentaire, référence MAJ, étage pression |
+| **SECTORISAT**, **PRECISLOCA** | Sectorisation, précision localisation |
+| **CLASSE_DIC**, **NOMCANAUX** | Classe, nom canal / synoptique |
+| **SYMBOLOGIE**, **TYPE_POSE**, **DN** | Symbole carte, type de pose, diamètre nominal |
+| **PROTECATHO**, **REGULATEUR**, **AGENCE** | Protection cathodique, régulateur, agence |
+| **COMMENTA_D**, **PROSP_RENO** | Commentaire, prospect rénovation |
+| **MAJREFGEOM**, **DATEMAJGEO**, **CONVENTION**, **DATEMAJH** | Références et dates de maj géométrie / convention |
+| **dense** | Densité (forte / faible) |
+| **ValoPat**, **Vetuste** | Valorisation patrimoniale, vétusté |
+| **nbFuites**, **nbAbo**, **sumConso** | Nombre de fuites, abonnés, somme consommations |
+| **PRESSIONAV**, **DEM_EAU_LS** | Pression moyenne, demande eau |
+| **CATEGORIE_** | Catégorie (1–9) |
+| **PrioMerlin**, **TXcasse** | Priorité Merlin, niveau de casse (qualitatif) |
+| **Altimetrie**, **Prediction**, **Predicti_1** | Altimétrie, prédiction |
+
+**Colonnes effectivement renseignées pour les abandonnées :** FACILITYID, abandoned, COMMUNE, NUM_OP, DIAMETER, MATERIAL, INSTALLDAT, WATERTYPE, FONCTION, LASTUPDATE, LASTEDITOR, SAISIE, MAINTBY, DEPOT, SHAPE_Leng, ABANDATE, HS_CAUSE, CAUSECOM, FACILITYKE, LINETYPE, **geometry**.  
+
+Les **coordonnées** des conduites abandonnées sont bien disponibles : elles sont portées par la géométrie (ligne, LineString) dans la colonne **geometry** (stockée en WKT en base), comme pour les conduites en service. Il n’y a donc pas de perte de géolocalisation pour les abandonnées.
+
 **Contraintes :**  
 - `FACILITYID` unique (PK).  
 - `abandoned IN (0, 1)`.  
@@ -447,7 +497,42 @@ Avec les données actuelles, le seul lien géographique exploitable entre chanti
 
 3. **Appariement texte** : tenter de faire correspondre **Localisation / Libellé** avec **ADRESSE** (wMain) dans la même commune. Fragile (formats différents, fautes de frappe) mais peut donner des pistes sans données supplémentaires.
 
-**En base SQL** : tant qu’on n’a pas coordonnées ou quartier/secteur côté chantiers/opérations, la jointure reste **par commune**. Dès qu’Eau d’Azur fournit des coordonnées ou un code quartier/secteur/UDI, on pourra ajouter une table ou des colonnes dédiées et faire un lien plus précis (par point, par polygone secteur, ou par UDI). : jointure par commune suffit pour « les conduites concernées par ce chantier / cette opération » (toutes celles de la commune). Pour un lien direct « cette opération concerne ce tronçon », il faudrait soit un champ commun (à identifier), soit une table de liaison fournie par le client.
+**En base SQL** : tant qu’on n’a pas coordonnées ou quartier/secteur côté chantiers/opérations, la jointure reste **par commune**. Dès qu’Eau d’Azur fournit des coordonnées ou un code quartier/secteur/UDI, on pourra ajouter une table ou des colonnes dédiées et faire un lien plus précis (par point, par polygone secteur, ou par UDI). Pour un lien direct « cette opération concerne ce tronçon », il faudrait soit un champ commun (à identifier), soit une table de liaison fournie par le client.
+
+---
+
+### 7.3 Lien coordonnées (Lambert) et adresse (reverse geocoding)
+
+**Oui**, on peut faire le lien entre les coordonnées des conduites (géométrie en **Lambert 93**, EPSG:2154) et une **adresse** (libellé de voie, code postal, commune). C’est le **reverse geocoding** : (X, Y) → adresse.
+
+**Principe :**
+
+1. **Reprojection** : les APIs d’adresse utilisent en général **WGS84** (lat/lon). Il faut donc convertir Lambert 93 → WGS84 (avec **pyproj** ou GeoPandas : `gdf.to_crs(4326)`).
+2. **Point à interroger** : pour une conduite (ligne), on prend par exemple le **centroïde** de la géométrie ou le **premier sommet** de la ligne, puis on le convertit en (latitude, longitude).
+3. **Appel API** : envoi (lat, lon) à un service de reverse geocoding ; la réponse contient l’adresse (voie, numéro, code postal, commune, etc.).
+
+**Services utilisables (gratuits, adaptés à la France) :**
+
+| Service | URL / usage | Remarque |
+|--------|-------------|----------|
+| **BAN (Base Adresse Nationale)** | `GET https://api-adresse.data.gouv.fr/reverse/?lon=<lon>&lat=<lat>` | Données officielles françaises, pas de clé API. Idéal pour la France. |
+| **Nominatim (OpenStreetMap)** | `GET https://nominatim.openstreetmap.org/reverse?lat=...&lon=...` | Mondial, gratuit ; respecter la politique d’usage (voir ci‑dessous). |
+
+**Limites d’usage (à jour au moment de la rédaction) :**
+
+| Service | Gratuit ? | Limite principale | Au‑delà |
+|--------|-----------|-------------------|--------|
+| **BAN** (api-adresse.data.gouv.fr) | Oui | **50 requêtes / seconde / adresse IP** | HTTP 429 (Too Many Requests), retry après 5 s. Pas de plafond journalier indiqué pour un usage standard. |
+| **Nominatim** (nominatim.openstreetmap.org) | Oui | **1 requête / seconde** maximum (politique stricte) ; usage « bulk » (grand volume) déconseillé | Blocage / bannissement possible. Obligation : **User-Agent** ou **Referer** identifiant l’application, **attribution** OSM, **cache** des résultats en bulk. Une seule machine, un seul thread pour du reverse geocoding en masse. |
+
+**BAN :** pour des volumes très importants, une levée de limite peut être demandée (contact IGN / Géoplateforme). L’API BAN historique est progressivement migrée vers la Géoplateforme (geoservices.ign.fr) ; vérifier les URLs et conditions à date.
+
+**Nominatim :** pour de gros volumes, la fondation OSM recommande d’installer sa propre instance Nominatim ou d’utiliser un fournisseur commercial. Voir [Usage Policy](https://operations.osmfoundation.org/policies/nominatim/).
+
+**Exemple de chaîne (Python) :**  
+Lire la géométrie WKT d’une conduite → la convertir en objet Shapely/GeoPandas en Lambert 93 → reprojeter en WGS84 → extraire (lon, lat) du centroïde → requête HTTP vers l’API BAN → parser le JSON pour récupérer `label` (adresse complète), `postcode`, `city`, etc. On peut ensuite stocker l’adresse obtenue dans une colonne dérivée ou une table dédiée.
+
+**Limites :** précision dépendant du fond de plan (BAN = adresses cadastrées / livraison), délai et quotas si on interroge en masse (mieux vaut batch + cache). Pour des lignes longues, le centroïde peut être éloigné de l’adresse « physique » ; on peut aussi tester plusieurs points le long de la ligne et garder la meilleure réponse.
 
 ---
 

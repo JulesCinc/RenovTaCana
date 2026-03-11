@@ -15,12 +15,16 @@ Exemples d'exécution :
 ```bash
 # Depuis la racine du projet
 python python/row-data/read_schema.py
+python python/row-data/describe_wmain_columns.py
+python python/row-data/describe_wabandonedline_columns.py
 
 # Depuis le dossier des scripts
 cd python/row-data
 python read_schema.py
 python explore_all_data.py
 python explore_data.py
+python describe_wmain_columns.py
+python describe_wabandonedline_columns.py
 ```
 
 ---
@@ -75,12 +79,25 @@ Si GeoPandas n’est pas installé, les shapefiles sont ignorés et un message l
 
 ---
 
+## 4. `describe_wmain_columns.py` et `describe_wabandonedline_columns.py`
+
+**Objectif :** analyser chaque colonne du shapefile (non-null, uniques, min/max ou exemples, répartition) pour **en déduire le sens** et alimenter la documentation.
+
+- **describe_wmain_columns.py** : wMain.shp (conduites en service). Sortie utilisée pour [docs/COLONNES_WMAIN.md](../../docs/COLONNES_WMAIN.md).
+- **describe_wabandonedline_columns.py** : wAbandonedLine.shp (conduites abandonnées). Sortie utilisée pour [docs/COLONNES_WABANDONEDLINE.md](../../docs/COLONNES_WABANDONEDLINE.md).
+
+**Utilité :** documenter précisément les colonnes (identifiants, diamètre, matériau, dates, cause d’abandon, etc.) pour la table SQLite et les analyses.
+
+---
+
 ## Résumé
 
-| Script               | Données lues                    | Sortie principale                                      |
-|----------------------|----------------------------------|--------------------------------------------------------|
-| `read_schema.py`     | CSV, tous les .dbf, Excel       | Liste des colonnes de chaque fichier                  |
-| `explore_all_data.py`| CSV, wMain.dbf, tous les .dbf, Excel | Comparaison longueur wMain/pipe_ranking + schémas   |
-| `explore_data.py`    | wMain.shp, wAbandonedLine.shp, CSV | CRS, colonnes, effectifs, exemple ligne, stats CSV  |
+| Script                            | Données lues                    | Sortie principale                                      |
+|-----------------------------------|----------------------------------|--------------------------------------------------------|
+| `read_schema.py`                  | CSV, tous les .dbf, Excel       | Liste des colonnes de chaque fichier                  |
+| `explore_all_data.py`             | CSV, wMain.dbf, tous les .dbf, Excel | Comparaison longueur wMain/pipe_ranking + schémas   |
+| `explore_data.py`                 | wMain.shp, wAbandonedLine.shp, CSV | CRS, colonnes, effectifs, exemple ligne, stats CSV  |
+| `describe_wmain_columns.py`       | wMain.shp                       | Stats par colonne → doc COLONNES_WMAIN.md             |
+| `describe_wabandonedline_columns.py` | wAbandonedLine.shp           | Stats par colonne → doc COLONNES_WABANDONEDLINE.md    |
 
 Ces scripts sont **en lecture seule** et servent à la compréhension des données et à la préparation de la base SQL (voir `python/build-sqlite/`).
