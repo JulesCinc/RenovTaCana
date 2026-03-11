@@ -6,9 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RenovTaCana - Accueil</title>
 
-    <!-- Lien vers la feuille de style principale -->
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="css/code.css">
 </head>
+
+<script src="js/search.js"></script>
 
 <body>
 
@@ -23,7 +30,7 @@
         </div>
 
         <div class="site-header__right">
-            <h1 class="site-header__title">RENOVTACANA</h1>
+            <h1 class="site-header__title">RenovTaCana</h1>
         </div>
     </header>
 
@@ -38,17 +45,18 @@
         <section class="hero__content">
 
             <!-- Barre de recherche visuelle -->
-            <div class="search-bar">
+            <form class="search-bar" action="pages/adresses.html">
                 <button class="search-bar__icon-button" aria-label="Rechercher">
                     <img src="assets/icons/chercher.svg" alt="" class="search-bar__icon">
                 </button>
 
-                <input type="text" class="search-bar__input" placeholder="Entrer une adresse"
+                <input type="text" name="adresse" class="search-bar__input" placeholder="Entrer une adresse"
                     aria-label="Entrer une adresse">
 
-                <button class="search-bar__icon-button" aria-label="Effacer">
+                <button type="button" class="search-bar__icon-button search-bar__clear-button" aria-label="Effacer">
                     <img src="assets/icons/croix.svg" alt="" class="search-bar__icon search-bar__icon--small">
                 </button>
+            </form>
             </div>
 
             <!-- Lien / bouton vers la page carte -->
