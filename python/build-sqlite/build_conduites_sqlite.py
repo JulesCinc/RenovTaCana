@@ -110,6 +110,12 @@ CONDUITES_COLUMNS = [
     ("CAUSECOM", "TEXT"),
     ("FACILITYKE", "TEXT"),
     ("LINETYPE", "TEXT"),
+    # REVIEW :
+    # ajout des coordonnées lat/lon pour permettre l'affichage
+    # des conduites sur la heatmap côté frontend.
+    # Le centroïde est utilisé pour représenter chaque tronçon.
+    ("lat", "REAL"),
+    ("lon", "REAL"),
     ("geometry", "TEXT"),
 ]
 COL_NAMES = [c[0] for c in CONDUITES_COLUMNS]
@@ -145,7 +151,11 @@ def main():
     df_main["abandoned"] = 0
     if "longueur" not in df_main.columns:
         df_main["longueur"] = df_main.get("SHAPE_Leng")
+    # Conversion géométrie
     df_main["geometry"] = gdf_main.geometry.apply(_to_wkt)
+    # Coordonnées pour la heatmap (centroïde)
+    df_main["lat"] = gdf_main.geometry.centroid.y
+    df_main["lon"] = gdf_main.geometry.centroid.x
     df_main = df_main.reindex(columns=COL_NAMES)
 
     # --- wAbandonedLine -> DataFrame CONDUITES ---
@@ -174,6 +184,10 @@ def main():
     df_ab = gdf_ab.copy()
     df_ab["abandoned"] = 1
     df_ab["geometry"] = gdf_ab.geometry.apply(_to_wkt)
+    # Coordonnées pour la heatmap
+    df_ab["lat"] = gdf_ab.geometry.centroid.y
+    df_ab["lon"] = gdf_ab.geometry.centroid.x
+
     df_ab = df_ab.rename(columns={"DEPOSE": "DEPOT"})
     df_ab = df_ab.reindex(columns=COL_NAMES)
 
@@ -232,11 +246,21 @@ def main():
             print(f"  - Total lignes supprimees par dedoublonnage : {n_dropped}")
 
     print("Création de la base SQLite:", OUT_DB)
+    # REVIEW :
+    # on s'assure que le dossier sqlite existe avant de créer la base
+    # sinon sqlite3.connect peut échouer si le dossier n'existe pas
+    os.makedirs(os.path.dirname(OUT_DB), exist_ok=True)
     conn = sqlite3.connect(OUT_DB)
     cur = conn.cursor()
 
     col_defs = ", ".join(f'"{c[0]}" {c[1]}' for c in CONDUITES_COLUMNS)
     cur.execute(f'CREATE TABLE IF NOT EXISTS conduites ({col_defs})')
+    # REVIEW :
+    # création d'index pour accélérer les requêtes utilisées par le backend
+    # (filtrage par commune, recherche de conduite, statut abandonné)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_facilityid ON conduites(FACILITYID)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_commune ON conduites(COMMUNE)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_abandoned ON conduites(abandoned)")
 
     # Insert par batch avec executemany
     placeholders = ", ".join(["?" for _ in COL_NAMES])
@@ -255,6 +279,7 @@ def main():
     conn.close()
 
     print("Table 'conduites' créée.")
+    print("Base SQLite prête pour utilisation backend / heatmap.")
     print(f"  Total: {n} lignes (en service: {n0}, abandonnées: {n1})")
     return 0
 
