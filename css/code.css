@@ -107,46 +107,6 @@ body {
     color: var(--color-black);
 }
 
-
-/* =========================================================
-   5. SECTION HERO
-   ---------------------------------------------------------
-   Grande zone avec image de fond
-   ========================================================= */
-.hero {
-    position: relative;
-    min-height: calc(100vh - var(--header-height));
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    /* Image de fond */
-    background-image: url("../assets/images/fond_page_accueil.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.hero__overlay {
-    position: absolute;
-    inset: 0;
-    background-color: var(--color-overlay);
-}
-
-.hero__content {
-    position: relative;
-    z-index: 1;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-
-    padding: 20px;
-}
-
-
 /* =========================================================
    6. BARRE DE RECHERCHE
    ---------------------------------------------------------
@@ -220,43 +180,6 @@ body {
     height: 20px;
 }
 
-
-/* =========================================================
-   7. LIEN SOUS LA BARRE DE RECHERCHE
-   ========================================================= */
-.hero__map-link {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--color-black);
-
-    position: relative;
-    text-decoration: none;
-
-    transition: all 0.25s ease;
-}
-
-.hero__map-link::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -3px;
-
-    width: 0%;
-    height: 2px;
-
-    background: var(--color-black);
-    transition: width 0.25s ease;
-}
-
-.hero__map-link:hover::after {
-    width: 100%;
-}
-
-.hero__map-link:hover {
-    opacity: 0.75;
-}
-
-
 /* =========================================================
    8. RESPONSIVE
    ---------------------------------------------------------
@@ -283,9 +206,6 @@ body {
         font-family: var(--font-main);
     }
 
-    .hero {
-        min-height: calc(100vh - 120px);
-    }
 }
 
 @media (max-width: 600px) {
@@ -304,10 +224,6 @@ body {
         font-size: 1rem;
     }
 
-    .hero__map-link {
-        font-size: 0.95rem;
-        text-align: center;
-    }
 }
 
 /* =========================================================
