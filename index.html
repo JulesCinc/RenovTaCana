@@ -1,43 +1,293 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-    <meta http-equiv="refresh" content="0; url=pages/carte.html">
-</head>
-
-</html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RenovTaCana - Accueil</title>
-
-    <!-- Google Fonts -->
+    <title>RenovTaCana — RésuEtats</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/code.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/adresses.css">
 </head>
 
 <body>
 
-    <!-- =========================
-         HEADER
-         ========================= -->
-    <header class="site-header">
+    <header class="site-header site-header--address">
         <div class="site-header__left">
-            <!-- Logo de l'entreprise / partenaire -->
-            <img src="assets/images/logo_entreprise.png" alt="Logo Métropole Nice Côte d’Azur"
-                class="site-header__logo">
+            <img src="assets/images/logo_entreprise.png" alt="Logo" class="site-header__logo">
+            <a href="carte.html" class="header-home" title="Carte interactive">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                    <line x1="8" y1="2" x2="8" y2="18" />
+                    <line x1="16" y1="6" x2="16" y2="22" />
+                </svg>
+            </a>
+            <a href="dashboard.html" class="header-home" title="Dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+            </a>
         </div>
-
         <div class="site-header__right">
-            <h1 class="site-header__title">RenovTaCana</h1>
+            <button class="header-export" id="btn-export">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Extraire CSV
+            </button>
+            <button class="theme-toggle" type="button" aria-label="Mode sombre">Mode sombre</button>
+            <h2 class="site-header__title">Renov<span>Ta</span>Cana</h2>
         </div>
     </header>
+
+    <main class="address-page">
+
+        <section class="address-search">
+            <form class="search-bar search-bar--address" id="search-form">
+                <button type="submit" class="search-bar__icon-button" aria-label="Rechercher">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </button>
+                <input type="text" name="adresse" class="search-bar__input" placeholder="Entrer une adresse"
+                    autocomplete="off">
+                <button type="button"
+                    class="search-bar__icon-button search-bar__icon-button--small search-bar__clear-button"
+                    aria-label="Effacer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </form>
+            <a href="carte.html" class="address-search__link">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                </svg>
+                Rechercher sur la carte interactive
+            </a>
+        </section>
+
+        <section class="address-layout">
+            <div class="address-main-block">
+                <div class="tabs-bar">
+                    <button class="tab-btn tab-btn--active" data-tab="canalisations">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6" />
+                            <line x1="8" y1="12" x2="21" y2="12" />
+                            <line x1="8" y1="18" x2="21" y2="18" />
+                            <line x1="3" y1="6" x2="3.01" y2="6" />
+                            <line x1="3" y1="12" x2="3.01" y2="12" />
+                            <line x1="3" y1="18" x2="3.01" y2="18" />
+                        </svg>
+                        Canalisations
+                        <span class="tab-badge" id="result-count">—</span>
+                    </button>
+                    <button class="tab-btn" data-tab="chantiers">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                        </svg>
+                        Chantiers
+                        <span class="tab-badge" id="chantiers-count">—</span>
+                    </button>
+                    <button class="tab-btn" data-tab="operations">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                        Operations
+                        <span class="tab-badge" id="operations-count">—</span>
+                    </button>
+                </div>
+
+                <div class="tab-panel" data-tab="canalisations">
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label class="filter-label">Materiaux</label>
+                            <select class="filter-select" id="filter-materiau">
+                                <option value="">Tous</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Anciennete</label>
+                            <select class="filter-select" id="filter-anciennete">
+                                <option value="">Toutes</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Statut criticite</label>
+                            <select class="filter-select" id="filter-Etatut">
+                                <option value="">Tous</option>
+                                <option value="critique">Critique (>= 70%)</option>
+                                <option value="attention">Attention (40-70%)</option>
+                                <option value="bon">Bon Etat (< 40%)</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                Criticite : <span id="criticite-range-label">0% - 100%</span>
+                            </label>
+                            <div class="range-row">
+                                <input type="range" class="filter-range" id="filter-crit-min" min="0" max="100"
+                                    value="0">
+                                <input type="range" class="filter-range" id="filter-crit-max" min="0" max="100"
+                                    value="100">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Recherche ID</label>
+                            <input type="text" class="filter-input" id="filter-id" placeholder="Ex : wMain_06088...">
+                        </div>
+                        <button class="filter-reset" id="filter-reset">Reinitialiser</button>
+                    </div>
+
+                    <div class="table-scroll">
+                        <table class="address-table" id="main-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Adresse</th>
+                                    <th>Materiaux</th>
+                                    <th data-col="diametre">Ø mm <span class="sort-icon">⇅</span></th>
+                                    <th data-col="longueur">Long. m <span class="sort-icon">⇅</span></th>
+                                    <th data-col="annee_pose">Pose <span class="sort-icon">⇅</span></th>
+                                    <th data-col="nb_fuites">Fuites <span class="sort-icon">⇅</span></th>
+                                    <th data-col="criticite">Criticite <span class="sort-icon">⇅</span></th>
+                                    <th data-col="score_priorite">Score <span class="sort-icon">⇅</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <tr class="row-loading">
+                                    <td colspan="9">Chargement...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-panel" data-tab="chantiers" style="display:none">
+                    <div class="table-scroll">
+                        <table class="address-table">
+                            <thead>
+                                <tr>
+                                    <th>N Operation</th>
+                                    <th>Libelle</th>
+                                    <th>Commune</th>
+                                    <th>Etat</th>
+                                    <th>Periode</th>
+                                </tr>
+                            </thead>
+                            <tbody id="chantiers-body">
+                                <tr class="row-loading">
+                                    <td colspan="5">Chargement...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-panel" data-tab="operations" style="display:none">
+                    <div class="table-scroll">
+                        <table class="address-table">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Commune</th>
+                                    <th>Localisation</th>
+                                    <th>Année</th>
+                                    <th>CPI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="operations-body">
+                                <tr class="row-loading">
+                                    <td colspan="5">Chargement...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="address-side-card">
+                <div class="address-side-card__header">Mini heatmap</div>
+                <div class="address-side-card__body">
+                    <div id="mini-map"></div>
+                    <div class="side-divider"></div>
+
+                    <div class="address-side-info">
+                        <span class="address-side-info__label">Adresse analysee</span>
+                        <span class="address-side-info__value" id="side-adresse">—</span>
+                    </div>
+
+                    <div class="side-divider"></div>
+
+                    <div class="address-side-info">
+                        <span class="address-side-info__label">Canalisations</span>
+                        <span class="address-side-info__value address-side-info__value--highlight"
+                            id="side-total">—</span>
+                    </div>
+                    <div class="address-side-info">
+                        <span class="address-side-info__label">Longueur totale</span>
+                        <span class="address-side-info__value" id="side-longueur">—</span>
+                    </div>
+                    <div class="address-side-info">
+                        <span class="address-side-info__label">Nb de fuites</span>
+                        <span class="address-side-info__value" id="side-nb-fuites">—</span>
+                    </div>
+
+                    <div class="side-divider"></div>
+
+                    <div class="address-side-info">
+                        <span class="address-side-info__label">Critiques (>= 70%)</span>
+                        <span class="address-side-info__value" style="color:var(--c-danger)"
+                            id="side-critiques">—</span>
+                    </div>
+                    <div class="address-side-info">
+                        <span class="address-side-info__label">Criticite moyenne</span>
+                        <span class="address-side-info__value" id="side-crit-moy">—</span>
+                    </div>
+
+                    <div class="side-divider"></div>
+
+                    <div class="criticite-bar">
+                        <div class="criticite-bar__label">
+                            <span>Criticite globale</span>
+                            <span id="side-crit-pct">—</span>
+                        </div>
+                        <div class="criticite-bar__track">
+                            <div class="criticite-bar__fill" id="side-crit-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/mini-map.js"></script>
+    <script src="js/index.js"></script>
 
 </body>
 

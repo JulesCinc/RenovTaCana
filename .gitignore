@@ -1,3 +1,5 @@
-# Données brutes (shapefiles, CSV, Excel) — trop volumineuses pour GitHub
-row-data/
-venv/
+# Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
