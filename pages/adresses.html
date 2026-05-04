@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenovTaCana - Adresse</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/code.css">
+</head>
+
+<script src="../js/search.js"></script>
+<script src="../js/adresse.js"></script>
+
+<body>
+
+    <header class="site-header site-header--address">
+        <div class="site-header__left">
+            <img src="../assets/images/logo_entreprise.png" alt="Logo Métropole Nice Côte d’Azur"
+                class="site-header__logo">
+
+            <a href="../index.html" class="header-home">
+                <img src="../assets/icons/accueil.png" alt="Accueil">
+            </a>
+        </div>
+
+        <div class="site-header__right">
+            <button class="header-export">
+                <img src="../assets/icons/telecharger.png" alt="Extraire" class="header-export__icon">
+                Extraire
+            </button>
+            <h1 class="site-header__title">RenovTaCana</h1>
+        </div>
+    </header>
+
+    <main class="address-page">
+
+        <section class="address-search">
+            <form class="search-bar search-bar--address" action="adresses.html" method="get">
+                <button type="submit" class="search-bar__icon-button" aria-label="Rechercher">
+                    <img src="../assets/icons/chercher.svg" alt="" class="search-bar__icon">
+                </button>
+
+                <input type="text" name="adresse" class="search-bar__input" placeholder="Entrer une adresse"
+                    aria-label="Entrer une adresse">
+
+                <button type="button" class="search-bar__icon-button search-bar__clear-button" aria-label="Effacer">
+                    <img src="../assets/icons/croix.svg" alt="" class="search-bar__icon search-bar__icon--small">
+                </button>
+            </form>
+
+            <a href="carte.html" class="address-search__link">
+                Rechercher directement sur la carte
+            </a>
+        </section>
+
+        <section class="address-layout">
+
+            <div class="address-table-card">
+                <div class="address-table-card__title" id="adresse-titre">
+                    Adresse
+                </div>
+
+                <table class="address-table">
+                    <thead>
+                        <tr>
+                            <th>ID CANA</th>
+                            <th>Matériaux</th>
+                            <th>Dernière renov</th>
+                            <th>INFO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>51654968435467</td>
+                            <td>PVC</td>
+                            <td><span class="table-pill table-pill--date">04 avr. 2030</span></td>
+                            <td>
+                                <span class="table-pill table-pill--success">
+                                    ✅ Completed
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>6465464646</td>
+                            <td>Alliage MR</td>
+                            <td><span class="table-pill table-pill--date">11 avr. 2030</span></td>
+                            <td>
+                                <span class="table-pill table-pill--warning">
+                                    ✏️ In progress
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>354543543643538000</td>
+                            <td>Aluminium</td>
+                            <td><span class="table-pill table-pill--date">18 avr. 2030</span></td>
+                            <td>
+                                <span class="table-pill table-pill--neutral">
+                                    Besoin de rénovation
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <aside class="address-side-card"></aside>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
