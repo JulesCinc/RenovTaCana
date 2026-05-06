@@ -62,4 +62,15 @@ Sous **Windows** : exécuter **`demarrer-web-app.bat`** (double-clic, ou `.\dema
 
 Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn script.main:app --reload`. Puis ouvrir **`http://127.0.0.1:8000/`** dans le navigateur. La base d’URL API est gérée dans **`js/config.js`**.
 
+## Prochaines étapes indispensables (Jalon 3)
+
+- Créer le script qui calcule le **score de priorité** pour chaque canalisation, puis renseigne `canalisations.score_priorite` dans `database/renovTaCana.db`.
+
+## Association des tâches
+
+```mermaid
+flowchart LR
+    T[Tâche Jalon 3<br/>Créer le script de calcul du score de priorité] --> A[Assigné à : Jules CINC]
+```
+
 ---

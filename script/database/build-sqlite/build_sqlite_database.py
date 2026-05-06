@@ -14,8 +14,15 @@ import os
 import re
 import shutil
 import sqlite3
+import sys
 from datetime import datetime
-from script.utils import normalize_text
+
+try:
+    from script.utils import normalize_text
+except ModuleNotFoundError:
+    # Permet l'execution directe du script (python script/.../build_sqlite_database.py)
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+    from script.utils import normalize_text
 
 # Racine du projet (au-dessus de script/database/build-sqlite/)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -345,7 +352,9 @@ def main():
     pred = pd.to_numeric(df_can["Predicti_1"], errors="coerce")
     tx_score = df_can["TXcasse"].map(tx_to_score) if "TXcasse" in df_can.columns else np.nan
     criticite = pred.mul(100.0).fillna(tx_score)
-    score_priorite = criticite.fillna(0.0)
+    # Le score de priorite n'est pas calcule au build.
+    # Il sera renseigne plus tard par un script de scoring dedie.
+    score_priorite = pd.Series([None] * len(df_can), index=df_can.index, dtype="object")
 
     can_df = pd.DataFrame(
         {
