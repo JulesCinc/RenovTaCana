@@ -1,6 +1,6 @@
 /**
- * carte.js â€” Carte interactive Leaflet
- * Canalisations + sÃ©lection de zone
+ * carte.js - Carte interactive Leaflet
+ * Canalisations + sélection de zone
  */
 
 function geoJsonCanalisationsUrl() {
@@ -9,11 +9,11 @@ function geoJsonCanalisationsUrl() {
 
 let map, geoLayer, drawLayer, selectRectangle;
 let baseTileLayer = null;
-let allFeatures    = [];
-let activeFilter   = "all";
-let selectMode     = false;
+let allFeatures = [];
+let activeFilter = "all";
+let selectMode = false;
 
-// â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Init --------------------------------------------------
 document.addEventListener("DOMContentLoaded", async function () {
     initMap();
     await loadCanalisations();
@@ -22,11 +22,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     initZoneSelect();
 });
 
-// â”€â”€ Carte Leaflet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Carte Leaflet -----------------------------------------
 function initMap() {
     map = L.map("map", {
         center: [43.705, 7.265],
-        zoom:   13,
+        zoom: 13,
         zoomControl: false,
     });
 
@@ -61,21 +61,21 @@ function observeThemeChanges() {
     });
 }
 
-// â”€â”€ Canalisations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Canalisations -----------------------------------------
 async function loadCanalisations() {
     try {
-        document.getElementById("map-loading").querySelector("span").textContent = 
+        document.getElementById("map-loading").querySelector("span").textContent =
             "Chargement des 55 524 canalisationsâ€¦";
-        const res  = await fetch(geoJsonCanalisationsUrl());
+        const res = await fetch(geoJsonCanalisationsUrl());
         const data = await res.json();
         allFeatures = data.features || [];
         renderLayer(allFeatures);
         document.getElementById("map-count").textContent =
             `${allFeatures.length.toLocaleString("fr-FR")} canalisations`;
         document.getElementById("map-loading").style.display = "none";
-    } catch(e) {
+    } catch (e) {
         document.getElementById("map-loading").innerHTML =
-            `<span style="color:var(--c-danger)">âš ï¸ Erreur chargement des donnÃ©es</span>`;
+            `<span style="color:var(--c-danger)">âš ï¸ Erreur chargement des données</span>`;
     }
 }
 
@@ -87,8 +87,8 @@ function renderLayer(features) {
             const p = feature.properties;
             layer.on("mouseover", e => { layer.setStyle({ weight: 5, opacity: 1 }); showTooltip(e, p); });
             layer.on("mousemove", e => moveTooltip(e));
-            layer.on("mouseout",  ()  => { if (!selectMode) geoLayer.resetStyle(layer); hideTooltip(); });
-            layer.on("click",     ()  => {
+            layer.on("mouseout", () => { if (!selectMode) geoLayer.resetStyle(layer); hideTooltip(); });
+            layer.on("click", () => {
                 if (selectMode) return;
                 if (p.adr) window.location.href = `index.html?adresse=${encodeURIComponent(p.adr)}`;
             });
@@ -97,19 +97,19 @@ function renderLayer(features) {
 }
 
 function getLineStyle(crit) {
-    if (crit == null)  return { color: "#475569", weight: 1.5, opacity: 0.5 };
-    if (crit >= 70)    return { color: "#ef4444", weight: 3,   opacity: 0.9 };
-    if (crit >= 40)    return { color: "#f97316", weight: 2.5, opacity: 0.85 };
-    if (crit >= 20)    return { color: "#eab308", weight: 2,   opacity: 0.75 };
-    if (crit >= 10)    return { color: "#84cc16", weight: 1.8, opacity: 0.7 };
-    return                    { color: "#00d4aa", weight: 1.5, opacity: 0.65 };
+    if (crit == null) return { color: "#475569", weight: 1.5, opacity: 0.5 };
+    if (crit >= 70) return { color: "#ef4444", weight: 3, opacity: 0.9 };
+    if (crit >= 40) return { color: "#f97316", weight: 2.5, opacity: 0.85 };
+    if (crit >= 20) return { color: "#eab308", weight: 2, opacity: 0.75 };
+    if (crit >= 10) return { color: "#84cc16", weight: 1.8, opacity: 0.7 };
+    return { color: "#00d4aa", weight: 1.5, opacity: 0.65 };
 }
 
-// â”€â”€ SÃ©lection de zone â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Sélection de zone -------------------------------------
 function initZoneSelect() {
     drawLayer = new L.FeatureGroup().addTo(map);
 
-    // Handler rectangle directement (sans passer par le contrÃ´le UI)
+    // Handler rectangle directement (sans passer par le contrôle UI)
     let drawHandler = null;
 
     const btn = document.getElementById("toggle-select");
@@ -136,7 +136,7 @@ function initZoneSelect() {
         drawLayer.clearLayers();
         drawLayer.addLayer(e.layer);
         const bounds = e.layer.getBounds();
-        // DÃ©sactiver le mode dessin aprÃ¨s tracÃ©
+        // Désactiver le mode dessin après tracé
         selectMode = false;
         document.getElementById("toggle-select")?.classList.remove("active");
         analyseZone(bounds);
@@ -160,12 +160,12 @@ function analyseZone(bounds) {
 
     if (!inside.length) return;
 
-    const total   = inside.length;
-    const crits   = inside.filter(f => (f.properties.crit ?? 0) >= 70).length;
+    const total = inside.length;
+    const crits = inside.filter(f => (f.properties.crit ?? 0) >= 70).length;
     const critMoy = inside.filter(f => f.properties.crit != null)
         .reduce((s, f, _, a) => s + f.properties.crit / a.length, 0);
 
-    // Highlight les canalisations sÃ©lectionnÃ©es
+    // Highlight les canalisations sélectionnées
     renderLayer(inside);
 
     document.getElementById("zone-stats").innerHTML = `
@@ -195,7 +195,7 @@ function analyseZone(bounds) {
     document.getElementById("map-count").textContent = `${total} dans la zone`;
 }
 
-// â”€â”€ Filtres rapides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Filtres rapides ---------------------------------------
 function initFilters() {
     document.querySelectorAll(".map-filter-btn").forEach(btn => {
         btn.addEventListener("click", function () {
@@ -210,10 +210,10 @@ function initFilters() {
 function applyFilter() {
     let filtered;
     switch (activeFilter) {
-        case "critique":  filtered = allFeatures.filter(f => (f.properties.crit ?? 0) >= 70); break;
+        case "critique": filtered = allFeatures.filter(f => (f.properties.crit ?? 0) >= 70); break;
         case "attention": filtered = allFeatures.filter(f => { const c = f.properties.crit ?? 0; return c >= 40 && c < 70; }); break;
-        case "bon":       filtered = allFeatures.filter(f => (f.properties.crit ?? 0) < 40); break;
-        default:          filtered = allFeatures;
+        case "bon": filtered = allFeatures.filter(f => (f.properties.crit ?? 0) < 40); break;
+        default: filtered = allFeatures;
     }
     renderLayer(filtered);
     document.getElementById("map-count").textContent =
@@ -222,7 +222,7 @@ function applyFilter() {
         map.fitBounds(geoLayer.getBounds(), { padding: [20, 20] });
 }
 
-// â”€â”€ Recherche â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Recherche ---------------------------------------------
 function initSearch() {
     const form = document.getElementById("search-form");
     if (!form) return;
@@ -239,7 +239,7 @@ function initSearch() {
         if (matches.length > 0) {
             renderLayer(matches);
             document.getElementById("map-count").textContent =
-                `${matches.length} rÃ©sultat${matches.length > 1 ? "s" : ""} pour "${query}"`;
+                `${matches.length} résultat${matches.length > 1 ? "s" : ""} pour "${query}"`;
             if (geoLayer) map.fitBounds(geoLayer.getBounds(), { padding: [40, 40] });
         } else {
             window.location.href = `index.html?adresse=${encodeURIComponent(query)}`;
@@ -255,23 +255,23 @@ function initSearch() {
     });
 }
 
-// â”€â”€ Tooltip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- Tooltip -----------------------------------------------
 const tooltip = document.getElementById("map-tooltip");
 
 function showTooltip(e, p) {
-    document.getElementById("tt-id").textContent   = p.id || "";
-    document.getElementById("tt-adr").textContent  = p.adr || "â€”";
-    document.getElementById("tt-mat").textContent  = p.mat || "â€”";
-    document.getElementById("tt-diam").textContent = p.diam ? `${p.diam} mm` : "â€”";
-    document.getElementById("tt-long").textContent = p.long ? `${p.long} m` : "â€”";
+    document.getElementById("tt-id").textContent = p.id || "";
+    document.getElementById("tt-adr").textContent = p.adr || "-";
+    document.getElementById("tt-mat").textContent = p.mat || "-";
+    document.getElementById("tt-diam").textContent = p.diam ? `${p.diam} mm` : "-";
+    document.getElementById("tt-long").textContent = p.long ? `${p.long} m` : "-";
     const crit = p.crit;
     if (crit != null) {
         document.getElementById("tt-crit-val").textContent = `${crit.toFixed(1)}%`;
         const fill = document.getElementById("tt-fill");
-        fill.style.width      = `${Math.min(crit,100)}%`;
+        fill.style.width = `${Math.min(crit, 100)}%`;
         fill.style.background = crit >= 70 ? "#ef4444" : crit >= 40 ? "#f97316" : "#00d4aa";
     } else {
-        document.getElementById("tt-crit-val").textContent = "â€”";
+        document.getElementById("tt-crit-val").textContent = "-";
         document.getElementById("tt-fill").style.width = "0%";
     }
     tooltip.style.display = "block";
@@ -281,11 +281,11 @@ function showTooltip(e, p) {
 function moveTooltip(e) {
     const rect = document.getElementById("map").getBoundingClientRect();
     let x = e.originalEvent.clientX - rect.left + 14;
-    let y = e.originalEvent.clientY - rect.top  - 20;
-    if (x + 240 > rect.width)  x -= 260;
+    let y = e.originalEvent.clientY - rect.top - 20;
+    if (x + 240 > rect.width) x -= 260;
     if (y + 200 > rect.height) y -= 200;
     tooltip.style.left = `${x}px`;
-    tooltip.style.top  = `${y}px`;
+    tooltip.style.top = `${y}px`;
 }
 
 function hideTooltip() { tooltip.style.display = "none"; }
