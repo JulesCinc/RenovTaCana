@@ -122,6 +122,12 @@
                 <div class="tab-panel" data-tab="canalisations">
                     <div class="filters-bar">
                         <div class="filter-group">
+                            <label class="filter-label">Commune</label>
+                            <select class="filter-select" id="filter-commune">
+                                <option value="">Toutes</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
                             <label class="filter-label">Materiaux</label>
                             <select class="filter-select" id="filter-materiau">
                                 <option value="">Tous</option>
@@ -164,20 +170,21 @@
                         <table class="address-table" id="main-table">
                             <thead>
                                 <tr>
+                                    <th>Commune</th>
                                     <th>Adresse</th>
                                     <th>Materiaux</th>
                                     <th data-col="diametre">Ø mm <span class="sort-icon">⇅</span></th>
                                     <th data-col="longueur">Long. m <span class="sort-icon">⇅</span></th>
                                     <th data-col="annee_pose">Pose <span class="sort-icon">⇅</span></th>
                                     <th data-col="nb_fuites">Fuites <span class="sort-icon">⇅</span></th>
-                                    <th data-col="criticite">Criticité (%) <span class="sort-icon">⇅</span></th>
+                                    <th data-col="criticite">Criticité (%)</th>
                                     <th data-col="score_priorite">Score <span class="sort-icon">⇅</span></th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-body">
                                 <tr class="row-loading">
-                                    <td colspan="9">Chargement...</td>
+                                    <td colspan="10">Chargement...</td>
                                 </tr>
                             </tbody>
                         </table>

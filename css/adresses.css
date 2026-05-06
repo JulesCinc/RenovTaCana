@@ -5,10 +5,11 @@
 /* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .address-layout {
     display: grid;
-    grid-template-columns: minmax(0, 0.95fr) 360px;
+    grid-template-columns: minmax(0, 1fr) 340px;
     gap: 24px;
     align-items: start;
-    max-width: 1600px;
+    width: 100%;
+    max-width: 1720px;
 }
 
 .address-main-block {
@@ -310,9 +311,11 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     background: var(--c-surface);
     border: 1px solid var(--c-border);
     border-radius: var(--radius-md);
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: sticky;
     top: calc(var(--header-h) + 16px);
+    max-height: calc(100vh - var(--header-h) - 24px);
 }
 
 .address-side-card__header {

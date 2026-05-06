@@ -21,6 +21,8 @@
             zoom: 12,
             zoomControl: false,
             attributionControl: false,
+            // Laisse le scroll de la page prioritaire sur la mini-carte.
+            scrollWheelZoom: false,
         });
 
         applyMiniMapTheme();

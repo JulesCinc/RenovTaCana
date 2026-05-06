@@ -67,6 +67,8 @@ Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn scri
 - Créer le script qui calcule le **score de priorité** pour chaque canalisation, puis renseigne `canalisations.score_priorite` dans `database/renovTaCana.db`.
 - Raccourcir les délais de chargement.
 - Trouver comment afficher la commune d'une canalisation (texte et non code).
+- Compléter le document de suivi de projet, avec product backlog, suivi des sprints et jalonage.
+- Rajouter un bouton d'action sur `index.html` pour que lorsqu'on clique sur un bouton "map", cela affiche la canalisation dans la mini heatmap.
 
 ## Association des tâches
 
@@ -75,6 +77,8 @@ flowchart LR
     T[Tâche Jalon 3<br/>Créer le script de calcul du score de priorité] --> A[Assigné à : Jules CINC]
     U1[Tâche Jalon 3<br/>Raccourcir les délais de chargement] --> U[Assigné à : Ulysse LONG]
     U2[Tâche Jalon 3<br/>Afficher la commune d'une canalisation en texte] --> U
+    N1[Tâche Jalon 3<br/>Compléter le document de suivi de projet] --> N[Assigné à : Nicolas DEMARS]
+    O1[Tâche Jalon 3<br/>Ajouter un bouton map sur index.html pour la mini heatmap] --> O[Assigné à : Oscar HUNAUT]
 ```
 
 ---

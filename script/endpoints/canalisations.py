@@ -1,3 +1,8 @@
+import json
+from functools import lru_cache
+from urllib.error import URLError
+from urllib.request import urlopen
+
 from fastapi import APIRouter, HTTPException, Query
 
 from database import get_db
@@ -19,6 +24,46 @@ ALLOWED_SORT_COLS = {
     "anciennete",
     "score_priorite",
 }
+
+
+def normalize_commune_code(value):
+    code = str(value or "").strip()
+    if not code:
+        return ""
+    if code.isdigit() and len(code) == 4:
+        return f"0{code}"
+    return code
+
+
+@lru_cache(maxsize=1024)
+def fetch_commune_name_from_code(code):
+    if not code.isdigit() or len(code) != 5:
+        return None
+    url = f"https://geo.api.gouv.fr/communes/{code}?fields=nom&format=json&geometry=centre"
+    try:
+        with urlopen(url, timeout=2.0) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+            if isinstance(payload, dict):
+                name = str(payload.get("nom") or "").strip()
+                return name or None
+    except (TimeoutError, URLError, ValueError, json.JSONDecodeError):
+        return None
+    return None
+
+
+def commune_display_value(raw_value):
+    code = normalize_commune_code(raw_value)
+    if not code:
+        return ""
+    if not code.isdigit():
+        return code
+    return fetch_commune_name_from_code(code) or code
+
+
+def enrich_commune_display(rows):
+    for row in rows:
+        row["commune_display"] = commune_display_value(row.get("commune"))
+    return rows
 
 
 @router.get("/canalisations")
@@ -93,7 +138,7 @@ def get_canalisations(
         params + [limit, offset],
     )
 
-    rows = [dict(r) for r in cur.fetchall()]
+    rows = enrich_commune_display([dict(r) for r in cur.fetchall()])
     conn.close()
 
     return {
@@ -171,7 +216,7 @@ def get_adresse_suggestions(
 
     for row in cur.fetchall():
         adresse = row["adresse"] or ""
-        commune = row["commune"] or ""
+        commune = commune_display_value(row["commune"] or "")
         full_label = f"{adresse}, {commune}" if commune else adresse
 
         suggestions.append(
@@ -221,7 +266,7 @@ def get_canalisations_zone(payload: dict):
         ids + [limit, offset],
     )
 
-    rows = [dict(r) for r in cur.fetchall()]
+    rows = enrich_commune_display([dict(r) for r in cur.fetchall()])
     conn.close()
 
     return {
@@ -250,6 +295,8 @@ def get_canalisation_detail(facilityid: str):
 
     cana_dict = dict(cana)
     cond_dict = dict(cond) if cond is not None else {}
+    cana_dict["commune_display"] = commune_display_value(cana_dict.get("commune"))
+    cond_dict["COMMUNE_DISPLAY"] = commune_display_value(cond_dict.get("COMMUNE"))
     adresse = cana_dict.get("adresse") or cond_dict.get("ADRESSE")
 
     return {

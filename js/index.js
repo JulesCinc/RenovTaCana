@@ -172,6 +172,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // Filtres → retour page 1
+    on("filter-commune",    "change", () => fetchPage(1));
     on("filter-materiau",   "change", () => fetchPage(1));
     on("filter-statut",     "change", () => fetchPage(1));
     on("filter-anciennete", "change", () => fetchPage(1));
@@ -211,6 +212,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 // ── Construire les paramètres de requête ──────────────────
 function buildQueryParams(page) {
     const offset   = (page - 1) * PAGE_SIZE;
+    const commune  = val("filter-commune");
     const mat      = val("filter-materiau");
     const statut   = val("filter-statut");
     const anc      = val("filter-anciennete");
@@ -228,6 +230,7 @@ function buildQueryParams(page) {
     });
 
     if (currentAdresse) p.append("adresse",   currentAdresse);
+    if (commune)        p.append("commune",   commune);
     if (mat)            p.append("materiau",  mat);
     if (statut)         p.append("statut",    statut);
     if (anc)            p.append("anciennete", anc);
@@ -241,7 +244,7 @@ function buildQueryParams(page) {
 async function fetchZone(ids) {
     if (!ids || !ids.length) return;
     const tbody = document.getElementById("table-body");
-    tbody.innerHTML = `<tr class="row-loading"><td colspan="9">Chargement des ${ids.length} canalisations…</td></tr>`;
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="10">Chargement des ${ids.length} canalisations…</td></tr>`;
     try {
         const res  = await fetch(`${API}/api/canalisations/zone`, {
             method: "POST",
@@ -267,14 +270,14 @@ async function fetchZone(ids) {
             if (bar) setTimeout(() => bar.style.width = `${moy}%`, 150);
         }
     } catch(e) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="9">⚠️ Erreur chargement zone</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">⚠️ Erreur chargement zone</td></tr>`;
     }
 }
 
 async function fetchPage(page) {
     currentPage = page;
     const tbody = document.getElementById("table-body");
-    tbody.innerHTML = `<tr class="row-loading"><td colspan="9">Chargement…</td></tr>`;
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="10">Chargement…</td></tr>`;
 
     try {
         const query = buildQueryParams(page);
@@ -287,7 +290,7 @@ async function fetchPage(page) {
         setEl("result-count", `${totalResults.toLocaleString("fr-FR")} résultat${totalResults > 1 ? "s" : ""}`);
 
     } catch(e) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="9">
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">
             ⚠️ Serveur non disponible — lancez <code>uvicorn main:app --reload</code>
         </td></tr>`;
         document.getElementById("pagination")?.remove();
@@ -298,15 +301,16 @@ async function fetchPage(page) {
 function renderTable(data) {
     const tbody = document.getElementById("table-body");
     if (!data.length) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="9">Aucune canalisation trouvée</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">Aucune canalisation trouvée</td></tr>`;
         renderPagination();
         return;
     }
     tbody.innerHTML = data.map(row => `
         <tr>
+            <td>${row.commune_display || row.commune || "—"}</td>
             <td>${row.adresse || "—"}</td>
             <td>${row.materiau || "—"}</td>
-            <td>${row.diametre != null ? Number(row.diametre).toFixed(2) + " mm" : "—"}</td>
+            <td>${row.diametre != null ? Number(row.diametre).toFixed(1) + " mm" : "—"}</td>
             <td>${row.longueur != null ? row.longueur.toFixed(1) + " m" : "—"}</td>
             <td>${row.annee_pose || "—"}</td>
             <td>${row.nb_fuites != null ? row.nb_fuites : "—"}</td>
@@ -421,7 +425,7 @@ function onRangeChange() {
 
 // ── Reset filtres ─────────────────────────────────────────
 function resetFilters() {
-    ["filter-materiau","filter-statut","filter-anciennete","filter-id"].forEach(id => setInputVal(id, ""));
+    ["filter-commune","filter-materiau","filter-statut","filter-anciennete","filter-id"].forEach(id => setInputVal(id, ""));
     setInputVal("filter-crit-min", "0");
     setInputVal("filter-crit-max", "100");
     setEl("criticite-range-label", "0% — 100%");
@@ -435,6 +439,23 @@ async function loadFiltres() {
     try {
         const res  = await fetch(`${API}/api/filtres`);
         const data = await res.json();
+
+        const selCommune = document.getElementById("filter-commune");
+        if (data.communes_options?.length) {
+            data.communes_options.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c.value;
+                opt.textContent = c.label || c.value;
+                selCommune?.appendChild(opt);
+            });
+        } else {
+            data.communes?.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c;
+                opt.textContent = c;
+                selCommune?.appendChild(opt);
+            });
+        }
 
         const selMat = document.getElementById("filter-materiau");
         data.materiaux?.forEach(m => {
@@ -736,7 +757,13 @@ async function openDetailModal(facilityid) {
         if (!res.ok) throw new Error("detail fetch failed");
         const detail = await res.json();
 
-        title.textContent = detail.adresse || "Canalisation";
+        const communeName = detail.canalisation?.commune_display
+            || detail.conduite?.COMMUNE_DISPLAY
+            || detail.canalisation?.commune
+            || detail.conduite?.COMMUNE
+            || "";
+        const adresseTitle = detail.adresse || "Canalisation";
+        title.textContent = communeName ? `${adresseTitle}, ${communeName}` : adresseTitle;
         subtitle.textContent = detail.facilityid || facilityid;
         body.innerHTML = [
             renderDetailSection("Canalisation (API)", detail.canalisation || {}),
