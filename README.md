@@ -4,6 +4,10 @@ Prototype hébergé en ligne : **https://k2vm-163.mde.epf.fr/pages/index.html**
 
 Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.0** : relier les fonctionnalités (carte, tableau d’adresses, tableau de bord, API) dans des **pages utilisables** et une navigation cohérente.
 
+Dans le périmètre fonctionnel de cette **V2.0**, le **build de la base SQLite** à partir des données brutes présentes dans `data/` est inclus, avec **gestion des versions antérieures** : à chaque nouveau build, la base précédente est déplacée dans `database/outdated` afin de conserver la traçabilité. 
+
+En revanche, le **calcul du score de priorité** ainsi que le chantier de **raccourcissement des délais de chargement** sont explicitement **hors périmètre**. Ces deux sujets sont reportés et seront traités dans la **version 2.1**.
+
 ---
 
 ## Arborescence 
