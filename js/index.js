@@ -118,7 +118,7 @@ function buildQueryParams(page) {
 async function fetchZone(ids) {
     if (!ids || !ids.length) return;
     const tbody = document.getElementById("table-body");
-    tbody.innerHTML = `<tr class="row-loading"><td colspan="9">Chargement des ${ids.length} canalisations…</td></tr>`;
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="8">Chargement des ${ids.length} canalisations…</td></tr>`;
     try {
         const res  = await fetch(`${API}/api/canalisations/zone`, {
             method: "POST",
@@ -144,14 +144,14 @@ async function fetchZone(ids) {
             if (bar) setTimeout(() => bar.style.width = `${moy}%`, 150);
         }
     } catch(e) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="9">⚠️ Erreur chargement zone</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="8">⚠️ Erreur chargement zone</td></tr>`;
     }
 }
 
 async function fetchPage(page) {
     currentPage = page;
     const tbody = document.getElementById("table-body");
-    tbody.innerHTML = `<tr class="row-loading"><td colspan="9">Chargement…</td></tr>`;
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="8">Chargement…</td></tr>`;
 
     try {
         const query = buildQueryParams(page);
@@ -164,7 +164,7 @@ async function fetchPage(page) {
         setEl("result-count", `${totalResults.toLocaleString("fr-FR")} résultat${totalResults > 1 ? "s" : ""}`);
 
     } catch(e) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="9">
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="8">
             ⚠️ Serveur non disponible — lancez <code>uvicorn main:app --reload</code>
         </td></tr>`;
         document.getElementById("pagination")?.remove();
@@ -175,16 +175,15 @@ async function fetchPage(page) {
 function renderTable(data) {
     const tbody = document.getElementById("table-body");
     if (!data.length) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="9">Aucune canalisation trouvée</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="8">Aucune canalisation trouvée</td></tr>`;
         renderPagination();
         return;
     }
     tbody.innerHTML = data.map(row => `
         <tr>
-            <td class="cell-id" title="${row.facilityid}">${row.facilityid}</td>
             <td>${row.adresse || "—"}</td>
             <td>${row.materiau || "—"}</td>
-            <td>${row.diametre != null ? row.diametre + " mm" : "—"}</td>
+            <td>${row.diametre != null ? Number(row.diametre).toFixed(2) + " mm" : "—"}</td>
             <td>${row.longueur != null ? row.longueur.toFixed(1) + " m" : "—"}</td>
             <td>${row.annee_pose || "—"}</td>
             <td>${row.nb_fuites != null ? row.nb_fuites : "—"}</td>

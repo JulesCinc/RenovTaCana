@@ -154,8 +154,8 @@
                             </div>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label">Recherche ID</label>
-                            <input type="text" class="filter-input" id="filter-id" placeholder="Ex : wMain_06088...">
+                            <label class="filter-label">Recherche ID ou adresse</label>
+                            <input type="text" class="filter-input" id="filter-id" placeholder="Ex : wMain_06088... ou Avenue Jean Medecin">
                         </div>
                         <button class="filter-reset" id="filter-reset">Reinitialiser</button>
                     </div>
@@ -164,20 +164,19 @@
                         <table class="address-table" id="main-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Adresse</th>
                                     <th>Materiaux</th>
                                     <th data-col="diametre">Ø mm <span class="sort-icon">⇅</span></th>
                                     <th data-col="longueur">Long. m <span class="sort-icon">⇅</span></th>
                                     <th data-col="annee_pose">Pose <span class="sort-icon">⇅</span></th>
                                     <th data-col="nb_fuites">Fuites <span class="sort-icon">⇅</span></th>
-                                    <th data-col="criticite">Criticite <span class="sort-icon">⇅</span></th>
+                                    <th data-col="criticite">Criticité (%) <span class="sort-icon">⇅</span></th>
                                     <th data-col="score_priorite">Score <span class="sort-icon">⇅</span></th>
                                 </tr>
                             </thead>
                             <tbody id="table-body">
                                 <tr class="row-loading">
-                                    <td colspan="9">Chargement...</td>
+                                    <td colspan="8">Chargement...</td>
                                 </tr>
                             </tbody>
                         </table>

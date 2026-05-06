@@ -59,8 +59,9 @@ def get_canalisations(
         params.append(anciennete)
 
     if search:
-        filters.append("LOWER(facilityid) LIKE LOWER(?)")
-        params.append(f"%{search}%")
+        filters.append("(LOWER(facilityid) LIKE LOWER(?) OR LOWER(adresse) LIKE LOWER(?))")
+        search_like = f"%{search}%"
+        params.extend([search_like, search_like])
 
     if statut == "critique":
         filters.append("criticite >= 70")
