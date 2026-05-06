@@ -10,7 +10,10 @@ Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.0** :
 
 ```
 .
-├── main.py                     ← Point d’entrée FastAPI (`uvicorn main:app`)
+├── script/
+│   ├── main.py                 ← Point d’entrée FastAPI (`uvicorn script.main:app`)
+│   ├── utils.py
+│   └── router/
 ├── requirements.txt
 ├── README.md
 ├── demarrer-web-app.bat        ← Lancement Windows (voir « Lancer l’app »)
@@ -38,7 +41,7 @@ Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.0** :
 │   ├── images/                 ← logos, visuels (ex. logo_entreprise.png)
 │   └── data/                   ← Jeux de données côté front (ex. GeoJSON)
 │
-└── sqlite/                     ← Base SQLite locale (ex. renovTaCana.db)
+└── database/                   ← Base SQLite locale (ex. renovTaCana.db)
 ```
 
 ---
@@ -47,6 +50,6 @@ Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.0** :
 
 Sous **Windows** : exécuter **`demarrer-web-app.bat`** (double-clic, ou `.\demarrer-web-app.bat` dans PowerShell). Ce script lance **uvicorn** sur **`http://127.0.0.1:8000`** et ouvre le navigateur. **Il n’est utilisable que sous Windows** (fichier `.bat`).
 
-Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn main:app --reload`. Puis ouvrir **`http://127.0.0.1:8000/`** dans le navigateur. La base d’URL API est gérée dans **`js/config.js`**.
+Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn script.main:app --reload`. Puis ouvrir **`http://127.0.0.1:8000/`** dans le navigateur. La base d’URL API est gérée dans **`js/config.js`**.
 
 ---

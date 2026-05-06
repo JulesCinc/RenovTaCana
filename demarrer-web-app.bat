@@ -22,5 +22,5 @@ echo Ouverture du navigateur dans ~2 s sur http://127.0.0.1:8000/
 echo Serveur ^(Ctrl+C pour arreter^)
 echo.
 start "" powershell -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 2; Start-Process 'http://127.0.0.1:8000/'"
-"%PY%" -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+"%PY%" -m uvicorn script.main:app --reload --host 127.0.0.1 --port 8000
 pause

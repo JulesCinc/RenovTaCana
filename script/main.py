@@ -7,14 +7,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from router.canalisations import router as canalisations_router
-from router.dashboard import router as dashboard_router
-from router.plan_travaux import router as plan_travaux_router
-from router.stats import router as stats_router
-from router.chantiers import router as chantiers_router
-from router.operations import router as operations_router
-from router.filtres import router as filtres_router
-from router.geojson import router as geojson_router
+from script.router.canalisations import router as canalisations_router
+from script.router.dashboard import router as dashboard_router
+from script.router.plan_travaux import router as plan_travaux_router
+from script.router.stats import router as stats_router
+from script.router.chantiers import router as chantiers_router
+from script.router.operations import router as operations_router
+from script.router.filtres import router as filtres_router
+from script.router.geojson import router as geojson_router
 
 
 app = FastAPI(title="RenovTaCana API", version="2.0.0")
@@ -41,4 +41,4 @@ app.mount("/", StaticFiles(directory=".", html=True), name="static")
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("script.main:app", host="127.0.0.1", port=8000, reload=True)

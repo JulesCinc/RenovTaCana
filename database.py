@@ -1,11 +1,11 @@
 import os
 import sqlite3
 
-from utils import normalize_text
+from script.utils import normalize_text
 
 
 BASE_DIR = os.path.dirname(__file__)
-DB_PATH = os.path.join(BASE_DIR, "sqlite", "renovtacana.db")
+DB_PATH = os.path.join(BASE_DIR, "database", "renovtacana.db")
 
 
 def get_db():

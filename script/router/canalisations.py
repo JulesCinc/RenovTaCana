@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 
 from database import get_db
-from utils import normalize_text
+from script.utils import normalize_text
 
 
 router = APIRouter(prefix="/api", tags=["Canalisations"])
