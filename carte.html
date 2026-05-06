@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenovTaCana - Carte</title>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/carte.css">
+</head>
+
+<body>
+
+    <header class="site-header site-header--map">
+
+        <div class="mh-left">
+            <img src="assets/images/logo_entreprise.png" alt="Logo" class="site-header__logo">
+            <a href="index.html" class="header-home" title="Accueil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+            </a>
+        </div>
+
+        <form class="search-bar search-bar--map" id="search-form">
+            <button class="search-bar__icon-button" type="submit" aria-label="Rechercher">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+            </button>
+            <input type="text" name="adresse" class="search-bar__input" placeholder="Rechercher une adresse..."
+                autocomplete="off">
+            <button type="button"
+                class="search-bar__icon-button search-bar__icon-button--small search-bar__clear-button"
+                aria-label="Effacer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </form>
+
+        <div class="map-filter-btns">
+            <button class="map-filter-btn active" data-filter="all">Tous</button>
+            <button class="map-filter-btn" data-filter="critique">Critique</button>
+            <button class="map-filter-btn" data-filter="attention">Attention</button>
+            <button class="map-filter-btn" data-filter="bon">Bon etat</button>
+        </div>
+
+        <div class="mh-sep"></div>
+
+        <div class="map-actions">
+            <button class="map-toggle-btn" id="toggle-select">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3l4 0M3 3l0 4M21 3l-4 0M21 3l0 4M3 21l4 0M3 21l0-4M21 21l-4 0M21 21l0-4" />
+                </svg>
+                Zone
+            </button>
+            <a href="dashboard.html" class="map-toggle-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                Dashboard
+            </a>
+        </div>
+
+        <div class="mh-right">
+            <button class="theme-toggle" type="button" aria-label="Mode sombre">Mode sombre</button>
+            <div class="header-badge">
+                <span class="header-badge__dot"></span>
+                <span id="map-count">Chargement...</span>
+            </div>
+        </div>
+
+    </header>
+
+    <main class="map-page">
+        <div id="map"></div>
+
+        <aside class="map-widget map-legend">
+            <div class="map-legend__title">Criticite</div>
+            <div class="map-legend__scale">
+                <div class="map-legend__gradient"></div>
+                <div class="map-legend__labels">
+                    <span>100%</span><span>70%</span><span>40%</span><span>0%</span>
+                </div>
+            </div>
+            <div class="map-legend__items">
+                <div class="map-legend__item"><span class="dot" style="background:#ef4444"></span>Critique >= 70%</div>
+                <div class="map-legend__item"><span class="dot" style="background:#f97316"></span>Attention 40-70%</div>
+                <div class="map-legend__item"><span class="dot" style="background:#00d4aa"></span>Bon etat &lt; 40%
+                </div>
+                <div class="map-legend__item"><span class="dot" style="background:#475569"></span>Non evalue</div>
+            </div>
+        </aside>
+
+        <div class="map-tooltip" id="map-tooltip" style="display:none">
+            <div class="map-tooltip__id" id="tt-id"></div>
+            <div class="map-tooltip__row"><span>Adresse</span><strong id="tt-adr"></strong></div>
+            <div class="map-tooltip__row"><span>Materiaux</span><strong id="tt-mat"></strong></div>
+            <div class="map-tooltip__row"><span>Diametre</span><strong id="tt-diam"></strong></div>
+            <div class="map-tooltip__row"><span>Longueur</span><strong id="tt-long"></strong></div>
+            <div class="map-tooltip__crit">
+                <span>Criticite</span>
+                <div class="tt-bar">
+                    <div class="tt-bar__fill" id="tt-fill"></div>
+                </div>
+                <strong id="tt-crit-val"></strong>
+            </div>
+            <div class="map-tooltip__action">Cliquer pour voir le detail -></div>
+        </div>
+
+        <div class="zone-panel" id="zone-panel" style="display:none">
+            <div class="zone-panel__header">
+                <span id="zone-title">Zone selectionnee</span>
+                <button class="zone-panel__close" id="zone-close">X</button>
+            </div>
+            <div class="zone-panel__stats" id="zone-stats"></div>
+            <div class="zone-panel__actions">
+                <a class="btn-zone" id="zone-voir-adresses">Voir dans le tableau -></a>
+            </div>
+        </div>
+
+        <div class="map-loading" id="map-loading">
+            <div class="map-loading__spinner"></div>
+            <span>Chargement des canalisations...</span>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/carte.js"></script>
+</body>
+
+</html>
