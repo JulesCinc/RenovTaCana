@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenovTaCana — Tableau de bord</title>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="site-header__left">
+            <img src="assets/images/logo_entreprise.png" alt="Logo" class="site-header__logo">
+            <a href="index.html" class="header-home" title="Accueil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+            </a>
+            <a href="carte.html" class="header-home" title="Carte">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                    <line x1="8" y1="2" x2="8" y2="18" />
+                    <line x1="16" y1="6" x2="16" y2="22" />
+                </svg>
+            </a>
+        </div>
+        <div class="site-header__right">
+            <div class="header-badge"><span class="header-badge__dot"></span>Tableau de bord</div>
+            <button class="theme-toggle" type="button" aria-label="Mode sombre">Mode sombre</button>
+            <h2 class="site-header__title">Renov<span>Ta</span>Cana</h2>
+        </div>
+    </header>
+
+    <main class="dashboard">
+
+        <!-- ── KPI Cards ──────────────────────────────────── -->
+        <section class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-card__icon kpi-card__icon--cyan">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                    </svg>
+                </div>
+                <div class="kpi-card__body">
+                    <div class="kpi-card__value" id="kpi-total">—</div>
+                    <div class="kpi-card__label">Canalisations</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-card__icon kpi-card__icon--blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                </div>
+                <div class="kpi-card__body">
+                    <div class="kpi-card__value" id="kpi-km">—</div>
+                    <div class="kpi-card__label">km de réseau</div>
+                </div>
+            </div>
+            <div class="kpi-card kpi-card--danger">
+                <div class="kpi-card__icon kpi-card__icon--red">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                </div>
+                <div class="kpi-card__body">
+                    <div class="kpi-card__value" id="kpi-critiques">—</div>
+                    <div class="kpi-card__label">Critiques ≥ 70%</div>
+                </div>
+            </div>
+            <div class="kpi-card kpi-card--warning">
+                <div class="kpi-card__icon kpi-card__icon--orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                </div>
+                <div class="kpi-card__body">
+                    <div class="kpi-card__value" id="kpi-attention">—</div>
+                    <div class="kpi-card__label">Attention 40–70%</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-card__icon kpi-card__icon--cyan">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                </div>
+                <div class="kpi-card__body">
+                    <div class="kpi-card__value" id="kpi-chantiers">—</div>
+                    <div class="kpi-card__label">Chantiers suivis</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-card__icon kpi-card__icon--green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                </div>
+                <div class="kpi-card__body">
+                    <div class="kpi-card__value" id="kpi-fuites">—</div>
+                    <div class="kpi-card__label">Fuites recensées</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Répartition criticité ──────────────────────── -->
+        <section class="dash-row">
+
+            <div class="dash-card dash-card--half">
+                <div class="dash-card__header">
+                    <span>Répartition criticité</span>
+                </div>
+                <div class="dash-card__body">
+                    <div class="crit-bars" id="crit-bars">
+                        <div class="crit-bar-row">
+                            <span class="crit-bar-label">🔴 Critique</span>
+                            <div class="crit-bar-track">
+                                <div class="crit-bar-fill crit-bar-fill--danger" id="bar-critique" style="width:0%">
+                                </div>
+                            </div>
+                            <span class="crit-bar-val" id="val-critique">—</span>
+                        </div>
+                        <div class="crit-bar-row">
+                            <span class="crit-bar-label">🟠 Attention</span>
+                            <div class="crit-bar-track">
+                                <div class="crit-bar-fill crit-bar-fill--warning" id="bar-attention" style="width:0%">
+                                </div>
+                            </div>
+                            <span class="crit-bar-val" id="val-attention">—</span>
+                        </div>
+                        <div class="crit-bar-row">
+                            <span class="crit-bar-label">🟢 Bon état</span>
+                            <div class="crit-bar-track">
+                                <div class="crit-bar-fill crit-bar-fill--success" id="bar-bon" style="width:0%"></div>
+                            </div>
+                            <span class="crit-bar-val" id="val-bon">—</span>
+                        </div>
+                        <div class="crit-bar-row">
+                            <span class="crit-bar-label">⚫ Non évalué</span>
+                            <div class="crit-bar-track">
+                                <div class="crit-bar-fill crit-bar-fill--neutral" id="bar-neval" style="width:0%"></div>
+                            </div>
+                            <span class="crit-bar-val" id="val-neval">—</span>
+                        </div>
+                    </div>
+                    <div class="crit-total">Criticité moyenne réseau : <strong id="kpi-crit-moy">—</strong></div>
+                </div>
+            </div>
+
+            <div class="dash-card dash-card--half">
+                <div class="dash-card__header"><span>Chantiers par état</span></div>
+                <div class="dash-card__body">
+                    <div class="crit-bars" id="chantiers-bars"></div>
+                    <div class="chantiers-legend" id="chantiers-legend"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ── Matériaux + Années de pose ────────────────── -->
+        <section class="dash-row">
+
+            <div class="dash-card dash-card--half">
+                <div class="dash-card__header"><span>Matériaux du réseau</span></div>
+                <div class="dash-card__body">
+                    <div class="mat-grid" id="mat-grid"></div>
+                </div>
+            </div>
+
+            <div class="dash-card dash-card--half">
+                <div class="dash-card__header"><span>Année de pose</span></div>
+                <div class="dash-card__body">
+                    <div class="crit-bars" id="annees-bars"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ── Plan de travaux ───────────────────────────── -->
+        <section class="dash-card dash-card--full">
+            <div class="dash-card__header">
+                <span>Plan de travaux — Top priorités par rue</span>
+                <div class="plan-filters">
+                    <select class="filter-select filter-select--sm" id="plan-commune">
+                        <option value="">Toutes communes</option>
+                    </select>
+                    <button class="header-export" id="export-plan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export CSV
+                    </button>
+                </div>
+            </div>
+            <div class="dash-card__body dash-card__body--notop">
+                <div class="table-scroll">
+                    <table class="address-table" id="plan-table">
+                        <thead>
+                            <tr>
+                                <th>Rang</th>
+                                <th>Adresse</th>
+                                <th>Commune</th>
+                                <th>Canalisations</th>
+                                <th>Score priorité</th>
+                                <th>Criticité moy.</th>
+                                <th>Fuites</th>
+                                <th>Longueur</th>
+                                <th>Matériaux</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plan-body">
+                            <tr class="row-loading">
+                                <td colspan="10">Chargement…</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
