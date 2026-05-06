@@ -7,11 +7,12 @@ let planData = [];
 let planCommune = "";
 let planPage = 1;
 const PLAN_PAGE_SIZE = 50;
+const COMMUNE_LABELS = new Map();
 
 document.addEventListener("DOMContentLoaded", async function () {
     await loadDashboard();
-    await loadPlanTravaux("");
     await loadCommunes();
+    await loadPlanTravaux("");
 
     on("plan-commune", "change", async function () {
         planCommune = val("plan-commune");
@@ -158,6 +159,7 @@ async function loadPlanTravaux(commune, offset = 0) {
         const res  = await fetch(`${API}/api/plan-travaux?${params}`);
         const json = await res.json();
         planData   = json.rues || [];
+        await hydrateCommuneLabels(planData.map(r => r.commune));
         renderPlanTable(planData, offset);
     } catch(e) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">Erreur chargement</td></tr>`;
@@ -175,10 +177,12 @@ function renderPlanTable(data, offset = 0) {
         const scorePct = Math.min(r.score_max, 100);
         const critCls = r.crit_moy >= 70 ? "table-pill--danger" : r.crit_moy >= 40 ? "table-pill--warning" : "table-pill--success";
         const mats = (r.materiaux || "").split(",").slice(0, 2).join(", ");
+        const communeCode = normalizeCommuneCode(r.commune);
+        const communeLabel = COMMUNE_LABELS.get(communeCode) || communeCode || "—";
         return `<tr>
             <td style="color:var(--c-text-dim);font-weight:600;width:50px">#${rang}</td>
             <td style="color:var(--c-text);width:180px">${r.adresse}</td>
-            <td style="color:var(--c-text-muted);width:130px">${r.commune}</td>
+            <td style="color:var(--c-text-muted);width:130px">${communeLabel}</td>
             <td style="text-align:center;width:80px">${r.nb_canalisations}</td>
             <td style="width:120px">
                 <div class="score-pill">
@@ -204,12 +208,73 @@ async function loadCommunes() {
         const data = await res.json();
         const sel  = document.getElementById("plan-commune");
         if (!sel) return;
-        data.communes?.forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c; opt.textContent = c;
-            sel.appendChild(opt);
-        });
+        if (data.communes_options?.length) {
+            data.communes_options.forEach(c => {
+                const value = String(c.value || "").trim();
+                const label = c.label || value;
+                if (value) COMMUNE_LABELS.set(value, label);
+                const opt = document.createElement("option");
+                opt.value = value;
+                opt.textContent = label;
+                sel.appendChild(opt);
+            });
+            await hydrateCommuneLabels(data.communes_options.map(c => c.value));
+            for (const opt of sel.options) {
+                if (!opt.value) continue;
+                opt.textContent = COMMUNE_LABELS.get(opt.value) || opt.textContent;
+            }
+        } else {
+            data.communes?.forEach(c => {
+                const value = String(c || "").trim();
+                if (!value) return;
+                COMMUNE_LABELS.set(value, value);
+                const opt = document.createElement("option");
+                opt.value = value;
+                opt.textContent = value;
+                sel.appendChild(opt);
+            });
+            await hydrateCommuneLabels(data.communes || []);
+            for (const opt of sel.options) {
+                if (!opt.value) continue;
+                opt.textContent = COMMUNE_LABELS.get(opt.value) || opt.textContent;
+            }
+        }
     } catch(e) {}
+}
+
+function normalizeCommuneCode(v) {
+    const code = String(v || "").trim();
+    if (!code) return "";
+    if (/^\d{4}$/.test(code)) return `0${code}`;
+    return code;
+}
+
+async function fetchCommuneLabel(code) {
+    const normalized = normalizeCommuneCode(code);
+    if (!normalized) return "";
+    if (!/^\d{5}$/.test(normalized)) return normalized;
+    try {
+        const res = await fetch(`https://geo.api.gouv.fr/communes/${normalized}?fields=nom&format=json&geometry=centre`);
+        if (!res.ok) return normalized;
+        const json = await res.json();
+        return String(json?.nom || "").trim() || normalized;
+    } catch (_) {
+        return normalized;
+    }
+}
+
+async function hydrateCommuneLabels(codes) {
+    const unique = [...new Set((codes || []).map(normalizeCommuneCode).filter(Boolean))];
+    const missing = unique.filter(code => {
+        const current = COMMUNE_LABELS.get(code);
+        return !current || current === code;
+    });
+    if (!missing.length) return;
+
+    const results = await Promise.all(missing.map(async code => [code, await fetchCommuneLabel(code)]));
+    results.forEach(([code, label]) => {
+        COMMUNE_LABELS.set(code, label || code);
+    });
 }
 
 // ── Export CSV plan ───────────────────────────────────────
@@ -224,7 +289,7 @@ async function exportPlanCSV() {
         const headers = ["Rang","Adresse","Commune","Nb canalisations","Score priorité",
                          "Criticité moy. (%)","Fuites totales","Longueur (m)","Matériaux"];
         const rows = data.map((r, i) => [
-            i+1, r.adresse, r.commune, r.nb_canalisations,
+            i+1, r.adresse, (COMMUNE_LABELS.get(normalizeCommuneCode(r.commune)) || normalizeCommuneCode(r.commune) || ""), r.nb_canalisations,
             r.score_max, r.crit_moy, r.total_fuites, r.longueur_tot, r.materiaux
         ]);
         const csv  = [headers, ...rows].map(r => r.map(v => `"${v ?? ""}"`).join(",")).join("\n");

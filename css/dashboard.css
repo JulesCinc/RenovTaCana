@@ -9,7 +9,7 @@
     gap: 20px;
     min-height: calc(100vh - var(--header-h));
     background: var(--c-bg);
-    overflow-x: hidden;
+    overflow-x: visible;
     box-sizing: border-box;
     width: 100%;
 }
@@ -97,7 +97,7 @@
 .dash-card__body {
     padding: 18px;
 }
-.dash-card__body--notop { padding-top: 0; }
+.dash-card__body--notop { padding: 0; }
 
 /* ── Barres criticité ────────────────────────────────────── */
 .crit-bars { display: flex; flex-direction: column; gap: 12px; }
@@ -183,19 +183,39 @@
 #plan-table {
     table-layout: fixed;
     width: 100%;
-    min-width: 900px;
+    min-width: 1180px;
 }
 
 #plan-table th:nth-child(1) { width: 50px; }
 #plan-table th:nth-child(2) { width: 180px; }
 #plan-table th:nth-child(3) { width: 130px; }
-#plan-table th:nth-child(4) { width: 80px; }
-#plan-table th:nth-child(5) { width: 120px; }
-#plan-table th:nth-child(6) { width: 90px; }
-#plan-table th:nth-child(7) { width: 60px; }
-#plan-table th:nth-child(8) { width: 80px; }
-#plan-table th:nth-child(9) { width: auto; }
-#plan-table th:nth-child(10){ width: 70px; }
+#plan-table th:nth-child(4) { width: 105px; }
+#plan-table th:nth-child(5) { width: 170px; }
+#plan-table th:nth-child(6) { width: 110px; }
+#plan-table th:nth-child(7) { width: 70px; }
+#plan-table th:nth-child(8) { width: 95px; }
+#plan-table th:nth-child(9) { width: 150px; }
+#plan-table th:nth-child(10){ width: 90px; }
+
+#plan-table th {
+    white-space: nowrap;
+    letter-spacing: 0.06em;
+}
+
+#plan-table th:first-child,
+#plan-table td:first-child {
+    padding-left: 16px;
+}
+
+#plan-table th:last-child,
+#plan-table td:last-child {
+    padding-right: 16px;
+}
+
+#plan-table th:nth-child(10),
+#plan-table td:nth-child(10) {
+    text-align: center;
+}
 
 .filter-select--sm {
     background: var(--c-surface);

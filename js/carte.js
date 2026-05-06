@@ -65,7 +65,7 @@ function observeThemeChanges() {
 async function loadCanalisations() {
     try {
         document.getElementById("map-loading").querySelector("span").textContent =
-            "Chargement des 55 524 canalisationsâ€¦";
+            "Chargement des 55 524 canalisations...";
         const res = await fetch(geoJsonCanalisationsUrl());
         const data = await res.json();
         allFeatures = data.features || [];
@@ -75,7 +75,7 @@ async function loadCanalisations() {
         document.getElementById("map-loading").style.display = "none";
     } catch (e) {
         document.getElementById("map-loading").innerHTML =
-            `<span style="color:var(--c-danger)">âš ï¸ Erreur chargement des données</span>`;
+            `<span style="color:var(--c-danger)">Erreur chargement des donnees</span>`;
     }
 }
 
@@ -123,7 +123,7 @@ function initZoneSelect() {
                 shapeOptions: { color: "#00d4aa", weight: 2, fillOpacity: 0.08, dashArray: "6 4" }
             });
             drawHandler.enable();
-            document.getElementById("map-count").textContent = "Dessinez un rectangleâ€¦";
+            document.getElementById("map-count").textContent = "Dessinez un rectangle...";
         } else {
             drawHandler?.disable();
             drawLayer.clearLayers();
