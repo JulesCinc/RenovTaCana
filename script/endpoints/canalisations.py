@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 
 from database import get_db
 from script.utils import normalize_text
@@ -229,4 +229,32 @@ def get_canalisations_zone(payload: dict):
         "offset": offset,
         "limit": limit,
         "canalisations": rows,
+    }
+
+
+@router.get("/canalisations/{facilityid}")
+def get_canalisation_detail(facilityid: str):
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM canalisations WHERE facilityid = ?", (facilityid,))
+    cana = cur.fetchone()
+
+    if cana is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Canalisation introuvable")
+
+    cur.execute("SELECT * FROM conduites WHERE FACILITYID = ?", (facilityid,))
+    cond = cur.fetchone()
+    conn.close()
+
+    cana_dict = dict(cana)
+    cond_dict = dict(cond) if cond is not None else {}
+    adresse = cana_dict.get("adresse") or cond_dict.get("ADRESSE")
+
+    return {
+        "facilityid": facilityid,
+        "adresse": adresse,
+        "canalisation": cana_dict,
+        "conduite": cond_dict,
     }

@@ -65,12 +65,16 @@ Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn scri
 ## Prochaines étapes indispensables (Jalon 3)
 
 - Créer le script qui calcule le **score de priorité** pour chaque canalisation, puis renseigne `canalisations.score_priorite` dans `database/renovTaCana.db`.
+- Raccourcir les délais de chargement.
+- Trouver comment afficher la commune d'une canalisation (texte et non code).
 
 ## Association des tâches
 
 ```mermaid
 flowchart LR
     T[Tâche Jalon 3<br/>Créer le script de calcul du score de priorité] --> A[Assigné à : Jules CINC]
+    U1[Tâche Jalon 3<br/>Raccourcir les délais de chargement] --> U[Assigné à : Ulysse LONG]
+    U2[Tâche Jalon 3<br/>Afficher la commune d'une canalisation en texte] --> U
 ```
 
 ---

@@ -155,7 +155,7 @@
                         </div>
                         <div class="filter-group">
                             <label class="filter-label">Recherche ID ou adresse</label>
-                            <input type="text" class="filter-input" id="filter-id" placeholder="Ex : wMain_06088... ou Avenue Jean Medecin">
+                            <input type="text" class="filter-input" id="filter-id" placeholder="ID ou adresse">
                         </div>
                         <button class="filter-reset" id="filter-reset">Reinitialiser</button>
                     </div>
@@ -172,11 +172,12 @@
                                     <th data-col="nb_fuites">Fuites <span class="sort-icon">⇅</span></th>
                                     <th data-col="criticite">Criticité (%) <span class="sort-icon">⇅</span></th>
                                     <th data-col="score_priorite">Score <span class="sort-icon">⇅</span></th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="table-body">
                                 <tr class="row-loading">
-                                    <td colspan="8">Chargement...</td>
+                                    <td colspan="9">Chargement...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -280,6 +281,23 @@
             </aside>
         </section>
     </main>
+
+    <div class="detail-modal" id="canalisation-modal" aria-hidden="true">
+        <div class="detail-modal__backdrop" id="canalisation-modal-backdrop"></div>
+        <div class="detail-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="canalisation-modal-title">
+            <div class="detail-modal__header">
+                <div>
+                    <div class="detail-modal__eyebrow">Détail canalisation</div>
+                    <h3 class="detail-modal__title" id="canalisation-modal-title">—</h3>
+                    <div class="detail-modal__subtitle" id="canalisation-modal-subtitle">—</div>
+                </div>
+                <button class="detail-modal__close" id="canalisation-modal-close" aria-label="Fermer">✕</button>
+            </div>
+            <div class="detail-modal__body" id="canalisation-modal-body">
+                <div class="row-loading">Chargement…</div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="js/config.js"></script>
