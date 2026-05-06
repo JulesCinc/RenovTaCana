@@ -14,8 +14,8 @@ import os
 import re
 import shutil
 import sqlite3
-import unicodedata
 from datetime import datetime
+from script.utils import normalize_text
 
 # Racine du projet (au-dessus de script/database/build-sqlite/)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -138,14 +138,9 @@ def _to_wkt(geom):
     return geom.wkt if hasattr(geom, "wkt") else None
 
 
-def normalize_text(value):
-    if value is None:
-        return ""
-    text = str(value).strip().lower()
-    text = unicodedata.normalize("NFD", text)
-    text = "".join(ch for ch in text if unicodedata.category(ch) != "Mn")
-    text = re.sub(r"[^a-z0-9]+", "", text)
-    return text
+def normalize_header_key(value):
+    # Garde la logique historique de clé compacte (sans espaces) pour le mapping.
+    return normalize_text(value).replace(" ", "")
 
 
 def find_first_file(root_dir, target_name):
@@ -153,6 +148,22 @@ def find_first_file(root_dir, target_name):
         for filename in files:
             if filename.lower() == target_name.lower():
                 return os.path.join(root, filename)
+    return None
+
+
+def extract_year(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    # Formats attendus: YYYY-MM-DD..., DD/MM/YYYY, etc.
+    m = re.search(r"(19|20)\d{2}", text)
+    if not m:
+        return None
+    year = int(m.group(0))
+    if 1900 <= year <= 2100:
+        return year
     return None
 
 
@@ -330,7 +341,7 @@ def main():
     }
 
     df_can = df.copy()
-    install_year = pd.to_numeric(df_can["INSTALLDAT"], errors="coerce")
+    install_year = df_can["INSTALLDAT"].apply(extract_year)
     pred = pd.to_numeric(df_can["Predicti_1"], errors="coerce")
     tx_score = df_can["TXcasse"].map(tx_to_score) if "TXcasse" in df_can.columns else np.nan
     criticite = pred.mul(100.0).fillna(tx_score)
@@ -379,7 +390,7 @@ def main():
     )
     if os.path.exists(CHANTIERS_XLSX):
         ch_df = pd.read_excel(CHANTIERS_XLSX, sheet_name=0)
-        header_map = {c: normalize_text(c) for c in ch_df.columns}
+        header_map = {c: normalize_header_key(c) for c in ch_df.columns}
         rev = {v: k for k, v in header_map.items()}
         mapped = pd.DataFrame(
             {
@@ -418,7 +429,7 @@ def main():
     )
     if os.path.exists(OPERATIONS_XLSX):
         op_df = pd.read_excel(OPERATIONS_XLSX, sheet_name=0)
-        header_map = {c: normalize_text(c) for c in op_df.columns}
+        header_map = {c: normalize_header_key(c) for c in op_df.columns}
         rev = {v: k for k, v in header_map.items()}
         mapped = pd.DataFrame(
             {
