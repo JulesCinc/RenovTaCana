@@ -13,7 +13,11 @@ Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.0** :
 ├── script/
 │   ├── main.py                 ← Point d’entrée FastAPI (`uvicorn script.main:app`)
 │   ├── utils.py
-│   └── router/
+│   ├── router/
+│   └── database/
+│       ├── build-sqlite/
+│       │   └── build_sqlite_database.py  ← Génère `database/renovTaCana.db`
+│       └── row-data/                      ← Scripts d’exploration des données brutes
 ├── requirements.txt
 ├── README.md
 ├── demarrer-web-app.bat        ← Lancement Windows (voir « Lancer l’app »)
@@ -39,9 +43,15 @@ Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.0** :
 │
 ├── assets/
 │   ├── images/                 ← logos, visuels (ex. logo_entreprise.png)
-│   └── data/                   ← Jeux de données côté front (ex. GeoJSON)
+│   └── data/                   ← Assets front legacy (anciens GeoJSON statiques)
 │
-└── database/                   ← Base SQLite locale (ex. renovTaCana.db)
+├── data/                       ← Données sources brutes (xlsx/csv/shp)
+│   └── data.zip                ← Archive versionnée à extraire localement
+│
+└── database/
+    ├── renovTaCana.db          ← Base SQLite active utilisée par l’API
+    ├── outdated/               ← Archives auto des anciennes bases
+    └── MCD.md                  ← MCD de la base active
 ```
 
 ---
