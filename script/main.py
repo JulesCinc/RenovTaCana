@@ -7,14 +7,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from script.router.canalisations import router as canalisations_router
-from script.router.dashboard import router as dashboard_router
-from script.router.plan_travaux import router as plan_travaux_router
-from script.router.stats import router as stats_router
-from script.router.chantiers import router as chantiers_router
-from script.router.operations import router as operations_router
-from script.router.filtres import router as filtres_router
-from script.router.geojson import router as geojson_router
+from script.endpoints.canalisations import router as canalisations_router
+from script.endpoints.dashboard import router as dashboard_router
+from script.endpoints.plan_travaux import router as plan_travaux_router
+from script.endpoints.stats import router as stats_router
+from script.endpoints.chantiers import router as chantiers_router
+from script.endpoints.operations import router as operations_router
+from script.endpoints.filtres import router as filtres_router
+from script.endpoints.geojson import router as geojson_router
 
 
 app = FastAPI(title="RenovTaCana API", version="2.0.0")
