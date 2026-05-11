@@ -25,8 +25,8 @@ _geo_thread: threading.Thread | None = None
 _last_req_time = 0.0
 
 # Bounding box stricte de Nice et proche périphérie
-_LAT_MIN, _LAT_MAX = 43.58, 43.82
-_LON_MIN, _LON_MAX = 7.10, 7.48
+_LAT_MIN, _LAT_MAX = 43.62, 44.35
+_LON_MIN, _LON_MAX = 6.80, 7.42
 
 _STREET_RE = re.compile(
     r"\b(rue|avenue|boulevard|allée|allee|chemin|impasse|place|voie|route|"
@@ -62,7 +62,23 @@ def _save_cache() -> None:
             pass
 
 
+def _clean_stale_cache() -> None:
+    """
+    Supprime :
+    - les entrées ancien format (sans commune, ne finissent pas par ', france')
+    - les entrées None (re-tentées avec la recherche structurée)
+    Garde uniquement les hits valides au nouveau format.
+    """
+    global _cache
+    before = len(_cache)
+    _cache = {k: v for k, v in _cache.items() if k.endswith(", france") and v is not None}
+    removed = before - len(_cache)
+    if removed > 0:
+        _save_cache()
+
+
 _load_cache()
+_clean_stale_cache()
 
 
 def _extract_query(libelle: str) -> str | None:
@@ -74,10 +90,14 @@ def _extract_query(libelle: str) -> str | None:
         return None
     stype = m.group(1).strip()
     sname = m.group(2).strip()
-    # Couper aux séparateurs forts (tiret entouré d'espaces, slash, parenthèse)
-    for sep in (" - ", " / ", " (", ";", " : "):
-        if sep in sname:
-            sname = sname.split(sep)[0].strip()
+    # Couper aux séparateurs forts et aux marqueurs d'action
+    for sep in (" - ", " / ", " (", ";", " : ",
+                " mise ", " pour ", " afin ", " ecl ", " proprié",
+                " renouvellement", " rénovation", " réfection", " réparation",
+                " création", " pose ", " travaux"):
+        idx = sname.lower().find(sep.lower())
+        if idx != -1:
+            sname = sname[:idx].strip()
     # Supprimer le bruit en fin (phase 2, tranche 1, nord, …)
     sname = _TRAILING_NOISE.sub("", sname).strip().rstrip(".,;:/- ")
     if len(sname) < 2:
@@ -88,53 +108,65 @@ def _extract_query(libelle: str) -> str | None:
     return f"{stype} {sname}"
 
 
-def _geocode(query: str) -> list | None:
-    """
-    Géocode via Nominatim (OSM), bounded sur Nice.
-    Respecte la limite 1 req/s. Cache persistant.
-    Retourne [lat, lon] ou None.
-    """
+def _nominatim_request(params: dict) -> list | None:
+    """Exécute une requête Nominatim (rate-limitée) et retourne [lat, lon] ou None."""
     global _last_req_time
-    key = query.lower().strip()
-    if key in _cache:
-        return _cache[key]
-
-    # Rate-limit : au moins 1.15 s entre deux appels
     elapsed = time.time() - _last_req_time
     if elapsed < 1.15:
         time.sleep(1.15 - elapsed)
-
-    params = urllib.parse.urlencode({
-        "q": f"{query}, Nice, France",
-        "format": "json",
-        "limit": 1,
-        "countrycodes": "fr",
-        # viewbox : lon_min,lat_max,lon_max,lat_min (top-left → bottom-right)
-        "viewbox": f"{_LON_MIN},{_LAT_MAX},{_LON_MAX},{_LAT_MIN}",
-        "bounded": 1,
-    })
     req = urllib.request.Request(
-        f"https://nominatim.openstreetmap.org/search?{params}",
+        f"https://nominatim.openstreetmap.org/search?{urllib.parse.urlencode(params)}",
         headers={"User-Agent": "RenovTaCana/2.1 (+epf-academic-project)"},
     )
     _last_req_time = time.time()
-
     try:
         with urllib.request.urlopen(req, timeout=7) as resp:
             results = json.loads(resp.read().decode())
     except Exception:
         return None
-
     if not results:
-        result = None
-    else:
-        lat = float(results[0]["lat"])
-        lon = float(results[0]["lon"])
-        # Validation géographique : doit être dans l'emprise de Nice
-        if _LAT_MIN <= lat <= _LAT_MAX and _LON_MIN <= lon <= _LON_MAX:
-            result = [lat, lon]
-        else:
-            result = None
+        return None
+    lat, lon = float(results[0]["lat"]), float(results[0]["lon"])
+    if _LAT_MIN <= lat <= _LAT_MAX and _LON_MIN <= lon <= _LON_MAX:
+        return [lat, lon]
+    return None
+
+
+def _geocode(query: str) -> list | None:
+    """
+    Géocode via Nominatim, deux tentatives :
+      1. Recherche free-text bornée : "Rue X, Commune, France"
+      2. Recherche structurée (street= + city=) si la première échoue
+    query format attendu : "{voie}, {commune}, France"
+    Retourne [lat, lon] ou None. Cache persistant.
+    """
+    key = query.lower().strip()
+    if key in _cache:
+        return _cache[key]
+
+    # --- Tentative 1 : free-text avec viewbox bounded ---
+    result = _nominatim_request({
+        "q": query,
+        "format": "json",
+        "limit": 1,
+        "countrycodes": "fr",
+        "viewbox": f"{_LON_MIN},{_LAT_MAX},{_LON_MAX},{_LAT_MIN}",
+        "bounded": 1,
+    })
+
+    # --- Tentative 2 : recherche structurée street= + city= ---
+    if result is None:
+        parts = query.split(", ")
+        if len(parts) >= 3:
+            street_part = parts[0]
+            city_part = ", ".join(parts[1:-1])   # tout entre voie et "France"
+            result = _nominatim_request({
+                "street": street_part,
+                "city": city_part,
+                "country": "fr",
+                "format": "json",
+                "limit": 1,
+            })
 
     _cache[key] = result
     _save_cache()
@@ -159,7 +191,7 @@ def get_geojson_chantiers():
     conn = get_db()
     cur = conn.cursor()
     cur.execute(
-        "SELECT id, num_op, etat, date_debut, date_fin, libelle FROM chantiers"
+        "SELECT id, num_op, etat, date_debut, date_fin, commune, libelle FROM chantiers"
     )
     rows = cur.fetchall()
     conn.close()
@@ -169,13 +201,16 @@ def get_geojson_chantiers():
 
     for row in rows:
         libelle = row["libelle"] or ""
-        query = _extract_query(libelle)
+        commune = (row["commune"] or "").strip()
+        street = _extract_query(libelle)
 
         geom = None
         localise = False
 
-        if query is not None:
-            key = query.lower().strip()
+        if street is not None and commune:
+            # Clé unique voie + commune pour éviter les confusions inter-communes
+            full_q = f"{street}, {commune}, France"
+            key = full_q.lower().strip()
             if key in _cache:
                 coords = _cache[key]
                 if coords:
@@ -183,7 +218,7 @@ def get_geojson_chantiers():
                     geom = {"type": "Point", "coordinates": [coords[1], coords[0]]}
                     localise = True
             else:
-                uncached.append(query)
+                uncached.append(full_q)
 
         features.append({
             "type": "Feature",

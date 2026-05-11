@@ -1,1883 +1,2257 @@
 {
-  "place de l'eglise ecl pub": null,
-  "rue hôtel de ville mise en sécurité": null,
-  "chemin de l'arbre mise en sécurité eclairage public": null,
-  "place des sitelles ariane": null,
-  "rue commandant cahuzac": null,
-  "corniche d'agrimont": null,
-  "avenue caqueray": null,
-  "rue raiberti": [
-    43.7104198,
-    7.2626866
+  "rue commandant cahuzac, saint-laurent-du-var, france": [
+    43.6604303,
+    7.1854852
   ],
-  "place d'un petit collectif au droit de l'ancien pr de": null,
-  "route de la colmiane": null,
-  "chemin de la lauvette pour rendre conforme le poteau": null,
-  "chemin des cabanes blétonnières": null,
-  "route du pont charles albert": null,
-  "route de l'energie": null,
-  "route de revest": null,
-  "chemin de la romegiero": null,
-  "route de gilette": null,
-  "chemin des cabannes blétonnières": null,
-  "chemin du contéo": [
+  "corniche d'agrimont, saint-laurent-du-var, france": [
+    43.6709399,
+    7.1839807
+  ],
+  "avenue caqueray, saint-martin-vésubie, france": [
+    44.0703201,
+    7.2545907
+  ],
+  "route de la colmiane, saint-martin-vésubie, france": [
+    44.0761918,
+    7.2417811
+  ],
+  "route du pont charles albert, le broc, france": [
+    43.836201,
+    7.1721263
+  ],
+  "route de l'energie, bonson, france": [
+    43.851339,
+    7.1946192
+  ],
+  "route de revest, gilette, france": [
+    43.8523866,
+    7.1645857
+  ],
+  "route de gilette, gilette, france": [
+    43.8485991,
+    7.1650794
+  ],
+  "chemin du contéo, nice, france": [
     43.7153486,
     7.307116
   ],
-  "impasse lesure propriété privée": null,
-  "chemin puy d'auron": null,
-  "chemin de l'ibac": [
+  "chemin puy d'auron, saint-étienne-de-tinée, france": [
+    44.2302229,
+    6.9298169
+  ],
+  "chemin de l'ibac, colomars, france": [
     43.7424607,
     7.2204812
   ],
-  "avenue des pins": [
-    43.6755191,
-    7.225372
+  "avenue des pins, vence, france": [
+    43.7180533,
+    7.1038497
   ],
-  "chemin de fontaine d'agneau": null,
-  "chemin de crémat": [
-    43.7175093,
-    7.1991161
+  "chemin de crémat, nice, france": [
+    43.7165089,
+    7.1966016
   ],
-  "route de la sirolle": null,
-  "route de nice": [
-    43.7437371,
-    7.3933719
+  "route de nice, aspremont, france": [
+    43.7847154,
+    7.2440691
   ],
-  "chemin de bezaudun": null,
-  "chemin du pilon": [
+  "chemin de bezaudun, gattières, france": [
+    43.7587447,
+    7.1652846
+  ],
+  "chemin du pilon, nice, france": [
     43.8036792,
     7.3217857
   ],
-  "chemin des camps dalmas": null,
-  "avenue des chênes": [
-    43.7294645,
-    7.2497266
+  "chemin des camps dalmas, gattières, france": [
+    43.7602123,
+    7.1845393
   ],
-  "allée des bois": null,
-  "chemin de la sine": null,
-  "chemin de l'ormée": null,
-  "boulevard de l'observatoire": [
+  "avenue des chênes, vence, france": [
+    43.7193336,
+    7.1016347
+  ],
+  "chemin de la sine, vence, france": [
+    43.7094566,
+    7.0954828
+  ],
+  "chemin de l'ormée, vence, france": [
+    43.7298329,
+    7.0901136
+  ],
+  "boulevard de l'observatoire, nice, france": [
     43.7268365,
     7.2949076
   ],
-  "chemin du collet des fourniers": [
+  "chemin du collet des fourniers, nice, france": [
     43.7391103,
     7.214053
   ],
-  "avenue panéra": [
+  "avenue panéra, nice, france": [
     43.7428248,
     7.2482788
   ],
-  "route de revest -renouvellement renforcement": null,
-  "chemin de sidonie": null,
-  "avenue musso": [
+  "chemin de sidonie, saint-laurent-du-var, france": [
+    43.6901958,
+    7.1826686
+  ],
+  "avenue musso, nice, france": [
     43.7327631,
     7.2711486
   ],
-  "chemin des salles": null,
-  "impasse boulevard de la madeleine": null,
-  "route de colomars": [
-    43.7506746,
-    7.1995658
+  "chemin des salles, cagnes-sur-mer, france": [
+    43.6819593,
+    7.1449217
   ],
-  "avenue pauliani": [
+  "route de colomars, aspremont, france": [
+    43.7685478,
+    7.2365906
+  ],
+  "avenue pauliani, nice, france": [
     43.7049998,
     7.2796011
   ],
-  "route d'aspremont": [
-    43.7465464,
-    7.248608
+  "route d'aspremont, tourrette-levens, france": [
+    43.7911153,
+    7.2734194
   ],
-  "rue des mas de l'adrech": null,
-  "impasse des collettes": null,
-  "avenue des acacias": null,
-  "impasse jean moulin": null,
-  "chemin sainte-petronille": null,
-  "rue jeanne jugan": [
+  "rue des mas de l'adrech, saint-martin-du-var, france": [
+    43.8251569,
+    7.1904325
+  ],
+  "impasse des collettes, cagnes-sur-mer, france": [
+    43.6722844,
+    7.1580938
+  ],
+  "avenue des acacias, cagnes-sur-mer, france": [
+    43.6617544,
+    7.1364238
+  ],
+  "impasse jean moulin, cagnes-sur-mer, france": [
+    43.6633801,
+    7.1563098
+  ],
+  "rue jeanne jugan, nice, france": [
     43.7107473,
     7.2811598
   ],
-  "avenue lympia": [
+  "avenue lympia, nice, france": [
     43.6959841,
     7.2886202
   ],
-  "avenue jean de la fontaine": [
+  "avenue jean de la fontaine, nice, france": [
     43.727895,
     7.2688691
   ],
-  "avenue denis semeria": [
-    43.6975072,
-    7.326561
+  "avenue denis semeria, saint-jean-cap-ferrat, france": [
+    43.6918585,
+    7.3292082
   ],
-  "allée jean ledieux": null,
-  "route de la coulleta et route de la croix de claude": null,
-  "lotissement montval route de nice": null,
-  "avenue louis ravet": null,
-  "chemin des rascas": null,
-  "route des pugets": null,
-  "route de gattières": null,
-  "chemin de maupas": null,
-  "route du pont de la manda": null,
-  "route de la baronne": null,
-  "rue de la guitterie et rue laurens": null,
-  "allée des pruniers": [
-    43.8033237,
-    7.3184426
+  "avenue louis ravet, saint-laurent-du-var, france": [
+    43.6689553,
+    7.1824321
   ],
-  "chemin des gros buaux": null,
-  "chemin du grec": [
-    43.7512819,
-    7.3241065
+  "chemin des rascas, saint-laurent-du-var, france": [
+    43.6799441,
+    7.1864793
   ],
-  "chemin de la petite source": [
+  "route des pugets, saint-laurent-du-var, france": [
+    43.684111,
+    7.1855858
+  ],
+  "route de la baronne, la gaude, france": [
+    43.7201465,
+    7.1791269
+  ],
+  "route de la baronne, gattières, france": [
+    43.7563561,
+    7.1855769
+  ],
+  "allée des pruniers, cagnes-sur-mer, france": [
+    43.6695617,
+    7.1695994
+  ],
+  "chemin des gros buaux, cagnes-sur-mer, france": [
+    43.6724542,
+    7.1707188
+  ],
+  "chemin du grec, drap, france": [
+    43.7514211,
+    7.3295089
+  ],
+  "chemin de la petite source, nice, france": [
     43.7076558,
     7.2511888
   ],
-  "impasse des genêts": null,
-  "avenue des mimosas": [
-    43.7251738,
-    7.2661855
+  "impasse des genêts, cagnes-sur-mer, france": [
+    43.6689504,
+    7.1710757
   ],
-  "rue des roses": [
+  "avenue des mimosas, cagnes-sur-mer, france": [
+    43.6575681,
+    7.1769899
+  ],
+  "rue des roses, nice, france": [
     43.7153412,
     7.2592404
   ],
-  "avenue paul cézanne": null,
-  "impasse des chênes blancs": null,
-  "chemin du lazaret": [
+  "avenue paul cézanne, cagnes-sur-mer, france": [
+    43.6670841,
+    7.1609242
+  ],
+  "chemin du lazaret, villefranche-sur-mer, france": [
     43.6965238,
     7.3065098
   ],
-  "rue ladoumegue": null,
-  "corniche fleurie": [
+  "rue ladoumegue, cagnes-sur-mer, france": [
+    43.6583567,
+    7.1579384
+  ],
+  "corniche fleurie, nice, france": [
     43.683826,
     7.2126331
   ],
-  "rue de france": [
-    43.6928942,
-    7.2489376
+  "rue de france, nice, france": [
+    43.6938248,
+    7.2518869
   ],
-  "avenue des grenouillères": [
+  "avenue des grenouillères, nice, france": [
     43.6673572,
     7.2128146
   ],
-  "rue du port": [
+  "rue du port, beaulieu-sur-mer, france": [
     43.7074378,
     7.3340503
   ],
-  "avenue sainte marguerite": [
-    43.6904747,
-    7.2012427
+  "avenue sainte marguerite, nice, france": [
+    43.6772798,
+    7.2254987
   ],
-  "avenue notre-dame": [
+  "avenue notre-dame, nice, france": [
     43.7042428,
     7.268744
   ],
-  "rue gauthier roux": [
+  "rue gauthier roux, nice, france": [
     43.7223365,
     7.285444
   ],
-  "place des tilleuls": null,
-  "boulevard joseph garnier": [
-    43.710081,
-    7.2580265
+  "place des tilleuls, belvédère, france": [
+    44.0154794,
+    7.319741
   ],
-  "rue maréchal vauban": [
+  "boulevard joseph garnier, nice, france": [
+    43.7101119,
+    7.2609252
+  ],
+  "rue maréchal vauban, nice, france": [
     43.7115848,
     7.2865161
   ],
-  "rue jean-pierre papon": [
+  "rue jean-pierre papon, nice, france": [
     43.7013918,
     7.2825692
   ],
-  "rue molière": [
-    43.7128743,
-    7.2576527
+  "rue molière, nice, france": [
+    43.7129861,
+    7.2602636
   ],
-  "avenue des magnolias": [
+  "avenue des magnolias, nice, france": [
     43.679613,
     7.2211179
   ],
-  "rue louis garneray": [
+  "rue louis garneray, nice, france": [
     43.7061809,
     7.293691
   ],
-  "rue de la calade": null,
-  "avenue de cuverville": [
+  "rue de la calade, la bollène-vésubie, france": [
+    43.9895959,
+    7.3299947
+  ],
+  "avenue de cuverville, nice, france": [
     43.7267724,
     7.2575015
   ],
-  "rue des orangers": [
+  "rue des orangers, nice, france": [
     43.713472,
     7.2936899
   ],
-  "passage de la villette": null,
-  "avenue joseph durandy": [
-    43.7124441,
-    7.2174835
+  "avenue joseph durandy, nice, france": [
+    43.7187126,
+    7.2170387
   ],
-  "avenue des diables bleus": [
-    43.7083055,
-    7.2907602
+  "avenue des diables bleus, nice, france": [
+    43.7083022,
+    7.2901017
   ],
-  "avenue du haut-pays": [
+  "avenue du haut-pays, tourrette-levens, france": [
     43.768699,
     7.2810839
   ],
-  "avenue de la condamine": [
+  "avenue de la condamine, villefranche-sur-mer, france": [
     43.7169691,
     7.316818
   ],
-  "chemin du baous inférieur": null,
-  "boulevard georges buono": null,
-  "avenue salonina": [
+  "avenue salonina, nice, france": [
     43.7179674,
     7.2758205
   ],
-  "boulevard napoléon iii": [
-    43.6870191,
-    7.2268453
+  "boulevard napoléon iii, nice, france": [
+    43.68402,
+    7.2238084
   ],
-  "avenue jules romains": [
+  "avenue jules romains, nice, france": [
     43.74035,
     7.2581719
   ],
-  "chemin de vosgelades": null,
-  "chemin du canet": [
+  "chemin du canet, castagniers, france": [
     43.7935335,
     7.2334817
   ],
-  "rue jacques barraja": null,
-  "avenue de verdun": [
-    43.6970689,
-    7.2693072
+  "rue jacques barraja, saint-martin-vésubie, france": [
+    44.0684241,
+    7.2564394
   ],
-  "rue du collet": [
-    43.6982444,
-    7.2773242
+  "avenue de verdun, la bollène-vésubie, france": [
+    43.9903056,
+    7.330584
   ],
-  "avenue paroldi": null,
-  "voie au lotissement les oliviers": null,
-  "rue voltaire": [
+  "rue du collet, belvédère, france": [
+    44.0160432,
+    7.3211379
+  ],
+  "avenue paroldi, belvédère, france": [
+    44.0160074,
+    7.3196463
+  ],
+  "rue voltaire, nice, france": [
     43.6997533,
     7.2701099
   ],
-  "chemin vieux": [
+  "avenue des diables bleus, èze, france": [
+    43.7384688,
+    7.3879944
+  ],
+  "chemin vieux, falicon, france": [
     43.7518892,
     7.2701622
   ],
-  "route de turin npru liserons": null,
-  "route felix garel": [
+  "route felix garel, colomars, france": [
     43.7580283,
     7.2327241
   ],
-  "rue edouard scoffier": [
+  "rue edouard scoffier, nice, france": [
     43.703935,
     7.29216
   ],
-  "chemin st pierre": [
+  "chemin st pierre, la trinité, france": [
     43.7471508,
     7.3732071
   ],
-  "avenue rené boylesve": [
+  "avenue rené boylesve, nice, france": [
     43.7167303,
     7.2544453
   ],
-  "place d'auron": null,
-  "rue de l'hôtel des postes": [
-    43.6989013,
-    7.2695289
+  "place d'auron, saint-étienne-de-tinée, france": [
+    44.2249566,
+    6.9314898
   ],
-  "chemin de la colmiane": null,
-  "avenue de rimiez": [
-    43.7363127,
-    7.2794282
+  "rue de l'hôtel des postes, nice, france": [
+    43.6993598,
+    7.2708885
   ],
-  "chemin de saint-blaise": [
-    43.8018216,
-    7.2039211
+  "chemin de la colmiane, venanson, france": [
+    44.0535963,
+    7.2512849
   ],
-  "route de saint jeannet": null,
-  "avenue emile ripert": [
+  "avenue de rimiez, falicon, france": [
+    43.7433782,
+    7.2724337
+  ],
+  "chemin de saint-blaise, belvédère, france": [
+    44.0150863,
+    7.3268541
+  ],
+  "route de saint jeannet, saint-laurent-du-var, france": [
+    43.6914811,
+    7.1768932
+  ],
+  "avenue emile ripert, nice, france": [
     43.7371044,
     7.3038248
   ],
-  "rue des ecoles": null,
-  "passage du bvd rené cassin- pégurier": null,
-  "boulevard de madeleine- renouvellement": null,
-  "chemin de la lauvette": [
-    43.7445193,
-    7.3073345
+  "chemin de la lauvette, nice, france": [
+    43.7480149,
+    7.3079366
   ],
-  "avenue du monastère": [
+  "avenue du monastère, nice, france": [
     43.7207595,
     7.2765886
   ],
-  "avenue gallin": [
+  "avenue gallin, nice, france": [
     43.7179735,
     7.2605728
   ],
-  "avenue de l'arbre inférieur": [
+  "avenue de l'arbre inférieur, nice, france": [
     43.7110503,
     7.2789823
   ],
-  "avenue scudéri": [
-    43.7299643,
-    7.2736902
+  "avenue scudéri, nice, france": [
+    43.7287309,
+    7.2698725
   ],
-  "rue des chevaliers de malte": [
+  "rue des chevaliers de malte, nice, france": [
     43.7242474,
     7.2541499
   ],
-  "rue parmentier": [
+  "rue parmentier, nice, france": [
     43.7137792,
     7.2581795
   ],
-  "avenue villebois-mareuil": [
+  "avenue villebois-mareuil, nice, france": [
     43.7114602,
     7.2728977
   ],
-  "avenue monte croce": [
+  "avenue monte croce, nice, france": [
     43.7183564,
     7.2760689
   ],
-  "avenue cyrille besset": [
-    43.7182256,
-    7.2539882
+  "avenue cyrille besset, nice, france": [
+    43.7146702,
+    7.2615748
   ],
-  "avenue de gien": [
+  "avenue de gien, nice, france": [
     43.7087136,
     7.2778543
   ],
-  "chemin de cimiez": [
+  "chemin de cimiez, nice, france": [
     43.715845,
     7.2776744
   ],
-  "rue du samint": null,
-  "chemin du mont des mignons": [
+  "rue du samint, belvédère, france": [
+    44.0147089,
+    7.3231419
+  ],
+  "chemin du mont des mignons, nice, france": [
     43.7276367,
     7.2932598
   ],
-  "chemin de calvi": null,
-  "avenue abbé clary": [
+  "avenue abbé clary, tourrette-levens, france": [
     43.7885172,
     7.2647954
   ],
-  "route du fort": [
-    43.6963,
-    7.2993427
+  "rue du planet, saint-étienne-de-tinée, france": [
+    44.2569879,
+    6.9250348
   ],
-  "chemin des murès": null,
-  "rue du planet": null,
-  "route de l'abadie": [
+  "route de l'abadie, saint-andré-de-la-roche, france": [
     43.7390874,
     7.2926132
   ],
-  "route de châteauneuf": [
-    43.8070758,
-    7.3041733
+  "route de châteauneuf, châteauneuf-villevieille, france": [
+    43.807585,
+    7.2978232
   ],
-  "rue anatole france": [
+  "rue anatole france, nice, france": [
     43.7378091,
     7.3030985
   ],
-  "rue bassa": null,
-  "chemin de valrose": [
+  "chemin de valrose, nice, france": [
     43.7155256,
     7.2642296
   ],
-  "avenue des agaves": [
+  "avenue des agaves, nice, france": [
     43.7001892,
     7.2359041
   ],
-  "route de carros": null,
-  "avenue villermont": [
-    43.7109673,
-    7.2633952
+  "route de carros, gattières, france": [
+    43.7677788,
+    7.1738165
   ],
-  "rue de villeneuve": [
+  "avenue villermont, nice, france": [
+    43.7094065,
+    7.264223
+  ],
+  "rue de villeneuve, nice, france": [
     43.7067815,
     7.261935
   ],
-  "chemin de la destourbe": null,
-  "avenue charles de caqueray": null,
-  "chemin du moulin": [
-    43.8065065,
-    7.3380447
+  "chemin de la destourbe, cagnes-sur-mer, france": [
+    43.6589102,
+    7.1500307
   ],
-  "rue longue": null,
-  "avenue de grasseuil": [
-    43.7009674,
-    7.3253326
+  "route de nice, saint-martin-vésubie, france": [
+    44.0579233,
+    7.2624766
   ],
-  "place du général de gaulle- renouvellement": null,
-  "voie romaine": [
-    43.7235888,
-    7.2810573
+  "avenue charles de caqueray, saint-martin-vésubie, france": [
+    44.0656198,
+    7.2572053
   ],
-  "rue paul déroulède": [
+  "rue longue, saint-étienne-de-tinée, france": [
+    44.256912,
+    6.9256474
+  ],
+  "avenue de grasseuil, saint-jean-cap-ferrat, france": [
+    43.6979608,
+    7.3259458
+  ],
+  "voie romaine, nice, france": [
+    43.723567,
+    7.2817919
+  ],
+  "rue paul déroulède, nice, france": [
     43.7006307,
     7.2644993
   ],
-  "rue galléan": [
+  "rue galléan, nice, france": [
     43.7033319,
     7.2717485
   ],
-  "voie au n": [
+  "voie au n, nice, france": [
     43.6917078,
     7.2009295
   ],
-  "boulevard de la madeleine": [
-    43.7251711,
-    7.2219014
+  "boulevard de la madeleine, nice, france": [
+    43.7188039,
+    7.2235026
   ],
-  "chemin des oliviers": [
-    43.7618245,
-    7.2677446
+  "chemin des oliviers, cap-d'ail, france": [
+    43.7227656,
+    7.4027211
   ],
-  "avenue marie christine de france": [
-    43.695229,
-    7.2496783
-  ],
-  "rue georges ville": [
+  "rue georges ville, nice, france": [
     43.7033264,
     7.2836736
   ],
-  "route du cimetière de l'est": [
+  "route du cimetière de l'est, nice, france": [
     43.741621,
     7.3072906
   ],
-  "avenue stephen liégeard": [
+  "avenue stephen liégeard, nice, france": [
     43.720917,
     7.252488
   ],
-  "rue de l'industrie": [
+  "rue de l'industrie, nice, france": [
     43.7274071,
     7.4132741
   ],
-  "avenue emmanuel bridault": [
+  "avenue emmanuel bridault, nice, france": [
     43.7079378,
     7.2660397
   ],
-  "route de bellet": [
+  "route de bellet, nice, france": [
     43.6990639,
     7.2351218
   ],
-  "voie liaison rue fodéré": null,
-  "rue charles chauve": [
+  "rue charles chauve, nice, france": [
     43.6719253,
     7.2243255
   ],
-  "chemin du moulin-refoulement de camp ricard": null,
-  "boulevard edouard vii": [
-    43.7103304,
-    7.3301267
+  "boulevard edouard vii, beaulieu-sur-mer, france": [
+    43.7114198,
+    7.3307368
   ],
-  "avenue du général de gaulle": [
+  "avenue du général de gaulle, villefranche-sur-mer, france": [
     43.7007757,
     7.3075785
   ],
-  "allée des roses": [
+  "allée des roses, saint-jean-cap-ferrat, france": [
     43.6863436,
     7.3257004
   ],
-  "chemin cal de spagnol": null,
-  "route de gattières -déconnexion des abonnés crdv-": null,
-  "avenue des orangers": [
-    43.6969892,
-    7.2519469
+  "avenue des orangers, saint-laurent-du-var, france": [
+    43.6645546,
+    7.195109
   ],
-  "avenue de valombrose": [
+  "avenue de valombrose, nice, france": [
     43.7252061,
     7.279427
   ],
-  "avenue mireio": [
+  "avenue mireio, nice, france": [
     43.725643,
     7.2766898
   ],
-  "chemin ferdinand garino": [
+  "chemin ferdinand garino, nice, france": [
     43.7356002,
     7.2734037
   ],
-  "chemin du faliconnet": [
+  "chemin du faliconnet, falicon, france": [
     43.7585856,
     7.2647115
   ],
-  "avenue edouard grinda": [
+  "avenue edouard grinda, nice, france": [
     43.6729818,
     7.2201648
   ],
-  "avenue du maréchal de lattre de tassigny": null,
-  "avenue de provence": [
-    43.7093709,
-    7.275874
+  "avenue de provence, vence, france": [
+    43.7282912,
+    7.1193474
   ],
-  "rue fragonard": null,
-  "avenue tuilières": null,
-  "route des granges de la brasque": null,
-  "chemin de la costière": [
+  "rue fragonard, cagnes-sur-mer, france": [
+    43.6687585,
+    7.1589291
+  ],
+  "avenue tuilières, cagnes-sur-mer, france": [
+    43.6654075,
+    7.1550306
+  ],
+  "chemin de la costière, nice, france": [
     43.7125924,
     7.2312959
   ],
-  "allée des cigales": [
-    43.7385239,
-    7.312903
+  "allée des cigales, saint-laurent-du-var, france": [
+    43.6707667,
+    7.1859132
   ],
-  "avenue brès": [
+  "avenue brès, nice, france": [
     43.7204246,
     7.3031199
   ],
-  "rue d'autun": [
+  "rue d'autun, nice, france": [
     43.7076753,
     7.2613563
   ],
-  "chemin des ardoins -renforcement a60": null,
-  "chemin de la prairie": [
+  "chemin de la prairie, aspremont, france": [
     43.7844637,
     7.2509642
   ],
-  "rue berlioz": [
+  "rue berlioz, nice, france": [
     43.7004801,
     7.2593982
   ],
-  "boulevard françois grosso": [
-    43.6964734,
-    7.2516128
+  "boulevard françois grosso, nice, france": [
+    43.6984277,
+    7.2512706
   ],
-  "route du mas duc -renforcement a80": null,
-  "avenue caravadossi": [
+  "avenue caravadossi, nice, france": [
     43.7113607,
     7.2666494
   ],
-  "avenue shakespeare": [
+  "avenue shakespeare, nice, france": [
     43.6997372,
     7.2535669
   ],
-  "rue saint-honoré": [
+  "rue saint-honoré, nice, france": [
     43.6930813,
     7.2402227
   ],
-  "rue alberti": [
+  "rue alberti, nice, france": [
     43.6993171,
     7.2720777
   ],
-  "avenue de la lanterne": [
-    43.6793258,
-    7.2232468
+  "avenue de la lanterne, nice, france": [
+    43.6830934,
+    7.2179542
   ],
-  "avenue de cannes": null,
-  "chemin du pestrier": null,
-  "route de fuonmurade": null,
-  "route sainte-marguerite": null,
-  "rue centrale": [
-    43.6969208,
-    7.2764111
+  "avenue de cannes, cagnes-sur-mer, france": [
+    43.6543623,
+    7.1486628
   ],
-  "rue fontaine de la ville -passage occelli": null,
-  "boulevard rené cassin": [
-    43.6699863,
-    7.2207245
+  "route de fuonmurade, le broc, france": [
+    43.8089202,
+    7.1670879
   ],
-  "boulevard franck pilatte": [
+  "route sainte-marguerite, le broc, france": [
+    43.8178588,
+    7.1647418
+  ],
+  "boulevard rené cassin, nice, france": [
+    43.6698501,
+    7.2166021
+  ],
+  "boulevard franck pilatte, nice, france": [
     43.6941351,
     7.2880177
   ],
-  "avenue charles boissier": null,
-  "chemin hugues bérenguier": null,
-  "rue du pavillon": null,
-  "route de l'abadie et l'avenue eugène coste-": null,
-  "rue de l'abbaye": [
+  "avenue charles boissier, saint-martin-vésubie, france": [
+    44.0885932,
+    7.252113
+  ],
+  "chemin hugues bérenguier, la gaude, france": [
+    43.7322437,
+    7.1482546
+  ],
+  "rue du pavillon, vence, france": [
+    43.7218111,
+    7.1100915
+  ],
+  "rue de l'abbaye, nice, france": [
     43.6968337,
     7.2751503
   ],
-  "avenue pierre sauvaigo": null,
-  "impasse de l'emigra": null,
-  "montée salettes": null,
-  "chemin frédéric mistral": null,
-  "boulevard maréchal juin": null,
-  "avenue du trois septembre": null,
-  "avenue du 3 septembre": [
+  "avenue pierre sauvaigo, saint-laurent-du-var, france": [
+    43.6630708,
+    7.1839705
+  ],
+  "impasse de l'emigra, carros, france": [
+    43.7869192,
+    7.2065545
+  ],
+  "boulevard maréchal juin, cagnes-sur-mer, france": [
+    43.661937,
+    7.1506389
+  ],
+  "avenue du 3 septembre, cap-d'ail, france": [
     43.7259245,
     7.4105583
   ],
-  "avenue leopold": [
-    43.7134556,
-    7.2740779
+  "avenue leopold, villefranche-sur-mer, france": [
+    43.7087082,
+    7.3140044
   ],
-  "allée des eucalyptus": null,
-  "rue des ponchettes": [
+  "allée des eucalyptus, vence, france": [
+    43.7238843,
+    7.0818386
+  ],
+  "rue des ponchettes, nice, france": [
     43.6949956,
     7.2782845
   ],
-  "chemin des crêtes du mont boron": [
+  "chemin des crêtes du mont boron, nice, france": [
     43.6923683,
     7.2944551
   ],
-  "route de la sirole-pas du pommier": null,
-  "voie au": [
+  "voie au, nice, france": [
     43.6917078,
     7.2009295
   ],
-  "chemin des noisetiers": null,
-  "montée du coteau": null,
-  "chemin de la ferme des 3 communes": null,
-  "route de casternou": [
+  "chemin des noisetiers, cagnes-sur-mer, france": [
+    43.6753472,
+    7.1697041
+  ],
+  "montée du coteau, cagnes-sur-mer, france": [
+    43.6612273,
+    7.1480646
+  ],
+  "route de casternou, châteauneuf-villevieille, france": [
     43.8027132,
     7.2862389
   ],
-  "route de châteauneuf-villevieille": [
+  "route de châteauneuf-villevieille, tourrette-levens, france": [
     43.8130179,
     7.2686059
   ],
-  "corniche de magnan": [
+  "corniche de magnan, nice, france": [
     43.711563,
     7.2368289
   ],
-  "chemin du château de la ginestière": [
+  "chemin du château de la ginestière, nice, france": [
     43.706437,
     7.2040257
   ],
-  "route du col de salèze": null,
-  "avenue du mont alban": [
-    43.7017571,
-    7.294438
+  "avenue du mont alban, nice, france": [
+    43.701883,
+    7.2947828
   ],
-  "avenue notre dame": [
+  "avenue notre dame, nice, france": [
     43.7042428,
     7.268744
   ],
-  "boulevard du mercantour": [
-    43.7526405,
-    7.1936019
+  "boulevard du mercantour, nice, france": [
+    43.7068799,
+    7.1882783
   ],
-  "rue françois guisol": [
+  "rue françois guisol, nice, france": [
     43.700352,
     7.2842093
   ],
-  "rue frédéric passy": [
+  "rue frédéric passy, nice, france": [
     43.6995774,
     7.2559101
   ],
-  "rue verdi": [
+  "rue verdi, nice, france": [
     43.699601,
     7.2603721
   ],
-  "rue jean baptiste spinetta": [
+  "rue jean baptiste spinetta, nice, france": [
     43.6967826,
     7.2520028
   ],
-  "rue niepce": [
+  "rue niepce, nice, france": [
     43.7047675,
     7.2689348
   ],
-  "allée françois aragon": [
+  "allée françois aragon, nice, france": [
     43.6981541,
     7.2798678
   ],
-  "rue gutenberg": [
+  "rue gutenberg, nice, france": [
     43.7095702,
     7.2584943
   ],
-  "boulevard général louis delfino": [
+  "boulevard général louis delfino, nice, france": [
     43.7057026,
     7.2837028
   ],
-  "rue alberti-renouvellement eb": null,
-  "avenue foch": [
-    43.7032272,
-    7.2687066
+  "avenue foch, vence, france": [
+    43.7232078,
+    7.1070308
   ],
-  "avenue de l'hotel de ville": [
-    43.7682626,
-    7.3658458
+  "avenue de l'hotel de ville, clans, france": [
+    43.9948943,
+    7.1475482
   ],
-  "avenue auguste ghiraldi": null,
-  "rue gambetta": [
-    43.7031736,
-    7.3113862
+  "avenue auguste ghiraldi, clans, france": [
+    43.9975437,
+    7.1509389
   ],
-  "chemin de romegiero": null,
-  "route des vespins": null,
-  "montée de verdun": [
+  "rue gambetta, vence, france": [
+    43.7218877,
+    7.1125691
+  ],
+  "chemin de romegiero, saint-martin-vésubie, france": [
+    44.0546193,
+    7.2625958
+  ],
+  "route des vespins, saint-laurent-du-var, france": [
+    43.6602718,
+    7.180415
+  ],
+  "montée de verdun, falicon, france": [
     43.7495012,
     7.2773667
   ],
-  "place de l'église": [
-    43.8049305,
-    7.4040072
+  "avenue de nice, cagnes-sur-mer, france": [
+    43.6574262,
+    7.1580564
   ],
-  "avenue de nice": [
-    43.7324128,
-    7.2894313
+  "allée des saules, cagnes-sur-mer, france": [
+    43.6617293,
+    7.1539074
   ],
-  "allée des saules": null,
-  "chemin de la carrière": [
+  "chemin de la carrière, saint-jean-cap-ferrat, france": [
     43.6798593,
     7.3351516
   ],
-  "rue jules ladoumegue": null,
-  "passage du logis": null,
-  "chemin du vieux village": null,
-  "chemin du val fleuri": null,
-  "passage renoir": null,
-  "promenade de la plage": null,
-  "rue du portalet- renouvellement réseau eu": null,
-  "chemin de la fontaine des boeufs": null,
-  "chemin de la romeguière": null,
-  "route de loda": null,
-  "route du rivet": null,
-  "chemin de saint antoine": [
-    43.6948663,
-    7.2363271
+  "rue jules ladoumegue, cagnes-sur-mer, france": [
+    43.6583567,
+    7.1579384
   ],
-  "chemin des glycines": null,
-  "chemin de vosgelade": null,
-  "rue des plans": null,
-  "rue saint anne": null,
-  "rue joseph blanchi": null,
-  "allée de verdun": null,
-  "avenue de caqueray": null,
-  "boulevard philippe corniglion": null,
-  "chemin de l'ibas": null,
-  "chemin du paraire": null,
-  "avenue général marcel paroldi": null,
-  "avenue de la liberté": [
+  "chemin du vieux village, tournefort, france": [
+    43.9460177,
+    7.1506873
+  ],
+  "chemin du val fleuri, cagnes-sur-mer, france": [
+    43.6703641,
+    7.1642602
+  ],
+  "passage renoir, cagnes-sur-mer, france": [
+    43.6658216,
+    7.1545999
+  ],
+  "promenade de la plage, cagnes-sur-mer, france": [
+    43.6534646,
+    7.1562473
+  ],
+  "chemin de la fontaine des boeufs, saint-jeannet, france": [
+    43.748021,
+    7.1384657
+  ],
+  "route de loda, lantosque, france": [
+    43.9547686,
+    7.3003303
+  ],
+  "route du rivet, lantosque, france": [
+    43.9739473,
+    7.3143509
+  ],
+  "chemin de saint antoine, clans, france": [
+    43.9940271,
+    7.1468472
+  ],
+  "chemin des glycines, cagnes-sur-mer, france": [
+    43.6584105,
+    7.1605479
+  ],
+  "chemin de vosgelade, vence, france": [
+    43.7182514,
+    7.1290771
+  ],
+  "rue joseph blanchi, saint-martin-vésubie, france": [
+    44.0673799,
+    7.2566219
+  ],
+  "allée de verdun, saint-martin-vésubie, france": [
+    44.0709029,
+    7.2553173
+  ],
+  "avenue de caqueray, saint-martin-vésubie, france": [
+    44.0656198,
+    7.2572053
+  ],
+  "boulevard philippe corniglion, la bollène-vésubie, france": [
+    43.9912621,
+    7.3334531
+  ],
+  "chemin du paraire, belvédère, france": [
+    44.0145946,
+    7.3210854
+  ],
+  "avenue général marcel paroldi, belvédère, france": [
+    44.0160074,
+    7.3196463
+  ],
+  "avenue de la liberté, èze, france": [
     43.7219603,
     7.3557532
   ],
-  "avenue de la californie": [
-    43.6768189,
-    7.2280741
+  "avenue de la californie, nice, france": [
+    43.6776684,
+    7.2285626
   ],
-  "rue auguste ganyaire": null,
-  "promenade du martinet": null,
-  "avenue gayraut": null,
-  "route de saint blaise": [
-    43.7997244,
-    7.2037304
+  "promenade du martinet, saint-sauveur-sur-tinée, france": [
+    44.0843156,
+    7.1034637
   ],
-  "place de la mairie": [
-    43.7865811,
-    7.4443683
+  "avenue des mimosas, saint-laurent-du-var, france": [
+    43.6639418,
+    7.1952739
   ],
-  "allée des villas fleuries-145 ml": null,
-  "domaine miranda sur 80 ml": null,
-  "avenue emile hugues sur 45 ml": null,
-  "place d'un pr": null,
-  "chemin du claout": [
-    43.7852994,
-    7.2451369
+  "chemin du claout, tourrette-levens, france": [
+    43.7880791,
+    7.2712924
   ],
-  "route de la roquette": [
-    43.8179028,
-    7.2122482
+  "route de la roquette, levens, france": [
+    43.8474048,
+    7.2198271
   ],
-  "rue edouard beri": [
+  "rue edouard beri, nice, france": [
     43.7034583,
     7.2745792
   ],
-  "rue francois plescent": null,
-  "chemin du souvenir": [
+  "chemin du souvenir, saint-andré-de-la-roche, france": [
     43.7418319,
     7.2866515
   ],
-  "chemin de lombardie": [
-    43.7448274,
-    7.272427
+  "chemin de lombardie, saint-andré-de-la-roche, france": [
+    43.7403542,
+    7.2837986
   ],
-  "voie d'accès step": null,
-  "chemin de lombardie et du souvenir": null,
-  "avenue des gros buaux": null,
-  "chemin de la colle germaine": [
+  "chemin de la colle germaine, colomars, france": [
     43.7499046,
     7.2217168
   ],
-  "rue r.preaud": null,
-  "route nicolas andreas": null,
-  "rue alfred corniglion": null,
-  "quai de la corderie": [
+  "route de la roquette, la roquette-sur-var, france": [
+    43.8474048,
+    7.2198271
+  ],
+  "rue alfred corniglion, roquebillière, france": [
+    44.0122495,
+    7.3067488
+  ],
+  "quai de la corderie, villefranche-sur-mer, france": [
     43.6981019,
     7.3067906
   ],
-  "route de saint laurent": [
-    43.7359405,
-    7.3834337
+  "route de saint laurent, la gaude, france": [
+    43.7275986,
+    7.1695815
   ],
-  "route des ribes": null,
-  "avenue borriglione": [
-    43.808734,
-    7.3160883
+  "route des ribes, le broc, france": [
+    43.8184354,
+    7.173419
   ],
-  "place jean gaïssa et rm2205": null,
-  "chemin sainte pétronille": null,
-  "passage lido": null,
-  "avenue maurice donat": null,
-  "avenue du parc": [
-    43.7189344,
-    7.2623283
+  "avenue borriglione, nice, france": [
+    43.8095416,
+    7.3162124
   ],
-  "chemin du rivage": null,
-  "chemin louis spinelli": null,
-  "chemin de l'abadie": [
+  "chemin sainte pétronille, la gaude, france": [
+    43.7187822,
+    7.1760463
+  ],
+  "avenue des chênes, cagnes-sur-mer, france": [
+    43.6611106,
+    7.1554133
+  ],
+  "passage lido, cagnes-sur-mer, france": [
+    43.6593328,
+    7.1710177
+  ],
+  "avenue maurice donat, cagnes-sur-mer, france": [
+    43.6610512,
+    7.143146
+  ],
+  "avenue du parc, cagnes-sur-mer, france": [
+    43.6562908,
+    7.1436748
+  ],
+  "chemin de l'abadie, saint-andré-de-la-roche, france": [
     43.7511648,
     7.2962016
   ],
-  "allée des fauvettes": null,
-  "rue dubeaumetz": null,
-  "place amélie pollonais": [
+  "allée des fauvettes, gattières, france": [
+    43.7555732,
+    7.1689759
+  ],
+  "place amélie pollonais, villefranche-sur-mer, france": [
     43.7029327,
     7.3114717
   ],
-  "rue du poilu": [
+  "rue du poilu, villefranche-sur-mer, france": [
     43.7056127,
     7.3126983
   ],
-  "place d'anjou à rue albini": null,
-  "place d'anjou": [
+  "place d'anjou, villefranche-sur-mer, france": [
     43.7042733,
     7.3102146
   ],
-  "place d'anjou à av gallieni": null,
-  "place de la république": [
+  "place de la république, villefranche-sur-mer, france": [
     43.703278,
     7.3110233
   ],
-  "route de la baronne-raccordement du quartier camps": null,
-  "chemin du génie": [
-    43.7422846,
-    7.2169081
+  "chemin du génie, colomars, france": [
+    43.7607294,
+    7.2284262
   ],
-  "allée françois aragon- renouvellement du réseau eu sur": null,
-  "place général de gaulle et allée de verdun": null,
-  "rue de l'argens -renouvellement du réseau d'eaux usées": null,
-  "rue gambetta prolongée": null,
-  "rue du val gelé": null,
-  "chemin des rougières": null,
-  "avenue rhin et danube": null,
-  "route de saint-jeannet": null,
-  "rue du bocage": null,
-  "chemin romegiero et plage de dépôt sédimentaire amont": null,
-  "avenue des filagnes": null,
-  "rue d'arménie": [
+  "rue gambetta prolongée, vence, france": [
+    43.7199151,
+    7.1126574
+  ],
+  "rue du val gelé, saint-étienne-de-tinée, france": [
+    44.2567154,
+    6.9235982
+  ],
+  "chemin des rougières, carros, france": [
+    43.7783501,
+    7.1956154
+  ],
+  "avenue rhin et danube, vence, france": [
+    43.7237157,
+    7.0890763
+  ],
+  "route de saint-jeannet, saint-laurent-du-var, france": [
+    43.6914811,
+    7.1768932
+  ],
+  "rue du bocage, cagnes-sur-mer, france": [
+    43.6559851,
+    7.1418349
+  ],
+  "avenue des filagnes, saint-laurent-du-var, france": [
+    43.6772415,
+    7.1867459
+  ],
+  "rue d'arménie, nice, france": [
     43.7137793,
-    7.2249634
+    7.2249635
   ],
-  "chemin de l'houmé": null,
-  "boulevard reine jeanne": null,
-  "chemin des collettes et chemin renoir": null,
-  "chemin des castagniers": null,
-  "chemin de salles": null,
-  "route de saint-laurent entre intersection moyenne": null,
-  "route de la baronne du pr3": null,
-  "route de bouyon entre pr17": null,
-  "avenue rhin danube n": null,
-  "route de cagnes": null,
-  "route des pugets n": null,
-  "rue auber entre l'avenue thiers et rue d'italie": null,
-  "square colonel jean-pierre": [
+  "chemin de l'houmé, saint-jeannet, france": [
+    43.74376,
+    7.1572124
+  ],
+  "boulevard reine jeanne, vence, france": [
+    43.7179494,
+    7.1118862
+  ],
+  "chemin des castagniers, vence, france": [
+    43.7202138,
+    7.093073
+  ],
+  "avenue rhin danube n, vence, france": [
+    43.7237157,
+    7.0890763
+  ],
+  "route de la baronne, saint-jeannet, france": [
+    43.7452728,
+    7.177587
+  ],
+  "route de cagnes, la gaude, france": [
+    43.7115072,
+    7.1496016
+  ],
+  "route des pugets n, saint-laurent-du-var, france": [
+    43.6850161,
+    7.1852372
+  ],
+  "square colonel jean-pierre, nice, france": [
     43.7058633,
     7.2586603
   ],
-  "place georges clémenceau": [
+  "place georges clémenceau, beaulieu-sur-mer, france": [
     43.706641,
     7.3312799
   ],
-  "chemin de berthemont": null,
-  "montée de la frairie": null,
-  "place du colombier": null,
-  "chemin marcellin allo et de création du barreau": null,
-  "route d'utelle": null,
-  "chemin départementale": null,
-  "route du bord de mer": null,
-  "square bénès": null,
-  "avenue france outre-mer": null,
-  "avenue jean aicard n": [
-    43.7052705,
-    7.2521008
+  "chemin de berthemont, saint-martin-vésubie, france": [
+    44.0497362,
+    7.284893
   ],
-  "rue pierre lambert": null,
-  "montée de la tour": null,
-  "avenue du 11 novembre": null,
-  "avenue du général leclerc": [
-    43.7036067,
-    7.3037396
+  "route d'utelle, la tour, france": [
+    43.9427106,
+    7.1885962
   ],
-  "rue léonard anfossi": null,
-  "avenue des anciens combattants afn": null,
-  "rue jules michel": [
-    43.7236995,
-    7.2915961
+  "route du bord de mer, saint-laurent-du-var, france": [
+    43.6612359,
+    7.1938602
   ],
-  "route de saint-jeannet du n": null,
-  "avenue emile hugues entre pr": null,
-  "promenade du paillon": [
+  "square bénès, saint-laurent-du-var, france": [
+    43.6710722,
+    7.190355
+  ],
+  "avenue france outre-mer, saint-laurent-du-var, france": [
+    43.6591482,
+    7.191225
+  ],
+  "avenue jean aicard n, saint-laurent-du-var, france": [
+    43.6829701,
+    7.185372
+  ],
+  "rue pierre lambert, saint-laurent-du-var, france": [
+    43.6744351,
+    7.1882739
+  ],
+  "montée de la tour, saint-laurent-du-var, france": [
+    43.7076945,
+    7.1754746
+  ],
+  "avenue du 11 novembre, saint-laurent-du-var, france": [
+    43.6727064,
+    7.1915163
+  ],
+  "avenue du général leclerc, saint-laurent-du-var, france": [
+    43.6739463,
+    7.1897577
+  ],
+  "rue jules michel, saint-laurent-du-var, france": [
+    43.674139,
+    7.1889719
+  ],
+  "route de saint-jeannet du n, saint-laurent-du-var, france": [
+    43.6914811,
+    7.1768932
+  ],
+  "chemin sainte pétronille, cagnes-sur-mer, france": [
+    43.6812865,
+    7.1722212
+  ],
+  "promenade du paillon, nice, france": [
     43.6974111,
     7.2717905
   ],
-  "route du télésiège": null,
-  "rue principale": [
-    43.7282043,
-    7.3622487
+  "rue principale, ilonse, france": [
+    44.0319924,
+    7.1000191
   ],
-  "chemin de salèze": null,
-  "chemin du siège": null,
-  "avenue entre 11ème rue et 12ème rue": null,
-  "chemin des carretiers": null,
-  "route de la gordolasque à partir pr1": null,
-  "chemin des serres": [
-    43.7149727,
-    7.1946244
+  "chemin du siège, vence, france": [
+    43.7204889,
+    7.1202166
   ],
-  "rue du loup": null,
-  "chemin du clos": [
-    43.6984749,
-    7.2475595
+  "chemin des serres, gattières, france": [
+    43.7573241,
+    7.1737544
   ],
-  "chemin du peyrouas": null,
-  "promenade sainte-pétronille": null,
-  "impasse de l'hôpital": null,
-  "route de cagnes n": null,
-  "avenue elise": null,
-  "avenue de la résistance": null,
-  "avenue tuby": null,
-  "boulevard paul andre": null,
-  "rue honoré brun": null,
-  "allée des tonnelles et l'avenue des orangers": null,
-  "chemin de bonvillard": null,
-  "avenue entre 14ème rue et 15ème rue": null,
-  "avenue thomas decaroli et l'avenue des oliviers": null,
-  "rue jean baptiste bermond": null,
-  "avenue de nice n": [
-    43.7324128,
-    7.2894313
+  "rue du loup, carros, france": [
+    43.7703986,
+    7.1938589
   ],
-  "voie mathis phase": null,
-  "boulevard kennedy": null,
-  "route de la gaude": null,
-  "avenue francis gag n": null,
-  "route de la baronne du pr4": null,
-  "voie des bréguières": null,
-  "chemin de la bastide": [
-    43.7585856,
-    7.2647115
+  "chemin du clos, saint-jeannet, france": [
+    43.7418817,
+    7.1481767
   ],
-  "chemin des launes": null,
-  "allée sud": [
-    43.7136862,
-    7.3101945
+  "chemin du peyrouas, saint-jeannet, france": [
+    43.7491312,
+    7.1577128
   ],
-  "avenue des tuilières phase": null,
-  "rue ladoumègue": null,
-  "voie venciane": null,
-  "route des sauces": null,
-  "route des plans": null,
-  "chemin des collines n": null,
-  "avenue jean mermoz entre n": null,
-  "avenue du docteur donat n": null,
-  "chemin auguste renoir": null,
-  "chemin des collettes n": null,
-  "chemin des collettes entre tuillières jusqu'au n": null,
-  "rue des jonquilles": null,
-  "avenue des bréguières n": null,
-  "avenue ziem n": null,
-  "avenue ziem": null,
-  "avenue de la gare entre giratoire saint-véran et": null,
-  "avenue des pignatières": null,
-  "boulevard pierre semard entre boulevard virgile barel et": null,
-  "avenue du mont-alban": [
+  "promenade sainte-pétronille, saint-jeannet, france": [
+    43.7497368,
+    7.1480709
+  ],
+  "impasse de l'hôpital, saint-jeannet, france": [
+    43.7472145,
+    7.1413469
+  ],
+  "route de cagnes n, vence, france": [
+    43.713972,
+    7.1268074
+  ],
+  "avenue elise, vence, france": [
+    43.7232768,
+    7.1087629
+  ],
+  "avenue de la résistance, vence, france": [
+    43.7230285,
+    7.1079351
+  ],
+  "avenue tuby, vence, france": [
+    43.7238458,
+    7.1071081
+  ],
+  "boulevard paul andre, vence, france": [
+    43.7234477,
+    7.1138349
+  ],
+  "avenue du général de gaulle, saint-laurent-du-var, france": [
+    43.6710945,
+    7.1906129
+  ],
+  "rue jean baptiste bermond, saint-laurent-du-var, france": [
+    43.6713146,
+    7.1911035
+  ],
+  "avenue de nice n, cagnes-sur-mer, france": [
+    43.6605661,
+    7.1772018
+  ],
+  "boulevard kennedy, cagnes-sur-mer, france": [
+    43.6515909,
+    7.1518218
+  ],
+  "route de la gaude, saint-jeannet, france": [
+    43.7411751,
+    7.1463149
+  ],
+  "route de nice, le broc, france": [
+    43.8056243,
+    7.1668727
+  ],
+  "chemin sainte-petronille, la gaude, france": [
+    43.7187822,
+    7.1760463
+  ],
+  "chemin de la bastide, gattières, france": [
+    43.7670129,
+    7.1841454
+  ],
+  "chemin des launes, carros, france": [
+    43.7764027,
+    7.2025494
+  ],
+  "rue ladoumègue, cagnes-sur-mer, france": [
+    43.6583567,
+    7.1579384
+  ],
+  "route des sauces, gattières, france": [
+    43.7563828,
+    7.1691338
+  ],
+  "route des plans, carros, france": [
+    43.7787216,
+    7.2024848
+  ],
+  "chemin des collines n, cagnes-sur-mer, france": [
+    43.6769211,
+    7.1320048
+  ],
+  "avenue de verdun, cagnes-sur-mer, france": [
+    43.6626022,
+    7.1481366
+  ],
+  "chemin auguste renoir, cagnes-sur-mer, france": [
+    43.6671045,
+    7.1578383
+  ],
+  "chemin des collettes n, cagnes-sur-mer, france": [
+    43.6660162,
+    7.1555495
+  ],
+  "rue des jonquilles, cagnes-sur-mer, france": [
+    43.6632329,
+    7.1630014
+  ],
+  "avenue des bréguières n, cagnes-sur-mer, france": [
+    43.6641264,
+    7.1640835
+  ],
+  "avenue ziem n, cagnes-sur-mer, france": [
+    43.6641844,
+    7.159316
+  ],
+  "avenue ziem, cagnes-sur-mer, france": [
+    43.6648686,
+    7.1628833
+  ],
+  "avenue du mont-alban, nice, france": [
     43.7017571,
     7.294438
   ],
-  "rue gilly en totalité": null,
-  "rue des ponchettes coord enedis séparation réseau": null,
-  "rue vanloo": [
+  "rue vanloo, nice, france": [
     43.6954047,
     7.2696712
   ],
-  "rue saint françois de paul": null,
-  "rue des orangers en totalité": null,
-  "rue paul déroulède mise en sécurité eclairage public": null,
-  "rue paul déroulède en totalité": null,
-  "rue galléan mise en sécurité eclairage public": null,
-  "rue valperga mise en sécurité eclairage public": null,
-  "rue alberti mise en sécurité eclairage public": null,
-  "rue lamartine mise en sécurité eclairage public": null,
-  "rue assalit en totalité": null,
-  "boulevard françois grosso entre les rues dante et bottero": null,
-  "rue candia rénovation eclairage public": null,
-  "rue candia": [
+  "rue candia, nice, france": [
     43.7012476,
     7.2521811
   ],
-  "rue de châteauneuf en totalité": null,
-  "boulevard auguste raynaud": [
-    43.7154058,
-    7.25808
+  "boulevard auguste raynaud, nice, france": [
+    43.7165916,
+    7.257315
   ],
-  "chemin frédéric mistral en totalité": null,
-  "rue frédéric passy mise en sécurité eclairage public": null,
-  "rue louise ackermann en totalité": null,
-  "avenue thiers entre la rue auber et le boulevard gambetta": null,
-  "rue gutenberg- rue castel- rue dabray- rue prince": null,
-  "rue prince maurice entre les rues castel et dabray": null,
-  "avenue sainte marguerite entre le 139 et le": null,
-  "avenue walkanaer": [
+  "avenue walkanaer, nice, france": [
     43.7198605,
     7.261183
   ],
-  "avenue jean de la fontaine du n": null,
-  "avenue saint maurice": [
+  "avenue saint maurice, nice, france": [
     43.717636,
     7.262125
   ],
-  "boulevard alfred borriglione": null,
-  "avenue borriglione entre les n": null,
-  "avenue alfred borriglione mise en sécurité eclairage": null,
-  "voie romaine phase2 travaux neufs eclairage public": null,
-  "boulevard de cimiez entre le n": null,
-  "traverse regina mise en sécurité eclairage public": null,
-  "voie op": null,
-  "avenue gallin mise en sécurité eclairage public": null,
-  "avenue henri dunant": null,
-  "rue saint honoré": [
+  "avenue henri dunant, nice, france": [
+    43.7240269,
+    7.2660899
+  ],
+  "rue saint honoré, nice, france": [
     43.6930813,
     7.2402227
   ],
-  "boulevard de la madeleine divers zones": null,
-  "chemin du baou des noirs": null,
-  "chemin de saint-laurent": [
-    43.7282855,
-    7.384355
+  "chemin du baou des noirs, vence, france": [
+    43.7360448,
+    7.1212401
   ],
-  "route de la cavagne": null,
-  "rue des selves": null,
-  "avenue de grasse": [
-    43.8068891,
-    7.190775
+  "chemin de saint-laurent, cagnes-sur-mer, france": [
+    43.6652134,
+    7.1730758
   ],
-  "place du général de gaulle": [
-    43.710305,
-    7.2617406
+  "route de la cavagne, carros, france": [
+    43.7760511,
+    7.1759145
   ],
-  "avenue moschetti": null,
-  "avenue général de gaulle": [
-    43.7434599,
-    7.4264261
+  "rue des selves, carros, france": [
+    43.7736084,
+    7.1935251
   ],
-  "avenue pierre  sms 13 pub anastasia": null,
-  "chemin de saint véran": null,
-  "rue de la condamine": [
-    43.6969987,
-    7.2779355
+  "avenue de grasse, cagnes-sur-mer, france": [
+    43.6566399,
+    7.146819
   ],
-  "avenue jean mermoz": [
-    43.68811,
-    7.3351324
+  "avenue moschetti, saint-laurent-du-var, france": [
+    43.6687323,
+    7.1891587
   ],
-  "chemin guillaumet": null,
-  "chemin du poutaouchoun": null,
-  "route du cimetière emportée": null,
-  "avenue du zoo depuis sauvaigo sur 150m": null,
-  "chemin de la maure": null,
-  "chemin du moulin n": [
-    43.8065065,
-    7.3380447
+  "avenue général de gaulle, drap, france": [
+    43.7613366,
+    7.3205431
   ],
-  "chemin de beaume gairard": null,
-  "place trastour": null,
-  "chemin du château": [
-    43.7628982,
-    7.233784
+  "chemin de saint véran, cagnes-sur-mer, france": [
+    43.6553651,
+    7.1455999
   ],
-  "avenue lympia mise en sécurité eclairage public": null,
-  "chemin de la tourraque": null,
-  "route de vence": null,
-  "chemin des serres n": [
-    43.7494162,
-    7.426161
+  "rue de la condamine, cagnes-sur-mer, france": [
+    43.6554914,
+    7.1445262
   ],
-  "place clémenceau": [
+  "avenue jean mermoz, cagnes-sur-mer, france": [
+    43.6734106,
+    7.1524497
+  ],
+  "chemin guillaumet, cagnes-sur-mer, france": [
+    43.6877066,
+    7.1513737
+  ],
+  "chemin du poutaouchoun, vence, france": [
+    43.7219549,
+    7.1366499
+  ],
+  "chemin de la maure, cagnes-sur-mer, france": [
+    43.680845,
+    7.1609012
+  ],
+  "chemin du moulin n, saint-jeannet, france": [
+    43.7470011,
+    7.1362141
+  ],
+  "chemin de beaume gairard, saint-jeannet, france": [
+    43.7471282,
+    7.1678631
+  ],
+  "place trastour, saint-jeannet, france": [
+    43.747868,
+    7.1432792
+  ],
+  "chemin du château, saint-jeannet, france": [
+    43.7434323,
+    7.1659531
+  ],
+  "chemin de la tourraque, saint-jeannet, france": [
+    43.747552,
+    7.1450022
+  ],
+  "route de vence, gattières, france": [
+    43.7558048,
+    7.1719163
+  ],
+  "chemin des serres n, gattières, france": [
+    43.7573241,
+    7.1737544
+  ],
+  "place clémenceau, drap, france": [
     43.7557903,
     7.320413
   ],
-  "route de saint dalmas lieu dit les prieures": null,
-  "chemin de toscane inferieur": [
+  "chemin de toscane inferieur, èze, france": [
     43.7262306,
     7.3770093
   ],
-  "avenue andre theuriet lieu-dit sembola trinite": null,
-  "rue auguste pégurier- nice": [
+  "rue auguste pégurier- nice, nice, france": [
     43.6707851,
     7.2185039
   ],
-  "boulevard des jardiniers": [
+  "boulevard des jardiniers, nice, france": [
     43.7022511,
     7.1934476
   ],
-  "chemin de saquier": [
+  "chemin de saquier, nice, france": [
     43.7346496,
     7.1991076
   ],
-  "avenue raymond gramaglia": [
+  "avenue raymond gramaglia, cap-d'ail, france": [
     43.7205366,
     7.3918825
   ],
-  "corniche eze": [
+  "corniche eze, èze, france": [
     43.7392892,
     7.364991
   ],
-  "route de villevieille": [
+  "route de villevieille, châteauneuf-villevieille, france": [
     43.8087415,
     7.2956266
   ],
-  "route des armans village de roya hameau des armans": null,
-  "chemin de la costiere": [
+  "chemin de la costiere, nice, france": [
     43.7281613,
     7.2287296
   ],
-  "chemin de la ginestiere": [
+  "chemin de la ginestiere, nice, france": [
     43.7068893,
     7.2097279
   ],
-  "avenue de suède": [
-    43.696307,
-    7.266718
+  "avenue de suède, nice, france": [
+    43.6964989,
+    7.2656554
   ],
-  "route du clos martel": null,
-  "route de gattières entre pr6": null,
-  "rue louis negro": null,
-  "allée des bouleaux": null,
-  "chemin du vallon des vaux": null,
-  "square joseph maurel": null,
-  "chemin des vallières": [
-    43.8132156,
-    7.3192096
+  "route du clos martel, le broc, france": [
+    43.8303476,
+    7.1732396
   ],
-  "chemin des colettes n": [
-    43.6988257,
-    7.2296455
+  "rue louis negro, cagnes-sur-mer, france": [
+    43.6634691,
+    7.152809
   ],
-  "route de cagnes entre pr": null,
-  "avenue de la gare entre pr0": null,
-  "avenue de la gaude entre pr1": null,
-  "route de saint-laurent": [
-    43.7359405,
-    7.3834337
+  "allée des bouleaux, cagnes-sur-mer, france": [
+    43.6533349,
+    7.1541473
   ],
-  "boulevard de la colle-belle": null,
-  "route des fraises": null,
-  "place alexandre médecin": [
+  "chemin du vallon des vaux, cagnes-sur-mer, france": [
+    43.6887412,
+    7.156481
+  ],
+  "chemin des vallières, cagnes-sur-mer, france": [
+    43.6673163,
+    7.1324623
+  ],
+  "route de saint-laurent, la gaude, france": [
+    43.7275986,
+    7.1695815
+  ],
+  "boulevard de la colle-belle, carros, france": [
+    43.7735766,
+    7.1943993
+  ],
+  "route des fraises, carros, france": [
+    43.7905508,
+    7.1846903
+  ],
+  "place alexandre médecin, nice, france": [
     43.7198012,
     7.2626126
   ],
-  "rue des géraniums": null,
-  "route de vence pr10": null,
-  "route de nice entre pr13": null,
-  "route métropolitaine 1 entre pr10": null,
-  "avenue entre section réalisée en 2024 et 7ème rue": null,
-  "rue des oliviers": null,
-  "route de vence n": null,
-  "rue pastorelli": [
-    43.7012371,
-    7.2725298
+  "rue des géraniums, cagnes-sur-mer, france": [
+    43.6587522,
+    7.1775654
   ],
-  "rue gioffredo mise en sécurité eclairage public": null,
-  "avenue notre dame mise en sécurité eclairage public": null,
-  "rue gustave deloye mise en sécurité eclairage public": null,
-  "rue barla mise en sécurité eclairage public": null,
-  "passage occelli": [
+  "route de vence pr10, saint-jeannet, france": [
+    43.7489448,
+    7.1665642
+  ],
+  "rue des oliviers, carros, france": [
+    43.7719367,
+    7.1903082
+  ],
+  "route de vence n, saint-jeannet, france": [
+    43.7489448,
+    7.1665642
+  ],
+  "rue pastorelli, nice, france": [
+    43.7019365,
+    7.273296
+  ],
+  "passage occelli, nice, france": [
     43.7014103,
-    7.2888831
+    7.2888832
   ],
-  "rue des arbousiers": null,
-  "chemin des canebiers": null,
-  "chemin du puy": null,
-  "avenue frédéric mistral": [
-    43.7246546,
-    7.2533266
+  "rue des arbousiers, carros, france": [
+    43.7725468,
+    7.1903629
   ],
-  "place saint antoine": [
-    43.7078382,
-    7.2153598
+  "chemin des canebiers, cagnes-sur-mer, france": [
+    43.6680255,
+    7.1494342
   ],
-  "route de la baronne du pr0": null,
-  "rue centrale avale phase": null,
-  "route de la redoute": null,
-  "route de france": [
-    43.7913638,
-    7.2723037
+  "chemin du puy, cagnes-sur-mer, france": [
+    43.6549267,
+    7.1363979
   ],
-  "montée du château": [
-    43.7846748,
-    7.2762201
+  "avenue frédéric mistral, saint-laurent-du-var, france": [
+    43.659989,
+    7.1895817
   ],
-  "route de france n": [
-    43.7913638,
-    7.2723037
+  "place saint antoine, saint-laurent-du-var, france": [
+    43.6754325,
+    7.1887659
   ],
-  "avenue germaine": [
-    43.6917363,
-    7.2973921
+  "avenue maurice donat, saint-laurent-du-var, france": [
+    43.6615729,
+    7.1868152
   ],
-  "chemin du gué": null,
-  "allée des pins": [
-    43.7310756,
-    7.2642998
+  "route de la redoute, le broc, france": [
+    43.8192055,
+    7.1695793
   ],
-  "rue jean barnoin": null,
-  "avenue de la gaude n": null,
-  "place du forest": null,
-  "rue louis genari mise en sécurité eclairage public": null,
-  "boulevard louis braille en totalité": null,
-  "boulevard delfino": [
+  "route de france, cagnes-sur-mer, france": [
+    43.6621553,
+    7.1311975
+  ],
+  "rue berlioz, cagnes-sur-mer, france": [
+    43.6557855,
+    7.1598791
+  ],
+  "montée du château, cagnes-sur-mer, france": [
+    43.6678598,
+    7.1460332
+  ],
+  "route de france n, cagnes-sur-mer, france": [
+    43.6620467,
+    7.1311542
+  ],
+  "avenue germaine, cagnes-sur-mer, france": [
+    43.6554058,
+    7.1495631
+  ],
+  "chemin du gué, cagnes-sur-mer, france": [
+    43.6691566,
+    7.1246305
+  ],
+  "allée des pins, cagnes-sur-mer, france": [
+    43.6572306,
+    7.1629225
+  ],
+  "rue jean barnoin, cagnes-sur-mer, france": [
+    43.6550281,
+    7.1562857
+  ],
+  "avenue de la gaude n, cagnes-sur-mer, france": [
+    43.685677,
+    7.1495941
+  ],
+  "boulevard delfino, nice, france": [
     43.7057026,
     7.2837028
   ],
-  "boulevard delfino entre l'avenue de la  république et le": null,
-  "rue delille": [
-    43.7017078,
-    7.2757839
+  "rue delille, nice, france": [
+    43.7013198,
+    7.2768643
   ],
-  "avenue bellevue entre le bd raynaud et la rue molière": null,
-  "avenue bellevue de l'av. cavendish au bd auguste raynaud": null,
-  "chemin de saquier sur 4 zones": null,
-  "avenue d'estienne d'orves mise en sécurité eclairage": null,
-  "rue jean canavèse mise en sécurité eclairage public": null,
-  "rue de l'orme en totalité": null,
-  "rue michel ange mise en sécurité eclairage public": null,
-  "avenue st-lambert de la rue pellos à la rue von der weiss": null,
-  "avenue villermont mise en sécurité eclairage public": null,
-  "route d'aspremont entre les n": null,
-  "voie romaine phase 3 mise en sécurité eclairage public": null,
-  "rue de la gendarmerie": [
+  "rue de la gendarmerie, nice, france": [
     43.7113497,
     7.2801902
   ],
-  "rue jean bonfante mise en sécurité eclairage public": null,
-  "avenue alfred de vigny entre les n": null,
-  "avenue paul dufourmantel entre les n": null,
-  "chemin roland garros": null,
-  "impasse des iris": null,
-  "avenue docteur donat n": null,
-  "chemin de l'estelle": null,
-  "avenue de la roseraie": [
-    43.6955679,
-    7.2924534
+  "chemin roland garros, cagnes-sur-mer, france": [
+    43.698661,
+    7.1500907
   ],
-  "avenue maurice donat n": null,
-  "avenue du docteur donat": null,
-  "boulevard de l'ouest": null,
-  "avenue antoine martin": [
+  "impasse des iris, cagnes-sur-mer, france": [
+    43.6558946,
+    7.160878
+  ],
+  "avenue docteur donat n, cagnes-sur-mer, france": [
+    43.6607562,
+    7.136826
+  ],
+  "chemin de l'estelle, cagnes-sur-mer, france": [
+    43.6908625,
+    7.1711002
+  ],
+  "avenue de la roseraie, cagnes-sur-mer, france": [
+    43.660154,
+    7.1378647
+  ],
+  "avenue maurice donat n, cagnes-sur-mer, france": [
+    43.6607562,
+    7.136826
+  ],
+  "avenue du docteur donat, cagnes-sur-mer, france": [
+    43.6607525,
+    7.148006
+  ],
+  "avenue antoine martin, nice, france": [
     43.6858287,
     7.2058523
   ],
-  "chemin célestin freinet n": null,
-  "rue de stamford": null,
-  "chemin de la gaude": null,
-  "chemin du claret": [
-    43.5943391,
-    7.1201201
+  "chemin célestin freinet n, vence, france": [
+    43.7305658,
+    7.1331182
   ],
-  "chemin du vallestreche": null,
-  "chemin de cagnes à gréolières": null,
-  "avenue du train des pignes": [
-    43.7667536,
-    7.2088559
+  "rue de stamford, vence, france": [
+    43.7217875,
+    7.1089942
   ],
-  "route jean natale": null,
-  "avenue marcel pagnol": null,
-  "impasse pasteur": [
-    43.7241476,
-    7.2860463
+  "chemin de la gaude, vence, france": [
+    43.7177455,
+    7.1340192
   ],
-  "chemin tourrettes": [
+  "chemin du claret, carros, france": [
+    43.797711,
+    7.1814051
+  ],
+  "avenue du train des pignes, colomars, france": [
+    43.7642283,
+    7.2081643
+  ],
+  "route jean natale, carros, france": [
+    43.7760289,
+    7.1749852
+  ],
+  "avenue marcel pagnol, la gaude, france": [
+    43.7049367,
+    7.164428
+  ],
+  "impasse pasteur, saint-martin-du-var, france": [
+    43.8225573,
+    7.1903092
+  ],
+  "chemin tourrettes, châteauneuf-villevieille, france": [
     43.7969994,
     7.2842164
   ],
-  "boulevard d alsace loraine": null,
-  "chemin alphonse daudet": null,
-  "rue de france amont gibraltar 06088p0377--de25": null,
-  "chemin du couleret -vence": null,
-  "avenue de grasse- cagnes sur mer": [
-    43.656404,
-    7.1553643
+  "route de la baronne, saint-laurent-du-var, france": [
+    43.7047707,
+    7.1778518
   ],
-  "chemin des quatre vents": null,
-  "chemin du greck": null,
-  "chemin du frogier superieur": [
+  "chemin alphonse daudet, cagnes-sur-mer, france": [
+    43.6699664,
+    7.172655
+  ],
+  "chemin du couleret -vence, vence, france": [
+    43.7332011,
+    7.0968929
+  ],
+  "avenue de grasse- cagnes sur mer, cagnes-sur-mer, france": [
+    43.6566399,
+    7.146819
+  ],
+  "chemin des quatre vents, vence, france": [
+    43.7270416,
+    7.0927144
+  ],
+  "chemin du frogier superieur, tourrette-levens, france": [
     43.7913765,
     7.2634162
   ],
-  "avenue le broc": null,
-  "voie romaine et ch": null,
-  "chemin des arnaud- saint -andre-de-la-roche": [
+  "avenue le broc, le broc, france": [
+    43.8027949,
+    7.1897109
+  ],
+  "chemin des arnaud- saint -andre-de-la-roche, saint-andré-de-la-roche, france": [
     43.7457032,
     7.287531
   ],
-  "chemin de conteo": null,
-  "boulevard gaston beuil": null,
-  "avenue pins": [
+  "avenue pins, nice, france": [
     43.6755191,
     7.225372
   ],
-  "rue barla 06088p0": null,
-  "route nationale": [
-    43.7811762,
-    7.3378934
-  ],
-  "rue poilu coord bt 06159p0034": null,
-  "avenue trident": [
+  "avenue trident, nice, france": [
     43.7163117,
     7.2851902
   ],
-  "chemin des anciens combattants d'afn n": null,
-  "place jules musso": [
+  "place jules musso, saint-andré-de-la-roche, france": [
     43.7397075,
     7.2877273
   ],
-  "promenade lambert may": null,
-  "rue fanny": null,
-  "place de la conque": null,
-  "avenue rhin et danube n": null,
-  "chemin sainte colombe": null,
-  "route de st jeannet n": null,
-  "avenue henri matisse": [
-    43.6749113,
-    7.2169062
+  "avenue du général de gaulle, cap-d'ail, france": [
+    43.7252724,
+    7.3999562
   ],
-  "rue roger martin du gard mise en sécurité eclairage": null,
-  "rue gabriel hanotaux mise en sécurité eclairage public": null,
-  "rue jean aicard mise en sécurité eclairage public": null,
-  "rue gustave garaud": [
+  "avenue rhin et danube n, vence, france": [
+    43.7237157,
+    7.0890763
+  ],
+  "chemin sainte colombe, vence, france": [
+    43.7401063,
+    7.1343937
+  ],
+  "route de st jeannet n, vence, france": [
+    43.7318385,
+    7.1188568
+  ],
+  "avenue henri matisse, vence, france": [
+    43.7262206,
+    7.1094737
+  ],
+  "place clémenceau, vence, france": [
+    43.722565,
+    7.1135219
+  ],
+  "rue gustave garaud, nice, france": [
     43.70575,
     7.2922182
   ],
-  "montée du chateau mise en sécurité éclairage public": null,
-  "chemin lou claus": null,
-  "chemin de la calade renforcement de chaussée": null,
-  "route de gattières n": null,
-  "corniche d'agrimont cession az 102": null,
-  "chemin des mauberts n": null,
-  "chemin de ste colombe": null,
-  "rue du puits": null,
-  "avenue géneral leclerc": [
-    43.706042,
-    7.3012957
+  "route de gattières n, saint-jeannet, france": [
+    43.74335,
+    7.1447507
   ],
-  "rue françois plésent": [
+  "chemin des mauberts n, cagnes-sur-mer, france": [
+    43.6845286,
+    7.1686406
+  ],
+  "chemin de ste colombe, cagnes-sur-mer, france": [
+    43.6675399,
+    7.1413037
+  ],
+  "rue du puits, cagnes-sur-mer, france": [
+    43.6579072,
+    7.141917
+  ],
+  "avenue géneral leclerc, cagnes-sur-mer, france": [
+    43.6588448,
+    7.1628595
+  ],
+  "rue françois plésent, colomars, france": [
     43.7650844,
     7.2212587
   ],
-  "chemin du haut magnan": [
+  "avenue des orangers, nice, france": [
+    43.6969892,
+    7.2519469
+  ],
+  "chemin du haut magnan, nice, france": [
     43.7052755,
     7.2390655
   ],
-  "chemin de la lauvette au n": null,
-  "rue herold en totalité": null,
-  "boulevard delfino entre les 83 et": null,
-  "rue sincaire en totalité": null,
-  "rue somlett en totalité": null,
-  "avenue de gairaut": [
-    43.7252265,
-    7.2572022
+  "avenue de gairaut, nice, france": [
+    43.7309671,
+    7.2566023
   ],
-  "chemin de gairaut": [
-    43.7264,
-    7.262053
+  "chemin de gairaut, nice, france": [
+    43.7280402,
+    7.2610845
   ],
-  "avenue maréchal lyautey": [
-    43.7227593,
-    7.2871698
+  "avenue maréchal lyautey, nice, france": [
+    43.7152456,
+    7.281409
   ],
-  "avenue général olry": [
+  "avenue général olry, nice, france": [
     43.7387548,
     7.2999059
   ],
-  "route de saint pancrace": [
-    43.7453617,
-    7.242927
+  "route de saint pancrace, nice, france": [
+    43.7415221,
+    7.2387744
   ],
-  "route de st pierre de féric": [
+  "route de st pierre de féric, nice, france": [
     43.7102451,
     7.2467875
   ],
-  "rue boylesve": null,
-  "rue castel": [
+  "rue castel, nice, france": [
     43.7095853,
     7.2584865
   ],
-  "avenue comba": [
+  "avenue comba, nice, france": [
     43.700468,
     7.2556301
   ],
-  "rue edouard dalmas": [
+  "rue edouard dalmas, nice, france": [
     43.7119351,
     7.2609731
   ],
-  "rue cros de capeu": [
-    43.710286,
-    7.2550006
+  "rue cros de capeu, nice, france": [
+    43.7120039,
+    7.2546336
   ],
-  "rue du grand pin": [
-    43.7128147,
-    7.2531816
+  "rue du grand pin, nice, france": [
+    43.7127476,
+    7.2546024
   ],
-  "rue andrioli": [
+  "rue andrioli, nice, france": [
     43.6951601,
     7.2541733
   ],
-  "rue de la préfecture": [
+  "rue de la préfecture, nice, france": [
     43.696316,
     7.2763478
   ],
-  "rue bonaparte": [
-    43.7004135,
-    7.2872522
+  "rue bonaparte, nice, france": [
+    43.7005632,
+    7.2848673
   ],
-  "avenue de fabron au n": null,
-  "rue de la croix": [
+  "rue de la croix, nice, france": [
     43.6979247,
     7.2778932
   ],
-  "avenue claude debussy": [
+  "avenue claude debussy, nice, france": [
     43.6855865,
     7.200414
   ],
-  "rue léon bertrand": [
+  "rue léon bertrand, nice, france": [
     43.6741121,
     7.2244284
   ],
-  "corniche des oliviers entre les n": null,
-  "avenue de la lanterne entre les 16 et": null,
-  "rue du lycée entre les rues gioffredo et hôtel des": null,
-  "rue max gallo aux n": null,
-  "rue smolett entre le n": null,
-  "avenue de hespérides en totalité": null,
-  "rue pertinax entre la rue de lépante et l": null,
-  "rue nathanya en totalité": null,
-  "rue de dijon en totalité": null,
-  "rue gendarmerie et pont sncf": null,
-  "boulevard winston churchill": [
+  "boulevard winston churchill, nice, france": [
     43.6940653,
     7.2915268
   ],
-  "rue chanoine bailet": [
+  "rue chanoine bailet, nice, france": [
     43.7135595,
     7.2918393
   ],
-  "rue fodéré entre lech walesa et fodéré prolongée": null,
-  "rue rossini en totalité": null,
-  "avenue de la lanterne sous pont vpm": null,
-  "boulevard du mercantour au n": null,
-  "voie p. mathis chaussée sud entre st-augustin et": null,
-  "avenue du ray en totalité": null,
-  "avenue françois mitterrand carrefour avec la rue": null,
-  "rue foresta du carrefour avec le quai lunel et le n": null,
-  "rue chanoine albin entre la ruelle saint-roch et la": null,
-  "rue de la malonnière en totalité": null,
-  "rue fodéré entre les rues arson et balatchano": null,
-  "rue saint-joseph en totalité": null,
-  "rue de la loge en totalité": null,
-  "rue sorgentino de la rue de sospel à la place saint": null,
-  "rue beaumont en totalité": null,
-  "rue lascaris en totalité": null,
-  "rue des bleuets entre avenue e. ripert et boulevard": null,
-  "rue gaston messiah en totalité": null,
-  "boulevard de l'ariane entre bd e. ripert et rue du gal": null,
-  "avenue edith cavell en totalité": null,
-  "avenue de gairaut entre le n": null,
-  "avenue général estienne en totalité": null,
-  "impasse st-eloi en totalité": null,
-  "avenue de la marne entre les n": null,
-  "avenue georges sand en totalité": null,
-  "avenue docteur ménard en totalité": null,
-  "avenue ratti en totalité": null,
-  "avenue cauvin entre les n": null,
-  "montée claire virenque entre les n": null,
-  "avenue jean bares entre le n": null,
-  "rue clément ader en totalité": null,
-  "rue d'alger en totalité": null,
-  "avenue desambrois entre raimbaldi et rouget de l'isle": null,
-  "avenue romain rolland en totalité": null,
-  "avenue lorenzi en totalité": null,
-  "passage du temple vaudois en totalité": null,
-  "avenue des baumettes en totalité": null,
-  "rue d'angleterre entre les rues d'italie et paul": null,
-  "chemin du mascon au n": null,
-  "chemin de l'églilse de st-pancrace": null,
-  "chemin des sablières entre les n": null,
-  "boulevard de la mantéga entre les 45 et": null,
-  "route de st-pancrace entre les n": null,
-  "chemin de terron entre les n": null,
-  "corniche des oliviers entre le carrefour avec le ch de la": null,
-  "avenue du dauphiné entre les n": null,
-  "avenue du col de bast au n": null,
-  "avenue de la clua entre les n": null,
-  "chemin du candeù entre les n": null,
-  "avenue de fabron entre le n": null,
-  "avenue des anthémis en totalité": null,
-  "avenue vittone au droit du n": null,
-  "avenue de fabron": [
-    43.6992448,
-    7.2082954
+  "avenue de fabron, nice, france": [
+    43.7067319,
+    7.2094694
   ],
-  "chemin st hospice": [
+  "place du général de gaulle, la bollène-vésubie, france": [
+    43.9906722,
+    7.3320026
+  ],
+  "chemin st hospice, saint-jean-cap-ferrat, france": [
     43.6861361,
     7.3455138
   ],
-  "rue acchiardi de saint léger mise en sécurité": null,
-  "allée mala": [
+  "allée mala, cap-d'ail, france": [
     43.7223481,
     7.3928758
   ],
-  "avenue de la gare": [
-    43.7605647,
-    7.4564811
+  "avenue de la gare, cap-d'ail, france": [
+    43.72116,
+    7.3964484
   ],
-  "avenue w churchill": null,
-  "route du bord de mer mise en sécurité de l'éclairage": null,
-  "boulevard cimiez tranche 1 mise en sécurité éclairage public": null,
-  "corniche rm 6007 3ème tr": null,
-  "rue autun mise en sécurité eclairage public": null,
-  "rue du lieutenant colonelli": [
+  "rue du lieutenant colonelli, beaulieu-sur-mer, france": [
     43.7055574,
     7.3320277
   ],
-  "quai de la banquière mise en sécurité": null,
-  "route de canta galet enfouissement eclairage public": null,
-  "quai des etats-unis mise en sécurité eclairage public": null,
-  "allée des brises eclairage public mise en sécurité": null,
-  "rue victor contesso mise en sécurité eclairage public": null,
-  "rue volti mise en sécurité eclairage public": null,
-  "rue françois bottau mise en sécurité eclairage public": null,
-  "rue du poilu-mise en sécurité eclairage public": null,
-  "rue pasteur": [
-    43.7389255,
-    7.4173071
+  "rue pasteur, villefranche-sur-mer, france": [
+    43.704686,
+    7.3123073
   ],
-  "allée des roses création d'un réseau d'éclairage public": null,
-  "promenade corniglion molinier remplacement mât eclairage": null,
-  "route forestière du mont boron": [
+  "route forestière du mont boron, nice, france": [
     43.6897354,
     7.2970848
   ],
-  "rue du val gele": null,
-  "avenue du collet ecl pub": null,
-  "rue joseph albert bovis": [
+  "rue du val gele, saint-étienne-de-tinée, france": [
+    44.2567154,
+    6.9235982
+  ],
+  "rue joseph albert bovis, nice, france": [
     43.7131971,
     7.2920231
   ],
-  "allée des brises phase": null,
-  "corniche mise en sécurité": null,
-  "promenade des anglais trottoir nord mise en sécurité": null,
-  "avenue leopold ii": [
-    43.7134556,
-    7.2740779
+  "avenue leopold ii, villefranche-sur-mer, france": [
+    43.7087082,
+    7.3140044
   ],
-  "boulevard du jardin exotique": [
+  "boulevard du jardin exotique, cap-d'ail, france": [
     43.7303184,
     7.4093067
   ],
-  "chemin de l'arbre": [
+  "chemin de l'arbre, la trinité, france": [
     43.7382584,
     7.3110316
   ],
-  "rue las planas": [
-    43.7293244,
-    7.2521443
+  "rue las planas, saint-dalmas-le-selvage, france": [
+    44.2845283,
+    6.8660093
   ],
-  "route de la forêt": null,
-  "promenade de la plage entre renault et slv": null,
-  "avenue de féric en totalité": null,
-  "rue st michel": null,
-  "avenue de provence n": [
-    43.7093709,
-    7.275874
+  "route de la forêt, venanson, france": [
+    44.0534966,
+    7.2496227
   ],
-  "place général de gaulle et de la place des allées": null,
-  "chemin du val de cagnes": null,
-  "chemin des colles et régagnades cr": null,
-  "rue des plaqueminiers": null,
-  "chemin des iscles azur boissons": null,
-  "impasse des genêts er n": null,
-  "route de pessicart": [
+  "rue st michel, vence, france": [
+    43.7215598,
+    7.1159754
+  ],
+  "avenue de provence n, vence, france": [
+    43.7392403,
+    7.1332358
+  ],
+  "chemin du val de cagnes, cagnes-sur-mer, france": [
+    43.6886882,
+    7.1480369
+  ],
+  "chemin des colles et régagnades cr, la gaude, france": [
+    43.7015139,
+    7.1524062
+  ],
+  "chemin des vallières, colomars, france": [
+    43.7623857,
+    7.2262887
+  ],
+  "rue des plaqueminiers, cagnes-sur-mer, france": [
+    43.6582641,
+    7.1644161
+  ],
+  "impasse des genêts er n, saint-laurent-du-var, france": [
+    43.6739265,
+    7.1775092
+  ],
+  "route de pessicart, nice, france": [
     43.7217867,
     7.2390852
   ],
-  "chemin de la minoterie": null,
-  "avenue thiers": [
+  "avenue jean mermoz, saint-jean-cap-ferrat, france": [
+    43.6878774,
+    7.3379965
+  ],
+  "chemin de la minoterie, cagnes-sur-mer, france": [
+    43.6563721,
+    7.1476499
+  ],
+  "avenue thiers, nice, france": [
     43.7019658,
     7.2570176
   ],
-  "rue chabrier mise en sécurité eclairage public": null,
-  "promenade des anglais": [
+  "promenade des anglais, nice, france": [
     43.6859892,
     7.2374765
   ],
-  "boulevard de riquier en totalité": null,
-  "avenue des citronniers": null,
-  "place frédéric mistral": null,
-  "boulevard dubouchage": [
-    43.7012083,
-    7.2699359
+  "avenue des citronniers, cagnes-sur-mer, france": [
+    43.6610341,
+    7.165691
   ],
-  "chemin du lautin": null,
-  "rue du docteur gonin": null,
-  "allée des jacinthes": null,
-  "chemin du mont gros": [
-    43.7184761,
-    7.297232
+  "place frédéric mistral, vence, france": [
+    43.7232982,
+    7.109481
   ],
-  "impasse des bigaradiers": null,
-  "rue bailet": [
-    43.7135595,
-    7.2918393
+  "boulevard dubouchage, nice, france": [
+    43.7038613,
+    7.2733662
   ],
-  "rue fernand barbary réfection de la voie": null,
-  "chemin de l'anguille": null,
-  "rue des combattants afn palais toesca mur de": null,
-  "chemin de cagnes": null,
-  "voie nouvelle bellissime": null,
-  "allée des arbousiers": [
-    43.7748454,
-    7.4790039
+  "route de st jeannet n, cagnes-sur-mer, france": [
+    43.6841268,
+    7.1792235
   ],
-  "impasse chaillon réfection": null,
-  "chemin des carrières": [
-    43.7234753,
-    7.2470436
+  "chemin du lautin, cagnes-sur-mer, france": [
+    43.6584508,
+    7.1547244
   ],
-  "chemin des bastides": null,
-  "chemin de la queirello": null,
-  "avenue maréchal joffre": [
-    43.7031932,
-    7.3098268
+  "rue du docteur gonin, cagnes-sur-mer, france": [
+    43.6629461,
+    7.1511896
   ],
-  "rue ouahigouya": null,
-  "chemin de la fontette": null,
-  "rue monseigneur alfred daumas mise en sécurité": null,
-  "square docteur zamenhof mise en sécurité eclairage public": null,
-  "rue d'alger mise en sécurité eclairage public": null,
-  "impasse des serres": [
+  "allée des jacinthes, cagnes-sur-mer, france": [
+    43.6619226,
+    7.174834
+  ],
+  "chemin du mont gros, la gaude, france": [
+    43.722454,
+    7.166403
+  ],
+  "impasse des bigaradiers, cagnes-sur-mer, france": [
+    43.6672146,
+    7.131414
+  ],
+  "chemin de cagnes, la gaude, france": [
+    43.7122057,
+    7.1523171
+  ],
+  "chemin des carrières, saint-jeannet, france": [
+    43.7417039,
+    7.1711792
+  ],
+  "avenue maréchal joffre, vence, france": [
+    43.7262794,
+    7.106893
+  ],
+  "rue ouahigouya, vence, france": [
+    43.7210045,
+    7.0819356
+  ],
+  "chemin de la fontette, vence, france": [
+    43.7271502,
+    7.1140913
+  ],
+  "impasse des serres, saint-martin-du-var, france": [
     43.8035494,
     7.2009293
   ],
-  "avenue joseph revelli": [
+  "avenue joseph revelli, nice, france": [
     43.6939624,
     7.2443779
   ],
-  "chemin st michel": [
+  "chemin st michel, èze, france": [
     43.7200932,
     7.3490431
   ],
-  "place du caire": null,
-  "rue baou": null,
-  "rue place neuve": null,
-  "rue gabriel ponzone": null,
-  "rue du four": [
-    43.6988722,
-    7.2786642
+  "rue baou, la gaude, france": [
+    43.7220188,
+    7.1493997
   ],
-  "chemin de la colette": [
-    43.8031453,
-    7.3907062
+  "rue place neuve, la gaude, france": [
+    43.7226039,
+    7.1503672
   ],
-  "avenue virgile barel nice": [
+  "rue gabriel ponzone, la gaude, france": [
+    43.723106,
+    7.1515556
+  ],
+  "rue du four, la gaude, france": [
+    43.721882,
+    7.1496829
+  ],
+  "avenue virgile barel nice, nice, france": [
     43.7701525,
     7.3302757
   ],
-  "rue navel": null,
-  "route de la madeleine": [
-    43.7018038,
-    7.2227985
+  "rue navel, belvédère, france": [
+    44.0148221,
+    7.3203655
   ],
-  "chemin du portion": [
+  "chemin du portion, castagniers, france": [
     43.7994083,
     7.2315413
   ],
-  "place des ménestrels": null,
-  "avenue de pessicart mise en sécurité eclairage public": null,
-  "avenue auber": [
+  "avenue auber, nice, france": [
     43.6995362,
     7.261344
   ],
-  "place du général goiran": null,
-  "chemin de saint roman": [
+  "chemin de saint roman, nice, france": [
     43.7440277,
     7.1998876
   ],
-  "square du 8 mai et creation d'une piste cyclable": null,
-  "avenue fernand dunant": null,
-  "rue jeanne jugan mise en sécurité eclairage public": null,
-  "avenue fighiera": [
+  "avenue fighiera, nice, france": [
     43.7242149,
     7.252417
   ],
-  "rue niepce mise en sécurité eclairage public": null,
-  "rue gubernatis mise en sécurité eclairage public": null,
-  "route de grenoble": [
-    43.681519,
-    7.1988704
+  "route de grenoble, nice, france": [
+    43.7155041,
+    7.1868565
   ],
-  "corniche frère marc mise en sécurité eclairage public": null,
-  "impasse du baoux": null,
-  "avenue maréchal foch": [
+  "avenue maréchal foch, nice, france": [
     43.7019958,
     7.3075344
   ],
-  "chemin de la cascade de gairaut mise en sécurité": null,
-  "quai de la banquière": [
+  "quai de la banquière, nice, france": [
     43.7352517,
     7.2877695
   ],
-  "chemin st pierre de féric": [
-    43.7159444,
-    7.2294268
+  "chemin st pierre de féric, nice, france": [
+    43.7268865,
+    7.22857
   ],
-  "avenue henry musso": [
-    43.7334693,
-    7.2706689
+  "avenue henry musso, nice, france": [
+    43.7327631,
+    7.2711486
   ],
-  "rue miollis entre les rues trachel et vernier": null,
-  "rue gaston leroux en totalité": null,
-  "rue reine jeanne": [
+  "rue reine jeanne, nice, france": [
     43.7057194,
     7.2590141
   ],
-  "route du cimetiére de l'est": [
+  "route du cimetiére de l'est, nice, france": [
     43.741621,
     7.3072906
   ],
-  "rue maître maurice slama": null,
-  "place du fou": null,
-  "avenue des blavets": null,
-  "place rouge": null,
-  "rue droite": [
-    43.6972956,
-    7.2772452
+  "avenue des blavets, saint-sauveur-sur-tinée, france": [
+    44.0835169,
+    7.1051591
   ],
-  "route et la nouvelle mairie": null,
-  "place recipon": null,
-  "route de sestrieres travaux d'entretien": null,
-  "place du château": [
-    43.799359,
-    7.4622439
+  "rue droite, saint-étienne-de-tinée, france": [
+    44.2539965,
+    6.9266474
   ],
-  "avenue auguste pegurier": null,
-  "rue marie bashkirtseff mise en sécurité eclairage": null,
-  "rue maurice mignon mise en sécurité eclairage public": null,
-  "rue jean vigo mise en sécurité eclairage public": null,
-  "rue jules belleudy mise en sécurité eclairage public": null,
-  "chemin de la pouncia": [
+  "place du château, cagnes-sur-mer, france": [
+    43.667382,
+    7.1456725
+  ],
+  "chemin de la pouncia, nice, france": [
     43.7261149,
     7.205077
   ],
-  "chemin du vallon sabatier mise en sécurité eclairage": null,
-  "promenade des anglais trottoir": null,
-  "rue colonel guide mise en sécurité eclairage public": null,
-  "rue verdi mise en sécurité eclairage public": null,
-  "rue raynardi mise en sécurité eclairage public": null,
-  "rue charles chauve mise en sécurité eclairage public": null,
-  "avenue des magnolias mise en sécurité eclairage public": null,
-  "corniche sainte rosalie mise en sécurité eclairage public": null,
-  "impasse saint eloi mise en sécurité eclairage public": null,
-  "chemin des graves": null,
-  "avenue du rond point mise en sécurité eclairage public": null,
-  "rue delrieu mise en sécurité eclairage public": null,
-  "rue cais de gilette mise en sécurité eclairage public": null,
-  "rue gauthier roux mise en sécurité eclairage public": null,
-  "rue colonel gassin mise en sécurité eclairage public": null,
-  "rue miollis entre les rues vernier et roassal": null,
-  "chemin châteaurenard au n": null,
-  "chemin de la ginestière": [
-    43.7069397,
-    7.208038
+  "chemin des graves, la roquette-sur-var, france": [
+    43.8359946,
+    7.1950672
   ],
-  "avenue edith cavell et avenue albert": null,
-  "rue du vallon": [
+  "chemin de la ginestière, nice, france": [
+    43.7068893,
+    7.2097279
+  ],
+  "rue du vallon, saint-jean-cap-ferrat, france": [
     43.6894965,
     7.3328399
   ],
-  "chemin du fort t27550": null,
-  "rue desboutins": null,
-  "rue saint-gaëtan": [
+  "rue saint-gaëtan, nice, france": [
     43.6960621,
     7.2755599
   ],
-  "boulevard de las planas": [
+  "boulevard de las planas, nice, france": [
     43.7309806,
     7.2439215
   ],
-  "rue de paris n": [
+  "rue de paris n, nice, france": [
     43.7048966,
     7.267937
   ],
-  "route de turin": [
-    43.7299209,
-    7.2839498
+  "route de turin, nice, france": [
+    43.730572,
+    7.2853922
   ],
-  "chemin du génie du n": null,
-  "voie de contournement au niveau du foyer adoma et de": null,
-  "avenue charles buchet": [
-    43.668101,
-    7.2150577
+  "avenue charles buchet, nice, france": [
+    43.6690676,
+    7.2158763
   ],
-  "rue alphonse 1er n": [
+  "rue alphonse 1er n, nice, france": [
     43.6763001,
     7.211282
   ],
-  "avenue guilbaud en totalité": null,
-  "avenue auguste vérola entre mercantour et l'avenue p. de": null,
-  "domaine public": null,
-  "rue barberis en totalité": null,
-  "boulevard de l'ariane et pénétrante du paillon": null,
-  "avenue du petit fabron": [
+  "avenue du petit fabron, nice, france": [
     43.6897401,
     7.2384718
   ],
-  "route des condamines": [
+  "route des condamines, saint-martin-du-var, france": [
     43.8111033,
     7.196062
   ],
-  "route du puy": [
+  "route du puy, saint-martin-du-var, france": [
     43.816988,
     7.1936172
   ],
-  "chemin piétonnier": null,
-  "avenue des platanes": [
+  "avenue des platanes, nice, france": [
     43.7195132,
     7.2512422
   ],
-  "chemin de la costière mise en sécurité eclairage public": null,
-  "rue penchienatti mise en sécurité eclairage public": null,
-  "rue des lilas en totalité": null,
-  "rue francois plesent": [
-    43.7650844,
-    7.2212587
+  "rue francois plesent, colomars, france": [
+    43.766312,
+    7.2209507
   ],
-  "avenue ste-marguerite": [
+  "avenue ste-marguerite, nice, france": [
     43.6904747,
     7.2012427
   ],
-  "place wilson": [
-    43.7005113,
-    7.2733622
+  "place wilson, villefranche-sur-mer, france": [
+    43.7020972,
+    7.3118644
   ],
-  "rue de lairette-route de massoins": null,
-  "rue droite  renouvellement de la rue commune de": null,
-  "montée barelli et sentier vert": null,
-  "rue du val gele  -renouvellement réseau": null,
-  "place à la bourgade": null,
-  "rue barberis": [
+  "rue barberis, nice, france": [
     43.7048079,
     7.2844334
   ],
-  "allée des chênes": [
-    43.7355281,
-    7.2954473
+  "allée des chênes, gattières, france": [
+    43.75421,
+    7.1607639
   ],
-  "route du cros d'utelle": null,
-  "route des carbounieras": null,
-  "route du relais": null
+  "route du cros d'utelle, utelle, france": [
+    43.8839874,
+    7.2353241
+  ],
+  "place de l'eglise, saint-blaise, france": [
+    43.8214601,
+    7.2391684
+  ],
+  "rue hôtel de ville, la trinité, france": [
+    43.7427573,
+    7.3138044
+  ],
+  "chemin de fontaine d'agneau, colomars, france": [
+    43.7596188,
+    7.2185333
+  ],
+  "boulevard de madeleine, nice, france": [
+    43.6974088,
+    7.2408006
+  ],
+  "place du général de gaulle, saint-martin-vésubie, france": [
+    44.0701244,
+    7.2564222
+  ],
+  "place des sitelles ariane, nice, france": null,
+  "rue raiberti, saint-martin-vésubie, france": null,
+  "place d'un petit collectif au droit de l'ancien pr de, roquebillière, france": null,
+  "chemin des cabanes blétonnières, aspremont, france": null,
+  "chemin de la romegiero, saint-martin-vésubie, france": null,
+  "chemin des cabannes blétonnières, aspremont, france": null,
+  "impasse lesure, saint-étienne-de-tinée, france": null,
+  "route de la sirolle, nice, france": null,
+  "allée des bois, vence, france": null,
+  "route de revest -renouvellement renforcement, bonson, france": null,
+  "impasse boulevard de la madeleine, nice, france": null,
+  "chemin sainte-petronille, levens, france": null,
+  "allée jean ledieux, saint-laurent-du-var, france": null,
+  "route de la coulleta et route de la croix de claude, saint-martin-du-var, france": null,
+  "lotissement montval route de nice, aspremont, france": null,
+  "route de gattières, saint-laurent-du-var, france": null,
+  "chemin de maupas, la gaude, france": null,
+  "route du pont de la manda, la gaude, france": null,
+  "rue de la guitterie et rue laurens, levens, france": null,
+  "impasse des chênes blancs, le broc, france": null,
+  "passage de la villette, cagnes-sur-mer, france": null,
+  "chemin du baous inférieur, castagniers, france": null,
+  "boulevard georges buono, la trinité, france": null,
+  "chemin de vosgelades, vence, france": null,
+  "voie au lotissement les oliviers, nice, france": null,
+  "route de turin npru liserons, nice, france": null,
+  "rue des ecoles, saint-étienne-de-tinée, france": null,
+  "passage du bvd rené cassin- pégurier, nice, france": null,
+  "chemin de calvi, nice, france": null,
+  "route du fort, rimplas, france": null,
+  "chemin des murès, valdeblore, france": null,
+  "rue bassa, bonson, france": null,
+  "chemin du moulin, roure, france": null,
+  "avenue marie christine de france, roquebillière, france": null,
+  "voie liaison rue fodéré, nice, france": null,
+  "chemin du moulin-refoulement de camp ricard, saint-jeannet, france": null,
+  "chemin cal de spagnol, nice, france": null,
+  "route de gattières, la gaude, france": null,
+  "route de gattières -déconnexion des abonnés crdv-, la gaude, france": null,
+  "avenue du maréchal de lattre de tassigny, èze, france": null,
+  "route des granges de la brasque, la tour, france": null,
+  "chemin des ardoins -renforcement a60, saint-andré-de-la-roche, france": null,
+  "route du mas duc -renforcement a80, nice, france": null,
+  "chemin du pestrier, levens, france": null,
+  "rue centrale, ilonse, france": null,
+  "rue fontaine de la ville -passage occelli, nice, france": null,
+  "route de l'abadie et l'avenue eugène coste, saint-andré-de-la-roche, france": null,
+  "montée salettes, aspremont, france": null,
+  "chemin frédéric mistral, nice, france": null,
+  "avenue du trois septembre, cap-d'ail, france": null,
+  "route de la sirole-pas du pommier, nice, france": null,
+  "chemin de la ferme des 3 communes, nice, france": null,
+  "chemin du moulin, lantosque, france": null,
+  "route du col de salèze, saint-martin-vésubie, france": null,
+  "rue alberti-renouvellement eb, nice, france": null,
+  "place de l'église, roure, france": null,
+  "passage du logis, cagnes-sur-mer, france": null,
+  "rue du portalet, saint-étienne-de-tinée, france": [
+    44.2563643,
+    6.9252817
+  ],
+  "chemin de la romeguière, saint-jeannet, france": null,
+  "rue des plans, saint-martin-vésubie, france": null,
+  "rue saint anne, saint-martin-vésubie, france": null,
+  "rue du collet, la bollène-vésubie, france": null,
+  "chemin de l'ibas, la bollène-vésubie, france": null,
+  "rue auguste ganyaire, saint-laurent-du-var, france": null,
+  "avenue gayraut, la bollène-vésubie, france": null,
+  "route de saint blaise, belvédère, france": null,
+  "place de la mairie, bairols, france": null,
+  "allée des villas fleuries-145 ml, cagnes-sur-mer, france": null,
+  "domaine miranda sur 80 ml, saint-laurent-du-var, france": null,
+  "avenue emile hugues sur 45 ml, vence, france": null,
+  "place d'un pr, saint-laurent-du-var, france": null,
+  "rue francois plescent, colomars, france": null,
+  "voie d'accès step, bonson, france": null,
+  "chemin de lombardie et du souvenir, saint-andré-de-la-roche, france": null,
+  "avenue des gros buaux, cagnes-sur-mer, france": null,
+  "rue r.preaud, levens, france": null,
+  "route nicolas andreas, falicon, france": null,
+  "place jean gaïssa et rm2205, isola, france": null,
+  "chemin du rivage, castagniers, france": null,
+  "chemin louis spinelli, castagniers, france": null,
+  "rue dubeaumetz, beaulieu-sur-mer, france": null,
+  "place d'anjou à rue albini, villefranche-sur-mer, france": null,
+  "place d'anjou à av gallieni, villefranche-sur-mer, france": null,
+  "route de la baronne-raccordement du quartier camps, gattières, france": null,
+  "place général de gaulle et allée de verdun, saint-martin-vésubie, france": null,
+  "rue de l'argens -renouvellement du réseau d'eaux usées, carros, france": null,
+  "chemin romegiero et plage de dépôt sédimentaire amont, saint-martin-vésubie, france": null,
+  "chemin des collettes et chemin renoir, cagnes-sur-mer, france": null,
+  "chemin de salles, la gaude, france": null,
+  "route de saint-laurent entre intersection moyenne, saint-laurent-du-var, france": null,
+  "route de la baronne du pr3, gattières, france": null,
+  "route de bouyon entre pr17, le broc, france": null,
+  "rue auber entre l'avenue thiers et rue d'italie, nice, france": null,
+  "montée de la frairie, saint-martin-vésubie, france": null,
+  "place du colombier, utelle, france": null,
+  "chemin marcellin allo et de, la gaude, france": null
 }
