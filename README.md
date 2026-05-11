@@ -1,6 +1,6 @@
 # RenovTaCana · **version V2.1**
 
-Prototype hébergé en ligne : **https://k2vm-163.mde.epf.fr/pages/index.html**
+Prototype hébergé en ligne : **https://k2vm-163.mde.epf.fr**
 
 Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.1** : consolider les fonctionnalités (carte, tableau d’adresses, tableau de bord, API) et livrer un **plan de travaux opérationnel**.
 
