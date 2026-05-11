@@ -272,7 +272,7 @@ body.theme-dark .map-widget {
     height: 96px;
     border-radius: 3px;
     border: 1px solid var(--c-border-2);
-    background: linear-gradient(to top, #ef4444 0%, #f97316 30%, #eab308 55%, #84cc16 75%, #00d4aa 100%);
+    background: linear-gradient(to bottom, #ef4444 0%, #f97316 30%, #eab308 55%, #84cc16 75%, #00d4aa 100%);
 }
 
 .map-legend__labels {
