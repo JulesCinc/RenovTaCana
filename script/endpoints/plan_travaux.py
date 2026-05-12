@@ -42,7 +42,7 @@ def get_plan_travaux(
         SELECT adresse, commune,
                COUNT(*) as nb_canalisations,
                ROUND(AVG(criticite),1) as crit_moy,
-               ROUND(MAX(score_priorite),1) as score_max,
+               ROUND(AVG(score_priorite),1) as score_max,
                CAST(SUM(nb_fuites) AS INTEGER) as total_fuites,
                ROUND(SUM(longueur),0) as longueur_tot,
                GROUP_CONCAT(DISTINCT materiau) as materiaux,
