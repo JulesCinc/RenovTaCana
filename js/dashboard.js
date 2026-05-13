@@ -10,7 +10,7 @@ const PLAN_PAGE_SIZE = 50;
 const COMMUNE_LABELS = new Map();
 
 /** Cache localStorage plan de travaux (affichage immédiat même « périmé », refresh réseau en arrière-plan). */
-const DASH_CACHE_VER = 2;
+const DASH_CACHE_VER = 3;
 const DASH_CACHE_PREFIX = `rtc_dash_v${DASH_CACHE_VER}_`;
 
 let planTableOffset = 0;
@@ -24,14 +24,30 @@ function dashStableHash(str) {
     return h.toString(16);
 }
 
-/** Entrée cache plan si la query `qs` correspond (on n’impose pas le TTL pour l’affichage : stale-while-revalidate). */
-function readDashPlanEntry(cacheKey, qs) {
+/**
+ * Lit le cache plan : la clé inclut déjà hash(qs), pas besoin de ré-égaler la chaîne
+ * (évite les ratés si encodage / ordre des params diffère).
+ */
+function readDashPlanPayload(cacheKey) {
     try {
         const raw = localStorage.getItem(cacheKey);
         if (!raw) return null;
         const o = JSON.parse(raw);
-        if (!o || o.qs !== qs || !o.payload) return null;
-        return o;
+        const p = o?.payload;
+        if (!p || typeof p !== "object" || !Array.isArray(p.rues)) return null;
+        return p;
+    } catch (_) {
+        return null;
+    }
+}
+
+/** Payload JSON pour clés fixes (dashboard, filtres). */
+function readDashStoragePayload(key) {
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const o = JSON.parse(raw);
+        return o?.payload ?? null;
     } catch (_) {
         return null;
     }
@@ -45,7 +61,12 @@ function localStorageRemoveKeys(predicate) {
 }
 
 function writeDashCache(key, fields) {
-    const blob = JSON.stringify({ t: Date.now(), ...fields });
+    let blob;
+    try {
+        blob = JSON.stringify({ t: Date.now(), ...fields });
+    } catch (_) {
+        return;
+    }
     const trySet = () => localStorage.setItem(key, blob);
     try {
         trySet();
@@ -75,7 +96,7 @@ function buildPlanTravauxQueryString(commune, offset) {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-    // Paralléliser : le temps perçu ≈ le plus lent des trois, pas la somme (avant c’était séquentiel).
+    // Paralléliser ; chaque charge peut sortir vite depuis le cache localStorage + refresh réseau en fond.
     await Promise.all([
         loadDashboard(),
         loadCommunes(),
@@ -91,37 +112,51 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 // ── Dashboard principal ───────────────────────────────────
+function applyDashboardPayload(data) {
+    setEl("kpi-total",     data.total_canalisations.toLocaleString("fr-FR"));
+    setEl("kpi-km",        `${data.km_total} km`);
+    setEl("kpi-critiques", data.critiques.toLocaleString("fr-FR"));
+    setEl("kpi-attention", data.attention.toLocaleString("fr-FR"));
+    setEl("kpi-chantiers", data.nb_chantiers.toLocaleString("fr-FR"));
+    setEl("kpi-fuites",    data.total_fuites.toLocaleString("fr-FR"));
+    setEl("kpi-crit-moy",  `${data.criticite_moyenne}%`);
+
+    const total = data.total_canalisations;
+    animBar("bar-critique", "val-critique", data.critiques, total);
+    animBar("bar-attention", "val-attention", data.attention, total);
+    animBar("bar-bon",       "val-bon",       data.bon,       total);
+    animBar("bar-neval",     "val-neval",     data.non_eval,  total);
+
+    renderChantiersEtat(data.chantiers_etat, data.nb_chantiers);
+    renderMateriaux(data.materiaux);
+    renderAnnees(data.annees);
+}
+
+async function refreshDashboardInBackground(cacheKey) {
+    try {
+        const res = await fetch(`${API}/api/dashboard`);
+        if (!res.ok) return;
+        const data = await res.json();
+        writeDashCache(cacheKey, { payload: data });
+        applyDashboardPayload(data);
+    } catch (_) { /* garder l’affichage cache */ }
+}
+
 async function loadDashboard() {
+    const cacheKey = `${DASH_CACHE_PREFIX}dashboard`;
+    const cached = readDashStoragePayload(cacheKey);
+    if (cached) {
+        applyDashboardPayload(cached);
+        void refreshDashboardInBackground(cacheKey);
+        return;
+    }
     try {
         const res  = await fetch(`${API}/api/dashboard`);
+        if (!res.ok) throw new Error(String(res.status));
         const data = await res.json();
-
-        // KPIs
-        setEl("kpi-total",     data.total_canalisations.toLocaleString("fr-FR"));
-        setEl("kpi-km",        `${data.km_total} km`);
-        setEl("kpi-critiques", data.critiques.toLocaleString("fr-FR"));
-        setEl("kpi-attention", data.attention.toLocaleString("fr-FR"));
-        setEl("kpi-chantiers", data.nb_chantiers.toLocaleString("fr-FR"));
-        setEl("kpi-fuites",    data.total_fuites.toLocaleString("fr-FR"));
-        setEl("kpi-crit-moy",  `${data.criticite_moyenne}%`);
-
-        // Barres criticité
-        const total = data.total_canalisations;
-        animBar("bar-critique", "val-critique", data.critiques, total);
-        animBar("bar-attention", "val-attention", data.attention, total);
-        animBar("bar-bon",       "val-bon",       data.bon,       total);
-        animBar("bar-neval",     "val-neval",     data.non_eval,  total);
-
-        // Chantiers par état
-        renderChantiersEtat(data.chantiers_etat, data.nb_chantiers);
-
-        // Matériaux
-        renderMateriaux(data.materiaux);
-
-        // Années de pose
-        renderAnnees(data.annees);
-
-    } catch(e) {
+        writeDashCache(cacheKey, { payload: data });
+        applyDashboardPayload(data);
+    } catch (e) {
         console.error("Erreur dashboard:", e);
     }
 }
@@ -235,11 +270,12 @@ async function loadPlanTravaux(commune, offset = 0) {
 
     const qs = buildPlanTravauxQueryString(commune, offset);
     const cacheKey = `${DASH_CACHE_PREFIX}plan_${dashStableHash(qs)}`;
-    const cached = readDashPlanEntry(cacheKey, qs);
+    const cachedPayload = readDashPlanPayload(cacheKey);
 
-    if (cached && cached.payload) {
-        planData = cached.payload.rues || [];
+    if (cachedPayload) {
+        planData = cachedPayload.rues || [];
         planTableOffset = offset;
+        renderPlanTable(planData, offset);
         await hydrateCommuneLabels(planData.map(r => r.commune));
         renderPlanTable(planData, offset);
         void refreshPlanTravauxInBackground(cacheKey, qs, offset);
@@ -255,6 +291,7 @@ async function loadPlanTravaux(commune, offset = 0) {
         writeDashCache(cacheKey, { qs, payload: json });
         planData = json.rues || [];
         planTableOffset = offset;
+        renderPlanTable(planData, offset);
         await hydrateCommuneLabels(planData.map(r => r.commune));
         renderPlanTable(planData, offset);
     } catch (e) {
@@ -299,48 +336,85 @@ function renderPlanTable(data, offset = 0) {
 }
 
 // ── Communes pour le filtre ───────────────────────────────
+function clearPlanCommuneSelect(sel) {
+    if (!sel) return;
+    while (sel.options.length > 1) sel.remove(1);
+}
+
+function applyPlanCommuneFiltres(data, sel) {
+    if (!sel) return;
+    clearPlanCommuneSelect(sel);
+    if (data.communes_options?.length) {
+        data.communes_options.forEach(c => {
+            const value = String(c.value || "").trim();
+            const label = c.label || value;
+            if (value) COMMUNE_LABELS.set(value, label);
+            const opt = document.createElement("option");
+            opt.value = value;
+            opt.textContent = label;
+            sel.appendChild(opt);
+        });
+    } else {
+        data.communes?.forEach(c => {
+            const value = String(c || "").trim();
+            if (!value) return;
+            COMMUNE_LABELS.set(value, value);
+            const opt = document.createElement("option");
+            opt.value = value;
+            opt.textContent = value;
+            sel.appendChild(opt);
+        });
+    }
+}
+
+async function finalizePlanCommuneLabels(sel, data) {
+    if (data.communes_options?.length) {
+        await hydrateCommuneLabels(data.communes_options.map(c => c.value));
+    } else {
+        await hydrateCommuneLabels(data.communes || []);
+    }
+    for (const opt of sel.options) {
+        if (!opt.value) continue;
+        opt.textContent = COMMUNE_LABELS.get(opt.value) || opt.textContent;
+    }
+    if (planData.length) {
+        await hydrateCommuneLabels(planData.map(r => r.commune));
+        renderPlanTable(planData, planTableOffset);
+    }
+}
+
+async function refreshFiltresInBackground(cacheKey, sel) {
+    try {
+        const res = await fetch(`${API}/api/filtres`);
+        if (!res.ok) return;
+        const data = await res.json();
+        writeDashCache(cacheKey, { payload: data });
+        applyPlanCommuneFiltres(data, sel);
+        await finalizePlanCommuneLabels(sel, data);
+    } catch (_) { /* garder le select actuel */ }
+}
+
 async function loadCommunes() {
+    const cacheKey = `${DASH_CACHE_PREFIX}filtres`;
+    const sel = document.getElementById("plan-commune");
+    if (!sel) return;
+
+    const cached = readDashStoragePayload(cacheKey);
+    if (cached) {
+        applyPlanCommuneFiltres(cached, sel);
+        await finalizePlanCommuneLabels(sel, cached);
+        void refreshFiltresInBackground(cacheKey, sel);
+        return;
+    }
+
     try {
         const res  = await fetch(`${API}/api/filtres`);
+        if (!res.ok) throw new Error(String(res.status));
         const data = await res.json();
-        const sel  = document.getElementById("plan-commune");
-        if (!sel) return;
-        if (data.communes_options?.length) {
-            data.communes_options.forEach(c => {
-                const value = String(c.value || "").trim();
-                const label = c.label || value;
-                if (value) COMMUNE_LABELS.set(value, label);
-                const opt = document.createElement("option");
-                opt.value = value;
-                opt.textContent = label;
-                sel.appendChild(opt);
-            });
-            await hydrateCommuneLabels(data.communes_options.map(c => c.value));
-            for (const opt of sel.options) {
-                if (!opt.value) continue;
-                opt.textContent = COMMUNE_LABELS.get(opt.value) || opt.textContent;
-            }
-        } else {
-            data.communes?.forEach(c => {
-                const value = String(c || "").trim();
-                if (!value) return;
-                COMMUNE_LABELS.set(value, value);
-                const opt = document.createElement("option");
-                opt.value = value;
-                opt.textContent = value;
-                sel.appendChild(opt);
-            });
-            await hydrateCommuneLabels(data.communes || []);
-            for (const opt of sel.options) {
-                if (!opt.value) continue;
-                opt.textContent = COMMUNE_LABELS.get(opt.value) || opt.textContent;
-            }
-        }
-        if (planData.length) {
-            await hydrateCommuneLabels(planData.map(r => r.commune));
-            renderPlanTable(planData, planTableOffset);
-        }
-    } catch(e) {}
+        writeDashCache(cacheKey, { payload: data });
+        applyPlanCommuneFiltres(data, sel);
+        await finalizePlanCommuneLabels(sel, data);
+    } catch (e) {}
 }
 
 function normalizeCommuneCode(v) {
