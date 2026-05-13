@@ -348,10 +348,19 @@ def main():
     }
 
     df_can = df.copy()
+    # Le CSV de ranking contient la granularité principale du score de criticité.
+    # On le fusionne ici pour ne pas dépendre uniquement de Predicti_1/TXcasse.
+    if os.path.exists(PIPE_RANKING_CSV):
+        pr_criticite = pd.read_csv(PIPE_RANKING_CSV, usecols=["FACILITYID", "probabilite_casse"])
+        pr_criticite = pr_criticite.drop_duplicates(subset=["FACILITYID"], keep="first")
+        df_can = df_can.merge(pr_criticite, on="FACILITYID", how="left")
+    else:
+        df_can["probabilite_casse"] = np.nan
+
+    proba_casse = pd.to_numeric(df_can["probabilite_casse"], errors="coerce")
     install_year = df_can["INSTALLDAT"].apply(extract_year)
-    pred = pd.to_numeric(df_can["Predicti_1"], errors="coerce")
     tx_score = df_can["TXcasse"].map(tx_to_score) if "TXcasse" in df_can.columns else np.nan
-    criticite = pred.mul(100.0).fillna(tx_score)
+    criticite = proba_casse.mul(100.0).fillna(tx_score)
     # Le score de priorite n'est pas calcule au build.
     # Il sera renseigne plus tard par un script de scoring dedie.
     score_priorite = pd.Series([None] * len(df_can), index=df_can.index, dtype="object")
