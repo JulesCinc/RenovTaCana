@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/adresses.css">
 </head>
@@ -142,7 +143,7 @@
                         </div>
                         <div class="filter-group">
                             <label class="filter-label">Statut criticite</label>
-                            <select class="filter-select" id="filter-Etatut">
+                            <select class="filter-select" id="filter-statut">
                                 <option value="">Tous</option>
                                 <option value="critique">Critique (>= 70%)</option>
                                 <option value="attention">Attention (40-70%)</option>
@@ -163,6 +164,18 @@
                         <div class="filter-group">
                             <label class="filter-label">Recherche ID ou adresse</label>
                             <input type="text" class="filter-input" id="filter-id" placeholder="ID ou adresse">
+                        </div>
+                        <div class="filter-group filter-group--checkbox">
+                            <label class="filter-label filter-label--checkbox" for="filter-criticite-null">
+                                <input type="checkbox" id="filter-criticite-null">
+                                Uniquement criticite inconnue
+                            </label>
+                        </div>
+                        <div class="filter-group filter-group--checkbox">
+                            <label class="filter-label filter-label--checkbox" for="filter-priorite-null">
+                                <input type="checkbox" id="filter-priorite-null">
+                                Uniquement score priorite inconnu
+                            </label>
                         </div>
                         <button class="filter-reset" id="filter-reset">Reinitialiser</button>
                     </div>

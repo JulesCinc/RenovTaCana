@@ -78,6 +78,8 @@ def get_canalisations(
     crit_max: float = Query(default=100),
     sort_col: str = Query(default="score_priorite"),
     sort_dir: str = Query(default="desc"),
+    only_unknown_criticite: bool = Query(default=False),
+    only_unknown_priorite: bool = Query(default=False),
     limit: int = Query(default=100),
     offset: int = Query(default=0),
 ):
@@ -117,6 +119,10 @@ def get_canalisations(
 
     filters.append("(criticite IS NULL OR (criticite >= ? AND criticite <= ?))")
     params += [crit_min, crit_max]
+    if only_unknown_criticite:
+        filters.append("criticite IS NULL")
+    if only_unknown_priorite:
+        filters.append("score_priorite IS NULL")
 
     where = " AND ".join(filters)
     col = sort_col if sort_col in ALLOWED_SORT_COLS else "score_priorite"

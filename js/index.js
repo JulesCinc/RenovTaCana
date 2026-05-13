@@ -176,6 +176,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     on("filter-materiau",   "change", () => fetchPage(1));
     on("filter-statut",     "change", () => fetchPage(1));
     on("filter-anciennete", "change", () => fetchPage(1));
+    on("filter-criticite-null", "change", () => fetchPage(1));
+    on("filter-priorite-null", "change", () => fetchPage(1));
     on("filter-crit-min",   "input",  onRangeChange);
     on("filter-crit-max",   "input",  onRangeChange);
     on("filter-reset",      "click",  resetFilters);
@@ -219,6 +221,8 @@ function buildQueryParams(page) {
     const id       = val("filter-id");
     const critMin  = val("filter-crit-min") || "0";
     const critMax  = val("filter-crit-max") || "100";
+    const onlyCriticiteNull = document.getElementById("filter-criticite-null")?.checked;
+    const onlyPrioriteNull = document.getElementById("filter-priorite-null")?.checked;
 
     const p = new URLSearchParams({
         limit:    PAGE_SIZE,
@@ -235,6 +239,8 @@ function buildQueryParams(page) {
     if (statut)         p.append("statut",    statut);
     if (anc)            p.append("anciennete", anc);
     if (id)             p.append("search",    id);
+    if (onlyCriticiteNull) p.append("only_unknown_criticite", "true");
+    if (onlyPrioriteNull) p.append("only_unknown_priorite", "true");
 
     return p.toString();
 }
@@ -314,8 +320,8 @@ function renderTable(data) {
             <td>${row.longueur != null ? row.longueur.toFixed(1) + " m" : "—"}</td>
             <td>${row.annee_pose || "—"}</td>
             <td>${row.nb_fuites != null ? row.nb_fuites : "—"}</td>
-            <td>${row.criticite != null ? critBar(row.criticite) : "—"}</td>
-            <td>${row.score_priorite != null ? row.score_priorite : "—"}</td>
+            <td>${row.criticite != null ? critBar(row.criticite) : unknownValueIcon("Criticité inconnue")}</td>
+            <td>${row.score_priorite != null ? row.score_priorite : unknownValueIcon("Score de priorité inconnu")}</td>
             <td>
                 <button class="row-action-btn" type="button" title="Voir le détail" data-action="view" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Voir le détail">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -428,6 +434,10 @@ function resetFilters() {
     ["filter-commune","filter-materiau","filter-statut","filter-anciennete","filter-id"].forEach(id => setInputVal(id, ""));
     setInputVal("filter-crit-min", "0");
     setInputVal("filter-crit-max", "100");
+    const critNullEl = document.getElementById("filter-criticite-null");
+    const prioNullEl = document.getElementById("filter-priorite-null");
+    if (critNullEl) critNullEl.checked = false;
+    if (prioNullEl) prioNullEl.checked = false;
     setEl("criticite-range-label", "0% — 100%");
     sortCol = "criticite"; sortDir = "desc";
     markSortHeader("criticite", "desc");
@@ -681,6 +691,12 @@ function critBar(value) {
         </div>
         <span class="crit-cell__value">${value.toFixed(1)}%</span>
     </div>`;
+}
+
+function unknownValueIcon(label = "Valeur inconnue") {
+    return `<span class="value-unknown-icon" title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">
+        <i class="fas fa-circle-question" aria-hidden="true"></i>
+    </span>`;
 }
 
 function statutLabel(crit) {
