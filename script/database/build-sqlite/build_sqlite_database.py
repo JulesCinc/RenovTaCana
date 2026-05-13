@@ -393,6 +393,9 @@ def main():
     can_rows = can_df.replace({np.nan: None}).to_numpy().tolist()
     cur.executemany(can_sql, can_rows)
 
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_can_commune ON canalisations(commune)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_can_adresse_commune ON canalisations(adresse, commune)")
+
     # --- Table chantiers depuis Excel ---
     cur.execute(
         """
@@ -470,6 +473,9 @@ def main():
         )
     else:
         print("Attention: fichier manquant", OPERATIONS_XLSX)
+
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_ch_commune_etat ON chantiers(commune, etat)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_op_commune_annee ON operations(commune, annee)")
 
     # --- Table communes (libellés INSEE + codes postaux, sans API gouv) ---
     if os.path.exists(GEO_LOCALISATION_SQL):

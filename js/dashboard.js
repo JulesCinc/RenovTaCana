@@ -9,6 +9,71 @@ let planPage = 1;
 const PLAN_PAGE_SIZE = 50;
 const COMMUNE_LABELS = new Map();
 
+/** Cache localStorage plan de travaux (affichage immédiat même « périmé », refresh réseau en arrière-plan). */
+const DASH_CACHE_VER = 2;
+const DASH_CACHE_PREFIX = `rtc_dash_v${DASH_CACHE_VER}_`;
+
+let planTableOffset = 0;
+
+function dashStableHash(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h.toString(16);
+}
+
+/** Entrée cache plan si la query `qs` correspond (on n’impose pas le TTL pour l’affichage : stale-while-revalidate). */
+function readDashPlanEntry(cacheKey, qs) {
+    try {
+        const raw = localStorage.getItem(cacheKey);
+        if (!raw) return null;
+        const o = JSON.parse(raw);
+        if (!o || o.qs !== qs || !o.payload) return null;
+        return o;
+    } catch (_) {
+        return null;
+    }
+}
+
+function localStorageRemoveKeys(predicate) {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && predicate(k)) localStorage.removeItem(k);
+    }
+}
+
+function writeDashCache(key, fields) {
+    const blob = JSON.stringify({ t: Date.now(), ...fields });
+    const trySet = () => localStorage.setItem(key, blob);
+    try {
+        trySet();
+    } catch (e) {
+        if (e.name === "QuotaExceededError" || e.code === 22) {
+            try {
+                localStorageRemoveKeys(k => k.startsWith(DASH_CACHE_PREFIX) && k.includes("_plan_"));
+                trySet();
+            } catch (_) {
+                try {
+                    // Libère souvent de la place (cache pagination index)
+                    localStorageRemoveKeys(k => k.includes("_canal_"));
+                    trySet();
+                } catch (_) { /* ignore */ }
+            }
+        }
+    }
+}
+
+function buildPlanTravauxQueryString(commune, offset) {
+    const params = new URLSearchParams({
+        limit: String(PLAN_PAGE_SIZE),
+        offset: String(offset),
+    });
+    if (commune) params.append("commune", commune);
+    return params.toString();
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     // Paralléliser : le temps perçu ≈ le plus lent des trois, pas la somme (avant c’était séquentiel).
     await Promise.all([
@@ -150,21 +215,49 @@ function renderAnnees(data) {
 }
 
 // ── Plan de travaux ───────────────────────────────────────
+async function refreshPlanTravauxInBackground(cacheKey, qs, offset) {
+    try {
+        const res = await fetch(`${API}/api/plan-travaux?${qs}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        if (buildPlanTravauxQueryString(planCommune, offset) !== qs) return;
+        writeDashCache(cacheKey, { qs, payload: json });
+        planData = json.rues || [];
+        await hydrateCommuneLabels(planData.map(r => r.commune));
+        planTableOffset = offset;
+        renderPlanTable(planData, offset);
+    } catch (_) { /* garder l’affichage actuel */ }
+}
+
 async function loadPlanTravaux(commune, offset = 0) {
     const tbody = document.getElementById("plan-body");
     if (!tbody) return;
+
+    const qs = buildPlanTravauxQueryString(commune, offset);
+    const cacheKey = `${DASH_CACHE_PREFIX}plan_${dashStableHash(qs)}`;
+    const cached = readDashPlanEntry(cacheKey, qs);
+
+    if (cached && cached.payload) {
+        planData = cached.payload.rues || [];
+        planTableOffset = offset;
+        await hydrateCommuneLabels(planData.map(r => r.commune));
+        renderPlanTable(planData, offset);
+        void refreshPlanTravauxInBackground(cacheKey, qs, offset);
+        return;
+    }
+
     tbody.innerHTML = `<tr class="row-loading"><td colspan="10">Chargement…</td></tr>`;
 
     try {
-        const params = new URLSearchParams({ limit: PLAN_PAGE_SIZE, offset });
-        if (commune) params.append("commune", commune);
-
-        const res  = await fetch(`${API}/api/plan-travaux?${params}`);
+        const res = await fetch(`${API}/api/plan-travaux?${qs}`);
+        if (!res.ok) throw new Error(String(res.status));
         const json = await res.json();
-        planData   = json.rues || [];
+        writeDashCache(cacheKey, { qs, payload: json });
+        planData = json.rues || [];
+        planTableOffset = offset;
         await hydrateCommuneLabels(planData.map(r => r.commune));
         renderPlanTable(planData, offset);
-    } catch(e) {
+    } catch (e) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">Erreur chargement</td></tr>`;
     }
 }
@@ -177,7 +270,8 @@ function renderPlanTable(data, offset = 0) {
     }
     tbody.innerHTML = data.map((r, i) => {
         const rang = offset + i + 1;
-        const scorePct = Math.min(r.score_max, 100);
+        const scoreVal = r.score_max ?? r.avg_score ?? 0;
+        const scorePct = Math.min(Number(scoreVal) || 0, 100);
         const critCls = r.crit_moy >= 70 ? "table-pill--danger" : r.crit_moy >= 40 ? "table-pill--warning" : "table-pill--success";
         const mats = (r.materiaux || "").split(",").slice(0, 2).join(", ");
         const communeCode = normalizeCommuneCode(r.commune);
@@ -190,7 +284,7 @@ function renderPlanTable(data, offset = 0) {
             <td style="width:120px">
                 <div class="score-pill">
                     <div class="score-bar"><div class="score-bar__fill" style="width:${scorePct}%"></div></div>
-                    <span style="font-size:0.8rem;color:var(--c-text)">${r.score_max}</span>
+                    <span style="font-size:0.8rem;color:var(--c-text)">${scoreVal}</span>
                 </div>
             </td>
             <td style="width:90px"><span class="table-pill ${critCls}">${r.crit_moy}%</span></td>
@@ -242,6 +336,10 @@ async function loadCommunes() {
                 opt.textContent = COMMUNE_LABELS.get(opt.value) || opt.textContent;
             }
         }
+        if (planData.length) {
+            await hydrateCommuneLabels(planData.map(r => r.commune));
+            renderPlanTable(planData, planTableOffset);
+        }
     } catch(e) {}
 }
 
@@ -287,7 +385,7 @@ async function exportPlanCSV() {
                          "Criticité moy. (%)","Fuites totales","Longueur (m)","Matériaux"];
         const rows = data.map((r, i) => [
             i+1, r.adresse, (COMMUNE_LABELS.get(normalizeCommuneCode(r.commune)) || normalizeCommuneCode(r.commune) || ""), r.nb_canalisations,
-            r.score_max, r.crit_moy, r.total_fuites, r.longueur_tot, r.materiaux
+            r.score_max ?? r.avg_score, r.crit_moy, r.total_fuites, r.longueur_tot, r.materiaux
         ]);
         const csv  = [headers, ...rows].map(r => r.map(v => `"${v ?? ""}"`).join(",")).join("\n");
         const blob = new Blob(["\uFEFF"+csv], { type: "text/csv;charset=utf-8;" });

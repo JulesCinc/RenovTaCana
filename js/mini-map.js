@@ -2,6 +2,54 @@
  * mini-map.js - Mini heatmap sur page index
  */
 (function () {
+    const MINI_GEO_CACHE_VER = 1;
+    const MINI_GEO_CACHE_TTL_MS = 10 * 60 * 1000;
+    const MINI_GEO_CACHE_KEY = `rtc_mini_v${MINI_GEO_CACHE_VER}_geojson_canalisations`;
+
+    function readMiniGeoCache() {
+        try {
+            const raw = localStorage.getItem(MINI_GEO_CACHE_KEY);
+            if (!raw) return null;
+            const o = JSON.parse(raw);
+            if (!o || typeof o.t !== "number" || !o.payload) return null;
+            if (Date.now() - o.t > MINI_GEO_CACHE_TTL_MS) return null;
+            if (!Array.isArray(o.payload.features)) return null;
+            return o;
+        } catch (_) {
+            return null;
+        }
+    }
+
+    function writeMiniGeoCache(payload) {
+        try {
+            localStorage.setItem(MINI_GEO_CACHE_KEY, JSON.stringify({ t: Date.now(), payload }));
+        } catch (e) {
+            if (e.name === "QuotaExceededError" || e.code === 22) {
+                try {
+                    localStorage.removeItem(MINI_GEO_CACHE_KEY);
+                } catch (_) { /* ignore */ }
+            }
+        }
+    }
+
+    /** Empreinte légère pour éviter un second `renderFeatures` (très coûteux) si l’API renvoie le même jeu. */
+    function miniGeoFeaturesSig(features) {
+        if (!features?.length) return "0";
+        const n = features.length;
+        let h = 2166136261 >>> 0;
+        h ^= n;
+        h = Math.imul(h, 16777619) >>> 0;
+        const step = Math.max(1, Math.floor(n / 800));
+        for (let i = 0; i < n; i += step) {
+            const id = String(features[i]?.properties?.id ?? "");
+            for (let j = 0; j < id.length; j++) {
+                h ^= id.charCodeAt(j);
+                h = Math.imul(h, 16777619) >>> 0;
+            }
+        }
+        return `${n}:${h.toString(16)}`;
+    }
+
     function geoJsonCanalisationsUrl() {
         return (window.__RTC_API_BASE__ || "http://127.0.0.1:8000") + "/api/geojson/canalisations";
     }
@@ -23,17 +71,43 @@
             attributionControl: false,
             // Laisse le scroll de la page prioritaire sur la mini-carte.
             scrollWheelZoom: false,
+            preferCanvas: true,
         });
 
         applyMiniMapTheme();
         observeThemeChanges();
 
+        const cached = readMiniGeoCache();
+        let showedCache = false;
+        if (cached?.payload?.features?.length) {
+            renderFeatures(cached.payload.features);
+            showedCache = true;
+            // Laisser une frame se peindre avant le fetch (réseau + JSON hors fil principal court).
+            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        }
+
         try {
             const res = await fetch(geoJsonCanalisationsUrl());
+            if (!res.ok) throw new Error(String(res.status));
             const data = await res.json();
             const features = data.features || [];
-            renderFeatures(features);
-        } catch (e) {}
+            const cachedFeats = showedCache && cached?.payload?.features
+                ? cached.payload.features
+                : null;
+            const unchanged = cachedFeats
+                && miniGeoFeaturesSig(features) === miniGeoFeaturesSig(cachedFeats);
+            if (!unchanged) {
+                writeMiniGeoCache({
+                    type: data.type || "FeatureCollection",
+                    features,
+                });
+                renderFeatures(features);
+            }
+        } catch (e) {
+            if (!showedCache) {
+                /* carte vide ou ancienne couche absente : rien à afficher */
+            }
+        }
     }
 
     function renderFeatures(features) {

@@ -76,7 +76,7 @@ def get_plan_travaux(
         SELECT adresse, commune,
                COUNT(*) as nb_canalisations,
                ROUND(AVG(criticite),1) as crit_moy,
-               ROUND(AVG({priority_score}),2) as avg_score,
+               ROUND(AVG({priority_score}),2) as score_max,
                CAST(SUM(nb_fuites) AS INTEGER) as total_fuites,
                ROUND(SUM(longueur),0) as longueur_tot,
                GROUP_CONCAT(DISTINCT materiau) as materiaux,
@@ -84,7 +84,7 @@ def get_plan_travaux(
         FROM canalisations
         WHERE {where}
         GROUP BY adresse, commune
-        ORDER BY avg_score DESC
+        ORDER BY score_max DESC
         LIMIT ? OFFSET ?
         """,
         params + [limit, offset],

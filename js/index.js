@@ -6,8 +6,8 @@
 const API        = window.__RTC_API_BASE__ || "http://127.0.0.1:8000";
 const PAGE_SIZE  = 100;
 
-/** Cache localStorage (réutilisable après F5 / nouvelle navigation, TTL court + refresh réseau). */
-const INDEX_CACHE_VER = 3;
+/** Cache localStorage (filtres/stats ; liste canalisations = page 1 seule, une entrée max). */
+const INDEX_CACHE_VER = 4;
 const INDEX_CACHE_TTL_MS = 10 * 60 * 1000; // 10 min
 const INDEX_CACHE_PREFIX = `rtc_idx_v${INDEX_CACHE_VER}_`;
 
@@ -48,6 +48,84 @@ function writeIndexCache(key, fields) {
             } catch (_) { /* ignore */ }
         }
     }
+}
+
+/** Ne garde qu’une entrée liste canalisations (dernière page 1) pour limiter le quota. */
+function pruneCanalCacheExcept(keepKey) {
+    try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const k = localStorage.key(i);
+            if (!k || !k.startsWith(INDEX_CACHE_PREFIX) || !k.includes("_canal_")) continue;
+            if (k !== keepKey) localStorage.removeItem(k);
+        }
+    } catch (_) { /* ignore */ }
+}
+
+/** Réponses liste canalisations en RAM (même filtres/tri), pour pagination instantanée. */
+const CANAL_PAGE_MEMORY = new Map();
+let lastCanalListSessionKey = "";
+let canalPrefetchGen = 0;
+/** Au-delà, les pages restantes se chargent à la demande (évite de saturer le réseau). */
+const CANAL_PREFETCH_MAX_PAGES = 50;
+const CANAL_PREFETCH_PARALLEL = 3;
+
+function getCanalListSessionKey() {
+    const u = new URLSearchParams(buildQueryParams(1));
+    u.delete("offset");
+    return u.toString();
+}
+
+function canalMemoryKey(sessionKey, page) {
+    return `${sessionKey}|p${page}`;
+}
+
+async function prefetchCanalListPages(sessionKey, totalHint, gen) {
+    const total = Math.max(0, Number(totalHint) || 0);
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    const maxPage = Math.min(totalPages, CANAL_PREFETCH_MAX_PAGES);
+    const pages = [];
+    for (let p = 2; p <= maxPage; p++) {
+        const mk = canalMemoryKey(sessionKey, p);
+        if (!CANAL_PAGE_MEMORY.has(mk)) pages.push(p);
+    }
+    const worker = async () => {
+        for (;;) {
+            if (gen !== canalPrefetchGen) return;
+            if (getCanalListSessionKey() !== sessionKey) return;
+            const p = pages.pop();
+            if (p == null) return;
+            const mk = canalMemoryKey(sessionKey, p);
+            if (CANAL_PAGE_MEMORY.has(mk)) continue;
+            try {
+                const q = buildQueryParams(p);
+                const res = await fetch(`${API}/api/canalisations?${q}`);
+                if (!res.ok) continue;
+                const json = await res.json();
+                if (gen !== canalPrefetchGen) return;
+                if (getCanalListSessionKey() !== sessionKey) return;
+                CANAL_PAGE_MEMORY.set(mk, json);
+            } catch (_) { /* ignore */ }
+        }
+    };
+    await Promise.all(Array.from({ length: CANAL_PREFETCH_PARALLEL }, () => worker()));
+}
+
+/** Après affichage depuis le cache disque page 1 : rafraîchir puis précharger les autres pages. */
+async function refreshCanalPage1InBackground(query, cacheKey, sessionKey, gen) {
+    try {
+        const res = await fetch(`${API}/api/canalisations?${query}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        if (gen !== canalPrefetchGen) return;
+        if (getCanalListSessionKey() !== sessionKey) return;
+        CANAL_PAGE_MEMORY.set(canalMemoryKey(sessionKey, 1), json);
+        if (cacheKey) {
+            pruneCanalCacheExcept(cacheKey);
+            writeIndexCache(cacheKey, { qs: query, payload: json });
+        }
+        if (currentPage === 1) applyCanalisationsListPayload(json);
+        void prefetchCanalListPages(sessionKey, json.total || 0, gen);
+    } catch (_) { /* ignore */ }
 }
 
 function clearSelectKeepFirst(sel) {
@@ -339,28 +417,51 @@ function applyCanalisationsListPayload(json) {
 async function fetchPage(page) {
     currentPage = page;
     const tbody = document.getElementById("table-body");
-    const query = buildQueryParams(page);
-    const cacheKey = `${INDEX_CACHE_PREFIX}canal_${indexCacheStableHash(query)}`;
-    const cached = readIndexCache(cacheKey);
+    const sessionKey = getCanalListSessionKey();
+    if (sessionKey !== lastCanalListSessionKey) {
+        lastCanalListSessionKey = sessionKey;
+        canalPrefetchGen++;
+        CANAL_PAGE_MEMORY.clear();
+    }
+    const myGen = canalPrefetchGen;
 
-    let hadStale = false;
-    if (cached && cached.qs === query && cached.payload) {
-        applyCanalisationsListPayload(cached.payload);
-        hadStale = true;
-    } else {
-        tbody.innerHTML = `<tr class="row-loading"><td colspan="10">Chargement…</td></tr>`;
+    const query = buildQueryParams(page);
+    const memKey = canalMemoryKey(sessionKey, page);
+    const memPayload = CANAL_PAGE_MEMORY.get(memKey);
+    if (memPayload) {
+        applyCanalisationsListPayload(memPayload);
+        return;
     }
 
+    const useCanalCache = page === 1;
+    const cacheKey = useCanalCache ? `${INDEX_CACHE_PREFIX}canal_${indexCacheStableHash(query)}` : null;
+    const lsCached = useCanalCache && cacheKey ? readIndexCache(cacheKey) : null;
+
+    if (useCanalCache && lsCached && lsCached.qs === query && lsCached.payload) {
+        applyCanalisationsListPayload(lsCached.payload);
+        CANAL_PAGE_MEMORY.set(memKey, lsCached.payload);
+        void prefetchCanalListPages(sessionKey, lsCached.payload.total || 0, myGen);
+        void refreshCanalPage1InBackground(query, cacheKey, sessionKey, myGen);
+        return;
+    }
+
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="10">Chargement…</td></tr>`;
+
     try {
-        const res  = await fetch(`${API}/api/canalisations?${query}`);
+        const res = await fetch(`${API}/api/canalisations?${query}`);
+        if (!res.ok) throw new Error(String(res.status));
         const json = await res.json();
-        writeIndexCache(cacheKey, { qs: query, payload: json });
-        applyCanalisationsListPayload(json);
-    } catch (e) {
-        if (hadStale && cached && cached.qs === query && cached.payload) {
-            applyCanalisationsListPayload(cached.payload);
-            return;
+        if (myGen !== canalPrefetchGen) return;
+        if (getCanalListSessionKey() !== sessionKey) return;
+
+        CANAL_PAGE_MEMORY.set(memKey, json);
+        if (useCanalCache && cacheKey) {
+            pruneCanalCacheExcept(cacheKey);
+            writeIndexCache(cacheKey, { qs: query, payload: json });
         }
+        applyCanalisationsListPayload(json);
+        if (page === 1) void prefetchCanalListPages(sessionKey, json.total || 0, myGen);
+    } catch (e) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">
             ⚠️ Serveur non disponible — lancez <code>uvicorn main:app --reload</code>
         </td></tr>`;
