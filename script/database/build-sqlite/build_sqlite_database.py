@@ -4,6 +4,7 @@ Script RenovTaCana : construit la base SQLite applicative complete.
 Tables generees :
 - conduites (source shapefiles + enrichissements)
 - canalisations (schema API historique)
+- communes (noms + codes postaux depuis data/geo_localisation.sql, code INSEE via url villedereve)
 - chantiers (depuis data/chantiers.xlsx)
 - operations (depuis data/Operations.xlsx)
 
@@ -30,6 +31,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 PIPE_RANKING_CSV = os.path.join(DATA_DIR, "pipe_ranking_v1_clear.csv")
 CHANTIERS_XLSX = os.path.join(DATA_DIR, "chantiers.xlsx")
 OPERATIONS_XLSX = os.path.join(DATA_DIR, "Operations.xlsx")
+GEO_LOCALISATION_SQL = os.path.join(DATA_DIR, "geo_localisation.sql")
 OUT_DB = os.path.join(BASE_DIR, "database", "renovTaCana.db")
 OUTDATED_DIR = os.path.join(BASE_DIR, "database", "outdated")
 
@@ -469,6 +471,25 @@ def main():
     else:
         print("Attention: fichier manquant", OPERATIONS_XLSX)
 
+    # --- Table communes (libellés INSEE + codes postaux, sans API gouv) ---
+    if os.path.exists(GEO_LOCALISATION_SQL):
+        from geo_communes_import import import_communes_from_geo_sql
+
+        n_communes = import_communes_from_geo_sql(conn, GEO_LOCALISATION_SQL)
+        print(f"  communes (depuis geo_localisation.sql): {n_communes}")
+    else:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS communes (
+                code_insee TEXT PRIMARY KEY,
+                nom_standard TEXT NOT NULL,
+                codes_postaux TEXT
+            )
+            """
+        )
+        n_communes = 0
+        print("Attention: fichier manquant", GEO_LOCALISATION_SQL, "(table communes vide)")
+
     conn.commit()
     cur.execute("SELECT COUNT(*) FROM conduites")
     n_conduites = cur.fetchone()[0]
@@ -478,14 +499,17 @@ def main():
     n_chantiers = cur.fetchone()[0]
     cur.execute("SELECT COUNT(*) FROM operations")
     n_operations = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM communes")
+    n_communes = cur.fetchone()[0]
     conn.close()
 
-    print("Tables generees: conduites, canalisations, chantiers, operations.")
+    print("Tables generees: conduites, canalisations, communes, chantiers, operations.")
     print("Base SQLite prete pour utilisation backend / frontend.")
     print(f"  conduites: {n_conduites}")
     print(f"  canalisations: {n_canalisations}")
     print(f"  chantiers: {n_chantiers}")
     print(f"  operations: {n_operations}")
+    print(f"  communes: {n_communes}")
     return 0
 
 

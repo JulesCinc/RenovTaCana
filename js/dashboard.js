@@ -10,9 +10,12 @@ const PLAN_PAGE_SIZE = 50;
 const COMMUNE_LABELS = new Map();
 
 document.addEventListener("DOMContentLoaded", async function () {
-    await loadDashboard();
-    await loadCommunes();
-    await loadPlanTravaux("");
+    // Paralléliser : le temps perçu ≈ le plus lent des trois, pas la somme (avant c’était séquentiel).
+    await Promise.all([
+        loadDashboard(),
+        loadCommunes(),
+        loadPlanTravaux(""),
+    ]);
 
     on("plan-commune", "change", async function () {
         planCommune = val("plan-commune");
@@ -253,14 +256,8 @@ async function fetchCommuneLabel(code) {
     const normalized = normalizeCommuneCode(code);
     if (!normalized) return "";
     if (!/^\d{5}$/.test(normalized)) return normalized;
-    try {
-        const res = await fetch(`https://geo.api.gouv.fr/communes/${normalized}?fields=nom&format=json&geometry=centre`);
-        if (!res.ok) return normalized;
-        const json = await res.json();
-        return String(json?.nom || "").trim() || normalized;
-    } catch (_) {
-        return normalized;
-    }
+    // Libellés issus du backend (table `communes`) via /api/filtres — pas d’appel gouv ici.
+    return normalized;
 }
 
 async function hydrateCommuneLabels(codes) {
