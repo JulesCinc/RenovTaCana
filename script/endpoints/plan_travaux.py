@@ -37,7 +37,6 @@ def get_plan_travaux(
         ) AND EXISTS (
             SELECT 1 FROM operations o
             WHERE o.commune = canalisations.commune
-            AND o.etat NOT IN ('Terminé', 'Annulé')
             AND o.annee >= strftime('%Y', 'now')
         ) THEN (criticite * 0.8) + 0.2
         WHEN EXISTS (
@@ -52,7 +51,6 @@ def get_plan_travaux(
         WHEN EXISTS (
             SELECT 1 FROM operations o
             WHERE o.commune = canalisations.commune
-            AND o.etat NOT IN ('Terminé', 'Annulé')
             AND o.annee >= strftime('%Y', 'now')
         ) THEN (criticite * 0.8) + 0.1
         ELSE criticite * 0.8
