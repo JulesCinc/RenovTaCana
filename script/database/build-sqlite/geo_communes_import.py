@@ -10,8 +10,19 @@ Le champ `codes_postaux` sert de référence métier (mapping nom <-> CP) ; la c
 reste le code INSEE (colonne `commune` / INSEE des canalisations).
 """
 import re
+import sys
 
 INSEE_VILLEDEREVE = re.compile(r"villedereve\.fr/ville/(\d{5})(?:[-/?#\"']|$)", re.IGNORECASE)
+
+
+def _tqdm(iterable, **kwargs):
+    kwargs.setdefault("disable", not sys.stdout.isatty())
+    try:
+        from tqdm import tqdm as _tq
+
+        return _tq(iterable, **kwargs)
+    except ImportError:
+        return iterable
 
 
 def _parse_mysql_string(blob, start):
@@ -157,7 +168,12 @@ def import_communes_from_geo_sql(conn, sql_path):
     batch = []
     n = 0
     with open(sql_path, encoding="utf-8", errors="replace") as f:
-        for code_insee, nom_standard, codes_postaux in iter_communes_from_geo_sql_lines(f):
+        for code_insee, nom_standard, codes_postaux in _tqdm(
+            iter_communes_from_geo_sql_lines(f),
+            desc="Import communes (SQL)",
+            unit="lig",
+            mininterval=0.2,
+        ):
             batch.append((code_insee, nom_standard, codes_postaux or None))
             n += 1
             if len(batch) >= 500:

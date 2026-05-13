@@ -67,18 +67,20 @@ Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn scri
 ## Prochaines étapes indispensables (Jalon 3)
 
 - Créer le script qui calcule le **score de priorité** pour chaque canalisation, puis renseigne `canalisations.score_priorite` dans `database/renovTaCana.db`.
-- Raccourcir les délais de chargement.
-- Trouver comment afficher la commune d'une canalisation (texte et non code).
+- Raccourcir les délais de chargement (il reste notamment à optimiser le chargement des **chantiers** et des **opérations**).
 - Compléter le document de suivi de projet, avec product backlog, suivi des sprints et jalonage.
 - Rajouter un bouton d'action sur `index.html` pour que lorsqu'on clique sur un bouton "map", cela affiche la canalisation dans la mini heatmap.
+- Optimiser l'affichage des adresses sur `index.html`.
+- Retrouver l'adresse des opérations (même processus que pour les chantiers : extraction / géocodage côté build ou équivalent).
 
 ## Association des tâches
 
 ```mermaid
 flowchart LR
     T[Tâche Jalon 3<br/>Créer le script de calcul du score de priorité] --> A[Assigné à : Jules CINC]
-    U1[Tâche Jalon 3<br/>Raccourcir les délais de chargement] --> U[Assigné à : Ulysse LONG]
-    U2[Tâche Jalon 3<br/>Afficher la commune d'une canalisation en texte] --> U
+    U1[Tâche Jalon 3<br/>Raccourcir les délais de chargement<br/>reste à optimiser chantiers et opérations] --> U[Assigné à : Ulysse LONG]
+    U2[Tâche Jalon 3<br/>Optimiser affichage des adresses sur index.html] --> U
+    U3[Tâche Jalon 3<br/>Adresse des opérations même processus que chantiers] --> U
     N1[Tâche Jalon 3<br/>Compléter le document de suivi de projet] --> N[Assigné à : Nicolas DEMARS]
     O1[Tâche Jalon 3<br/>Ajouter un bouton map sur index.html pour la mini heatmap] --> O[Assigné à : Oscar HUNAUT]
 ```

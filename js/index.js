@@ -719,7 +719,7 @@ async function fetchChantierPage(page) {
     chantierPage = page;
     const tbody = document.getElementById("chantiers-body");
     if (!tbody) return;
-    tbody.innerHTML = `<tr class="row-loading"><td colspan="5">Chargement…</td></tr>`;
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="6">Chargement…</td></tr>`;
     try {
         const offset = (page - 1) * PAGE_SIZE_CHANTIERS;
         const url = `${API}/api/chantiers?commune=${encodeURIComponent(chantierCommune)}&limit=${PAGE_SIZE_CHANTIERS}&offset=${offset}`;
@@ -730,14 +730,20 @@ async function fetchChantierPage(page) {
         setEl("chantiers-count", chantierTotal.toLocaleString("fr-FR"));
         renderTabPagination("chantiers-pagination", chantierPage, chantierTotal, PAGE_SIZE_CHANTIERS, fetchChantierPage);
     } catch(e) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="5">Données non disponibles</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="6">Données non disponibles</td></tr>`;
     }
+}
+
+function formatChantierAdresseCell(adresse) {
+    const s = adresse == null ? "" : String(adresse).trim();
+    if (s) return escapeHtml(s);
+    return `<span class="cell-adresse-empty" title="Adresse non renseignée" aria-label="Adresse non renseignée"><i class="fa-solid fa-minus" aria-hidden="true"></i></span>`;
 }
 
 function renderChantiers(data) {
     const tbody = document.getElementById("chantiers-body");
     if (!data.length) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="5">Aucun chantier trouvé pour cette zone</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="6">Aucun chantier trouvé pour cette zone</td></tr>`;
         return;
     }
     tbody.innerHTML = data.map(row => `
@@ -745,6 +751,7 @@ function renderChantiers(data) {
             <td class="cell-id">${row.num_op}</td>
             <td>${row.libelle || "—"}</td>
             <td>${row.commune}</td>
+            <td class="cell-adresse">${formatChantierAdresseCell(row.adresse)}</td>
             <td><span class="table-pill ${etatClass(row.etat)}">${row.etat}</span></td>
             <td>${row.date_debut} → ${row.date_fin}</td>
         </tr>

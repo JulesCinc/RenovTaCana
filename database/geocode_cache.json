@@ -1,1255 +1,655 @@
 {
-  "rue commandant cahuzac, saint-laurent-du-var, france": [
-    43.6604303,
-    7.1854852
-  ],
-  "corniche d'agrimont, saint-laurent-du-var, france": [
-    43.6709399,
-    7.1839807
-  ],
-  "avenue caqueray, saint-martin-vésubie, france": [
-    44.0703201,
-    7.2545907
-  ],
-  "route de la colmiane, saint-martin-vésubie, france": [
-    44.0761918,
-    7.2417811
-  ],
-  "route du pont charles albert, le broc, france": [
-    43.836201,
-    7.1721263
-  ],
-  "route de l'energie, bonson, france": [
-    43.851339,
-    7.1946192
-  ],
-  "route de revest, gilette, france": [
-    43.8523866,
-    7.1645857
-  ],
-  "route de gilette, gilette, france": [
-    43.8485991,
-    7.1650794
-  ],
-  "chemin du contéo, nice, france": [
-    43.7153486,
-    7.307116
-  ],
-  "chemin puy d'auron, saint-étienne-de-tinée, france": [
-    44.2302229,
-    6.9298169
-  ],
-  "chemin de l'ibac, colomars, france": [
-    43.7424607,
-    7.2204812
-  ],
-  "avenue des pins, vence, france": [
-    43.7180533,
-    7.1038497
-  ],
-  "chemin de crémat, nice, france": [
-    43.7165089,
-    7.1966016
-  ],
-  "route de nice, aspremont, france": [
-    43.7847154,
-    7.2440691
-  ],
-  "chemin de bezaudun, gattières, france": [
-    43.7587447,
-    7.1652846
-  ],
-  "chemin du pilon, nice, france": [
-    43.8036792,
-    7.3217857
-  ],
-  "chemin des camps dalmas, gattières, france": [
-    43.7602123,
-    7.1845393
-  ],
-  "avenue des chênes, vence, france": [
-    43.7193336,
-    7.1016347
-  ],
-  "chemin de la sine, vence, france": [
-    43.7094566,
-    7.0954828
-  ],
-  "chemin de l'ormée, vence, france": [
-    43.7298329,
-    7.0901136
-  ],
-  "boulevard de l'observatoire, nice, france": [
-    43.7268365,
-    7.2949076
-  ],
-  "chemin du collet des fourniers, nice, france": [
-    43.7391103,
-    7.214053
-  ],
-  "avenue panéra, nice, france": [
-    43.7428248,
-    7.2482788
-  ],
-  "chemin de sidonie, saint-laurent-du-var, france": [
-    43.6901958,
-    7.1826686
-  ],
-  "avenue musso, nice, france": [
-    43.7327631,
-    7.2711486
-  ],
-  "chemin des salles, cagnes-sur-mer, france": [
-    43.6819593,
-    7.1449217
-  ],
-  "route de colomars, aspremont, france": [
-    43.7685478,
-    7.2365906
-  ],
-  "avenue pauliani, nice, france": [
-    43.7049998,
-    7.2796011
-  ],
-  "route d'aspremont, tourrette-levens, france": [
-    43.7911153,
-    7.2734194
-  ],
-  "rue des mas de l'adrech, saint-martin-du-var, france": [
-    43.8251569,
-    7.1904325
-  ],
-  "impasse des collettes, cagnes-sur-mer, france": [
-    43.6722844,
-    7.1580938
-  ],
-  "avenue des acacias, cagnes-sur-mer, france": [
-    43.6617544,
-    7.1364238
-  ],
-  "impasse jean moulin, cagnes-sur-mer, france": [
-    43.6633801,
-    7.1563098
-  ],
-  "rue jeanne jugan, nice, france": [
-    43.7107473,
-    7.2811598
-  ],
-  "avenue lympia, nice, france": [
-    43.6959841,
-    7.2886202
-  ],
-  "avenue jean de la fontaine, nice, france": [
-    43.727895,
-    7.2688691
-  ],
-  "avenue denis semeria, saint-jean-cap-ferrat, france": [
-    43.6918585,
-    7.3292082
-  ],
-  "avenue louis ravet, saint-laurent-du-var, france": [
-    43.6689553,
-    7.1824321
-  ],
-  "chemin des rascas, saint-laurent-du-var, france": [
-    43.6799441,
-    7.1864793
-  ],
-  "route des pugets, saint-laurent-du-var, france": [
-    43.684111,
-    7.1855858
-  ],
-  "route de la baronne, la gaude, france": [
-    43.7201465,
-    7.1791269
-  ],
-  "route de la baronne, gattières, france": [
-    43.7563561,
-    7.1855769
-  ],
-  "allée des pruniers, cagnes-sur-mer, france": [
-    43.6695617,
-    7.1695994
-  ],
-  "chemin des gros buaux, cagnes-sur-mer, france": [
-    43.6724542,
-    7.1707188
-  ],
-  "chemin du grec, drap, france": [
-    43.7514211,
-    7.3295089
-  ],
-  "chemin de la petite source, nice, france": [
-    43.7076558,
-    7.2511888
-  ],
-  "impasse des genêts, cagnes-sur-mer, france": [
-    43.6689504,
-    7.1710757
-  ],
-  "avenue des mimosas, cagnes-sur-mer, france": [
-    43.6575681,
-    7.1769899
-  ],
-  "rue des roses, nice, france": [
-    43.7153412,
-    7.2592404
-  ],
-  "avenue paul cézanne, cagnes-sur-mer, france": [
-    43.6670841,
-    7.1609242
-  ],
-  "chemin du lazaret, villefranche-sur-mer, france": [
-    43.6965238,
-    7.3065098
-  ],
-  "rue ladoumegue, cagnes-sur-mer, france": [
-    43.6583567,
-    7.1579384
-  ],
-  "corniche fleurie, nice, france": [
-    43.683826,
-    7.2126331
-  ],
-  "rue de france, nice, france": [
-    43.6938248,
-    7.2518869
-  ],
-  "avenue des grenouillères, nice, france": [
-    43.6673572,
-    7.2128146
-  ],
-  "rue du port, beaulieu-sur-mer, france": [
-    43.7074378,
-    7.3340503
-  ],
-  "avenue sainte marguerite, nice, france": [
-    43.6772798,
-    7.2254987
-  ],
-  "avenue notre-dame, nice, france": [
-    43.7042428,
-    7.268744
-  ],
-  "rue gauthier roux, nice, france": [
-    43.7223365,
-    7.285444
-  ],
-  "place des tilleuls, belvédère, france": [
-    44.0154794,
-    7.319741
-  ],
-  "boulevard joseph garnier, nice, france": [
-    43.7101119,
-    7.2609252
-  ],
-  "rue maréchal vauban, nice, france": [
-    43.7115848,
-    7.2865161
-  ],
-  "rue jean-pierre papon, nice, france": [
-    43.7013918,
-    7.2825692
-  ],
-  "rue molière, nice, france": [
-    43.7129861,
-    7.2602636
-  ],
-  "avenue des magnolias, nice, france": [
-    43.679613,
-    7.2211179
-  ],
-  "rue louis garneray, nice, france": [
-    43.7061809,
-    7.293691
-  ],
-  "rue de la calade, la bollène-vésubie, france": [
-    43.9895959,
-    7.3299947
-  ],
-  "avenue de cuverville, nice, france": [
-    43.7267724,
-    7.2575015
-  ],
-  "rue des orangers, nice, france": [
-    43.713472,
-    7.2936899
-  ],
-  "avenue joseph durandy, nice, france": [
-    43.7187126,
-    7.2170387
-  ],
-  "avenue des diables bleus, nice, france": [
-    43.7083022,
-    7.2901017
-  ],
-  "avenue du haut-pays, tourrette-levens, france": [
-    43.768699,
-    7.2810839
-  ],
-  "avenue de la condamine, villefranche-sur-mer, france": [
-    43.7169691,
-    7.316818
-  ],
-  "avenue salonina, nice, france": [
-    43.7179674,
-    7.2758205
-  ],
-  "boulevard napoléon iii, nice, france": [
-    43.68402,
-    7.2238084
-  ],
-  "avenue jules romains, nice, france": [
-    43.74035,
-    7.2581719
-  ],
-  "chemin du canet, castagniers, france": [
-    43.7935335,
-    7.2334817
-  ],
-  "rue jacques barraja, saint-martin-vésubie, france": [
-    44.0684241,
-    7.2564394
-  ],
-  "avenue de verdun, la bollène-vésubie, france": [
-    43.9903056,
-    7.330584
-  ],
-  "rue du collet, belvédère, france": [
-    44.0160432,
-    7.3211379
-  ],
-  "avenue paroldi, belvédère, france": [
-    44.0160074,
-    7.3196463
-  ],
-  "rue voltaire, nice, france": [
-    43.6997533,
-    7.2701099
-  ],
-  "avenue des diables bleus, èze, france": [
-    43.7384688,
-    7.3879944
-  ],
-  "chemin vieux, falicon, france": [
-    43.7518892,
-    7.2701622
-  ],
-  "route felix garel, colomars, france": [
-    43.7580283,
-    7.2327241
-  ],
-  "rue edouard scoffier, nice, france": [
-    43.703935,
-    7.29216
-  ],
-  "chemin st pierre, la trinité, france": [
-    43.7471508,
-    7.3732071
-  ],
-  "avenue rené boylesve, nice, france": [
-    43.7167303,
-    7.2544453
-  ],
-  "place d'auron, saint-étienne-de-tinée, france": [
-    44.2249566,
-    6.9314898
-  ],
-  "rue de l'hôtel des postes, nice, france": [
-    43.6993598,
-    7.2708885
-  ],
-  "chemin de la colmiane, venanson, france": [
-    44.0535963,
-    7.2512849
-  ],
-  "avenue de rimiez, falicon, france": [
-    43.7433782,
-    7.2724337
-  ],
-  "chemin de saint-blaise, belvédère, france": [
-    44.0150863,
-    7.3268541
-  ],
-  "route de saint jeannet, saint-laurent-du-var, france": [
-    43.6914811,
-    7.1768932
-  ],
-  "avenue emile ripert, nice, france": [
-    43.7371044,
-    7.3038248
-  ],
-  "chemin de la lauvette, nice, france": [
-    43.7480149,
-    7.3079366
-  ],
-  "avenue du monastère, nice, france": [
-    43.7207595,
-    7.2765886
-  ],
-  "avenue gallin, nice, france": [
-    43.7179735,
-    7.2605728
-  ],
-  "avenue de l'arbre inférieur, nice, france": [
-    43.7110503,
-    7.2789823
-  ],
-  "avenue scudéri, nice, france": [
-    43.7287309,
-    7.2698725
-  ],
-  "rue des chevaliers de malte, nice, france": [
-    43.7242474,
-    7.2541499
-  ],
-  "rue parmentier, nice, france": [
-    43.7137792,
-    7.2581795
-  ],
-  "avenue villebois-mareuil, nice, france": [
-    43.7114602,
-    7.2728977
-  ],
-  "avenue monte croce, nice, france": [
-    43.7183564,
-    7.2760689
-  ],
-  "avenue cyrille besset, nice, france": [
-    43.7146702,
-    7.2615748
-  ],
-  "avenue de gien, nice, france": [
-    43.7087136,
-    7.2778543
-  ],
-  "chemin de cimiez, nice, france": [
-    43.715845,
-    7.2776744
-  ],
-  "rue du samint, belvédère, france": [
-    44.0147089,
-    7.3231419
-  ],
-  "chemin du mont des mignons, nice, france": [
-    43.7276367,
-    7.2932598
-  ],
-  "avenue abbé clary, tourrette-levens, france": [
-    43.7885172,
-    7.2647954
-  ],
-  "rue du planet, saint-étienne-de-tinée, france": [
-    44.2569879,
-    6.9250348
-  ],
-  "route de l'abadie, saint-andré-de-la-roche, france": [
-    43.7390874,
-    7.2926132
-  ],
-  "route de châteauneuf, châteauneuf-villevieille, france": [
-    43.807585,
-    7.2978232
-  ],
-  "rue anatole france, nice, france": [
-    43.7378091,
-    7.3030985
-  ],
-  "chemin de valrose, nice, france": [
-    43.7155256,
-    7.2642296
-  ],
-  "avenue des agaves, nice, france": [
-    43.7001892,
-    7.2359041
-  ],
-  "route de carros, gattières, france": [
-    43.7677788,
-    7.1738165
-  ],
-  "avenue villermont, nice, france": [
-    43.7094065,
-    7.264223
-  ],
-  "rue de villeneuve, nice, france": [
-    43.7067815,
-    7.261935
-  ],
-  "chemin de la destourbe, cagnes-sur-mer, france": [
-    43.6589102,
-    7.1500307
-  ],
-  "route de nice, saint-martin-vésubie, france": [
-    44.0579233,
-    7.2624766
-  ],
-  "avenue charles de caqueray, saint-martin-vésubie, france": [
-    44.0656198,
-    7.2572053
-  ],
-  "rue longue, saint-étienne-de-tinée, france": [
-    44.256912,
-    6.9256474
-  ],
-  "avenue de grasseuil, saint-jean-cap-ferrat, france": [
-    43.6979608,
-    7.3259458
-  ],
-  "voie romaine, nice, france": [
-    43.723567,
-    7.2817919
-  ],
-  "rue paul déroulède, nice, france": [
-    43.7006307,
-    7.2644993
-  ],
-  "rue galléan, nice, france": [
-    43.7033319,
-    7.2717485
-  ],
-  "voie au n, nice, france": [
-    43.6917078,
-    7.2009295
-  ],
-  "boulevard de la madeleine, nice, france": [
-    43.7188039,
-    7.2235026
-  ],
-  "chemin des oliviers, cap-d'ail, france": [
-    43.7227656,
-    7.4027211
-  ],
-  "rue georges ville, nice, france": [
-    43.7033264,
-    7.2836736
-  ],
-  "route du cimetière de l'est, nice, france": [
-    43.741621,
-    7.3072906
-  ],
-  "avenue stephen liégeard, nice, france": [
-    43.720917,
-    7.252488
-  ],
-  "rue de l'industrie, nice, france": [
-    43.7274071,
-    7.4132741
-  ],
-  "avenue emmanuel bridault, nice, france": [
-    43.7079378,
-    7.2660397
-  ],
-  "route de bellet, nice, france": [
-    43.6990639,
-    7.2351218
-  ],
-  "rue charles chauve, nice, france": [
-    43.6719253,
-    7.2243255
-  ],
-  "boulevard edouard vii, beaulieu-sur-mer, france": [
-    43.7114198,
-    7.3307368
-  ],
-  "avenue du général de gaulle, villefranche-sur-mer, france": [
-    43.7007757,
-    7.3075785
-  ],
-  "allée des roses, saint-jean-cap-ferrat, france": [
-    43.6863436,
-    7.3257004
-  ],
-  "avenue des orangers, saint-laurent-du-var, france": [
-    43.6645546,
-    7.195109
-  ],
-  "avenue de valombrose, nice, france": [
-    43.7252061,
-    7.279427
-  ],
-  "avenue mireio, nice, france": [
-    43.725643,
-    7.2766898
-  ],
-  "chemin ferdinand garino, nice, france": [
-    43.7356002,
-    7.2734037
-  ],
-  "chemin du faliconnet, falicon, france": [
-    43.7585856,
-    7.2647115
-  ],
-  "avenue edouard grinda, nice, france": [
-    43.6729818,
-    7.2201648
-  ],
-  "avenue de provence, vence, france": [
-    43.7282912,
-    7.1193474
-  ],
-  "rue fragonard, cagnes-sur-mer, france": [
-    43.6687585,
-    7.1589291
-  ],
-  "avenue tuilières, cagnes-sur-mer, france": [
-    43.6654075,
-    7.1550306
-  ],
-  "chemin de la costière, nice, france": [
-    43.7125924,
-    7.2312959
+  "allée de verdun, saint-martin-vésubie, france": [
+    44.0709029,
+    7.2553173
+  ],
+  "allée des bouleaux, cagnes-sur-mer, france": [
+    43.6533349,
+    7.1541473
+  ],
+  "allée des chênes, gattières, france": [
+    43.75421,
+    7.1607639
   ],
   "allée des cigales, saint-laurent-du-var, france": [
     43.6707667,
     7.1859132
   ],
-  "avenue brès, nice, france": [
-    43.7204246,
-    7.3031199
-  ],
-  "rue d'autun, nice, france": [
-    43.7076753,
-    7.2613563
-  ],
-  "chemin de la prairie, aspremont, france": [
-    43.7844637,
-    7.2509642
-  ],
-  "rue berlioz, nice, france": [
-    43.7004801,
-    7.2593982
-  ],
-  "boulevard françois grosso, nice, france": [
-    43.6984277,
-    7.2512706
-  ],
-  "avenue caravadossi, nice, france": [
-    43.7113607,
-    7.2666494
-  ],
-  "avenue shakespeare, nice, france": [
-    43.6997372,
-    7.2535669
-  ],
-  "rue saint-honoré, nice, france": [
-    43.6930813,
-    7.2402227
-  ],
-  "rue alberti, nice, france": [
-    43.6993171,
-    7.2720777
-  ],
-  "avenue de la lanterne, nice, france": [
-    43.6830934,
-    7.2179542
-  ],
-  "avenue de cannes, cagnes-sur-mer, france": [
-    43.6543623,
-    7.1486628
-  ],
-  "route de fuonmurade, le broc, france": [
-    43.8089202,
-    7.1670879
-  ],
-  "route sainte-marguerite, le broc, france": [
-    43.8178588,
-    7.1647418
-  ],
-  "boulevard rené cassin, nice, france": [
-    43.6698501,
-    7.2166021
-  ],
-  "boulevard franck pilatte, nice, france": [
-    43.6941351,
-    7.2880177
-  ],
-  "avenue charles boissier, saint-martin-vésubie, france": [
-    44.0885932,
-    7.252113
-  ],
-  "chemin hugues bérenguier, la gaude, france": [
-    43.7322437,
-    7.1482546
-  ],
-  "rue du pavillon, vence, france": [
-    43.7218111,
-    7.1100915
-  ],
-  "rue de l'abbaye, nice, france": [
-    43.6968337,
-    7.2751503
-  ],
-  "avenue pierre sauvaigo, saint-laurent-du-var, france": [
-    43.6630708,
-    7.1839705
-  ],
-  "impasse de l'emigra, carros, france": [
-    43.7869192,
-    7.2065545
-  ],
-  "boulevard maréchal juin, cagnes-sur-mer, france": [
-    43.661937,
-    7.1506389
-  ],
-  "avenue du 3 septembre, cap-d'ail, france": [
-    43.7259245,
-    7.4105583
-  ],
-  "avenue leopold, villefranche-sur-mer, france": [
-    43.7087082,
-    7.3140044
-  ],
   "allée des eucalyptus, vence, france": [
     43.7238843,
     7.0818386
-  ],
-  "rue des ponchettes, nice, france": [
-    43.6949956,
-    7.2782845
-  ],
-  "chemin des crêtes du mont boron, nice, france": [
-    43.6923683,
-    7.2944551
-  ],
-  "voie au, nice, france": [
-    43.6917078,
-    7.2009295
-  ],
-  "chemin des noisetiers, cagnes-sur-mer, france": [
-    43.6753472,
-    7.1697041
-  ],
-  "montée du coteau, cagnes-sur-mer, france": [
-    43.6612273,
-    7.1480646
-  ],
-  "route de casternou, châteauneuf-villevieille, france": [
-    43.8027132,
-    7.2862389
-  ],
-  "route de châteauneuf-villevieille, tourrette-levens, france": [
-    43.8130179,
-    7.2686059
-  ],
-  "corniche de magnan, nice, france": [
-    43.711563,
-    7.2368289
-  ],
-  "chemin du château de la ginestière, nice, france": [
-    43.706437,
-    7.2040257
-  ],
-  "avenue du mont alban, nice, france": [
-    43.701883,
-    7.2947828
-  ],
-  "avenue notre dame, nice, france": [
-    43.7042428,
-    7.268744
-  ],
-  "boulevard du mercantour, nice, france": [
-    43.7068799,
-    7.1882783
-  ],
-  "rue françois guisol, nice, france": [
-    43.700352,
-    7.2842093
-  ],
-  "rue frédéric passy, nice, france": [
-    43.6995774,
-    7.2559101
-  ],
-  "rue verdi, nice, france": [
-    43.699601,
-    7.2603721
-  ],
-  "rue jean baptiste spinetta, nice, france": [
-    43.6967826,
-    7.2520028
-  ],
-  "rue niepce, nice, france": [
-    43.7047675,
-    7.2689348
-  ],
-  "allée françois aragon, nice, france": [
-    43.6981541,
-    7.2798678
-  ],
-  "rue gutenberg, nice, france": [
-    43.7095702,
-    7.2584943
-  ],
-  "boulevard général louis delfino, nice, france": [
-    43.7057026,
-    7.2837028
-  ],
-  "avenue foch, vence, france": [
-    43.7232078,
-    7.1070308
-  ],
-  "avenue de l'hotel de ville, clans, france": [
-    43.9948943,
-    7.1475482
-  ],
-  "avenue auguste ghiraldi, clans, france": [
-    43.9975437,
-    7.1509389
-  ],
-  "rue gambetta, vence, france": [
-    43.7218877,
-    7.1125691
-  ],
-  "chemin de romegiero, saint-martin-vésubie, france": [
-    44.0546193,
-    7.2625958
-  ],
-  "route des vespins, saint-laurent-du-var, france": [
-    43.6602718,
-    7.180415
-  ],
-  "montée de verdun, falicon, france": [
-    43.7495012,
-    7.2773667
-  ],
-  "avenue de nice, cagnes-sur-mer, france": [
-    43.6574262,
-    7.1580564
-  ],
-  "allée des saules, cagnes-sur-mer, france": [
-    43.6617293,
-    7.1539074
-  ],
-  "chemin de la carrière, saint-jean-cap-ferrat, france": [
-    43.6798593,
-    7.3351516
-  ],
-  "rue jules ladoumegue, cagnes-sur-mer, france": [
-    43.6583567,
-    7.1579384
-  ],
-  "chemin du vieux village, tournefort, france": [
-    43.9460177,
-    7.1506873
-  ],
-  "chemin du val fleuri, cagnes-sur-mer, france": [
-    43.6703641,
-    7.1642602
-  ],
-  "passage renoir, cagnes-sur-mer, france": [
-    43.6658216,
-    7.1545999
-  ],
-  "promenade de la plage, cagnes-sur-mer, france": [
-    43.6534646,
-    7.1562473
-  ],
-  "chemin de la fontaine des boeufs, saint-jeannet, france": [
-    43.748021,
-    7.1384657
-  ],
-  "route de loda, lantosque, france": [
-    43.9547686,
-    7.3003303
-  ],
-  "route du rivet, lantosque, france": [
-    43.9739473,
-    7.3143509
-  ],
-  "chemin de saint antoine, clans, france": [
-    43.9940271,
-    7.1468472
-  ],
-  "chemin des glycines, cagnes-sur-mer, france": [
-    43.6584105,
-    7.1605479
-  ],
-  "chemin de vosgelade, vence, france": [
-    43.7182514,
-    7.1290771
-  ],
-  "rue joseph blanchi, saint-martin-vésubie, france": [
-    44.0673799,
-    7.2566219
-  ],
-  "allée de verdun, saint-martin-vésubie, france": [
-    44.0709029,
-    7.2553173
-  ],
-  "avenue de caqueray, saint-martin-vésubie, france": [
-    44.0656198,
-    7.2572053
-  ],
-  "boulevard philippe corniglion, la bollène-vésubie, france": [
-    43.9912621,
-    7.3334531
-  ],
-  "chemin du paraire, belvédère, france": [
-    44.0145946,
-    7.3210854
-  ],
-  "avenue général marcel paroldi, belvédère, france": [
-    44.0160074,
-    7.3196463
-  ],
-  "avenue de la liberté, èze, france": [
-    43.7219603,
-    7.3557532
-  ],
-  "avenue de la californie, nice, france": [
-    43.6776684,
-    7.2285626
-  ],
-  "promenade du martinet, saint-sauveur-sur-tinée, france": [
-    44.0843156,
-    7.1034637
-  ],
-  "avenue des mimosas, saint-laurent-du-var, france": [
-    43.6639418,
-    7.1952739
-  ],
-  "chemin du claout, tourrette-levens, france": [
-    43.7880791,
-    7.2712924
-  ],
-  "route de la roquette, levens, france": [
-    43.8474048,
-    7.2198271
-  ],
-  "rue edouard beri, nice, france": [
-    43.7034583,
-    7.2745792
-  ],
-  "chemin du souvenir, saint-andré-de-la-roche, france": [
-    43.7418319,
-    7.2866515
-  ],
-  "chemin de lombardie, saint-andré-de-la-roche, france": [
-    43.7403542,
-    7.2837986
-  ],
-  "chemin de la colle germaine, colomars, france": [
-    43.7499046,
-    7.2217168
-  ],
-  "route de la roquette, la roquette-sur-var, france": [
-    43.8474048,
-    7.2198271
-  ],
-  "rue alfred corniglion, roquebillière, france": [
-    44.0122495,
-    7.3067488
-  ],
-  "quai de la corderie, villefranche-sur-mer, france": [
-    43.6981019,
-    7.3067906
-  ],
-  "route de saint laurent, la gaude, france": [
-    43.7275986,
-    7.1695815
-  ],
-  "route des ribes, le broc, france": [
-    43.8184354,
-    7.173419
-  ],
-  "avenue borriglione, nice, france": [
-    43.8095416,
-    7.3162124
-  ],
-  "chemin sainte pétronille, la gaude, france": [
-    43.7187822,
-    7.1760463
-  ],
-  "avenue des chênes, cagnes-sur-mer, france": [
-    43.6611106,
-    7.1554133
-  ],
-  "passage lido, cagnes-sur-mer, france": [
-    43.6593328,
-    7.1710177
-  ],
-  "avenue maurice donat, cagnes-sur-mer, france": [
-    43.6610512,
-    7.143146
-  ],
-  "avenue du parc, cagnes-sur-mer, france": [
-    43.6562908,
-    7.1436748
-  ],
-  "chemin de l'abadie, saint-andré-de-la-roche, france": [
-    43.7511648,
-    7.2962016
   ],
   "allée des fauvettes, gattières, france": [
     43.7555732,
     7.1689759
   ],
-  "place amélie pollonais, villefranche-sur-mer, france": [
-    43.7029327,
-    7.3114717
+  "allée des jacinthes, cagnes-sur-mer, france": [
+    43.6619226,
+    7.174834
   ],
-  "rue du poilu, villefranche-sur-mer, france": [
-    43.7056127,
-    7.3126983
+  "allée des pins, cagnes-sur-mer, france": [
+    43.6572306,
+    7.1629225
   ],
-  "place d'anjou, villefranche-sur-mer, france": [
-    43.7042733,
-    7.3102146
+  "allée des pruniers, cagnes-sur-mer, france": [
+    43.6695617,
+    7.1695994
   ],
-  "place de la république, villefranche-sur-mer, france": [
-    43.703278,
-    7.3110233
+  "allée des roses, saint-jean-cap-ferrat, france": [
+    43.6863436,
+    7.3257004
   ],
-  "chemin du génie, colomars, france": [
-    43.7607294,
-    7.2284262
+  "allée des saules, cagnes-sur-mer, france": [
+    43.6617293,
+    7.1539074
   ],
-  "rue gambetta prolongée, vence, france": [
-    43.7199151,
-    7.1126574
+  "allée françois aragon, nice, france": [
+    43.6981541,
+    7.2798678
   ],
-  "rue du val gelé, saint-étienne-de-tinée, france": [
-    44.2567154,
-    6.9235982
+  "allée mala, cap-d'ail, france": [
+    43.7223481,
+    7.3928758
   ],
-  "chemin des rougières, carros, france": [
-    43.7783501,
-    7.1956154
+  "avenue abbé clary, tourrette-levens, france": [
+    43.7885172,
+    7.2647954
   ],
-  "avenue rhin et danube, vence, france": [
-    43.7237157,
-    7.0890763
+  "avenue alfred borriglione, nice, france": [
+    43.7125613,
+    7.261665
   ],
-  "route de saint-jeannet, saint-laurent-du-var, france": [
-    43.6914811,
-    7.1768932
+  "avenue antoine martin, nice, france": [
+    43.6858287,
+    7.2058523
   ],
-  "rue du bocage, cagnes-sur-mer, france": [
-    43.6559851,
-    7.1418349
+  "avenue auber, nice, france": [
+    43.6995362,
+    7.261344
   ],
-  "avenue des filagnes, saint-laurent-du-var, france": [
-    43.6772415,
-    7.1867459
+  "avenue auguste ghiraldi, clans, france": [
+    43.9975437,
+    7.1509389
   ],
-  "rue d'arménie, nice, france": [
-    43.7137793,
-    7.2249635
+  "avenue borriglione, nice, france": [
+    43.8095416,
+    7.3162124
   ],
-  "chemin de l'houmé, saint-jeannet, france": [
-    43.74376,
-    7.1572124
+  "avenue brès, nice, france": [
+    43.7204246,
+    7.3031199
   ],
-  "boulevard reine jeanne, vence, france": [
-    43.7179494,
-    7.1118862
+  "avenue caqueray, saint-martin-vésubie, france": [
+    44.0703201,
+    7.2545907
   ],
-  "chemin des castagniers, vence, france": [
-    43.7202138,
-    7.093073
+  "avenue caravadossi, nice, france": [
+    43.7113607,
+    7.2666494
   ],
-  "avenue rhin danube n, vence, france": [
-    43.7237157,
-    7.0890763
+  "avenue charles boissier, saint-martin-vésubie, france": [
+    44.0885932,
+    7.252113
   ],
-  "route de la baronne, saint-jeannet, france": [
-    43.7452728,
-    7.177587
+  "avenue charles buchet, nice, france": [
+    43.6690676,
+    7.2158763
   ],
-  "route de cagnes, la gaude, france": [
-    43.7115072,
-    7.1496016
+  "avenue charles de caqueray, saint-martin-vésubie, france": [
+    44.0656198,
+    7.2572053
   ],
-  "route des pugets n, saint-laurent-du-var, france": [
-    43.6850161,
-    7.1852372
+  "avenue claude debussy, nice, france": [
+    43.6855865,
+    7.200414
   ],
-  "square colonel jean-pierre, nice, france": [
-    43.7058633,
-    7.2586603
+  "avenue comba, nice, france": [
+    43.700468,
+    7.2556301
   ],
-  "place georges clémenceau, beaulieu-sur-mer, france": [
-    43.706641,
-    7.3312799
+  "avenue cyrille besset, nice, france": [
+    43.7146702,
+    7.2615748
   ],
-  "chemin de berthemont, saint-martin-vésubie, france": [
-    44.0497362,
-    7.284893
+  "avenue d'estienne d'orves, nice, france": [
+    43.7010049,
+    7.2527125
   ],
-  "route d'utelle, la tour, france": [
-    43.9427106,
-    7.1885962
+  "avenue de cannes, cagnes-sur-mer, france": [
+    43.6543623,
+    7.1486628
   ],
-  "route du bord de mer, saint-laurent-du-var, france": [
-    43.6612359,
-    7.1938602
+  "avenue de caqueray, saint-martin-vésubie, france": [
+    44.0656198,
+    7.2572053
   ],
-  "square bénès, saint-laurent-du-var, france": [
-    43.6710722,
-    7.190355
+  "avenue de cuverville, nice, france": [
+    43.7267724,
+    7.2575015
   ],
-  "avenue france outre-mer, saint-laurent-du-var, france": [
-    43.6591482,
-    7.191225
+  "avenue de fabron, nice, france": [
+    43.7067319,
+    7.2094694
   ],
-  "avenue jean aicard n, saint-laurent-du-var, france": [
-    43.6829701,
-    7.185372
+  "avenue de gairaut, nice, france": [
+    43.7309671,
+    7.2566023
   ],
-  "rue pierre lambert, saint-laurent-du-var, france": [
-    43.6744351,
-    7.1882739
+  "avenue de gien, nice, france": [
+    43.7087136,
+    7.2778543
   ],
-  "montée de la tour, saint-laurent-du-var, france": [
-    43.7076945,
-    7.1754746
+  "avenue de grasse, cagnes-sur-mer, france": [
+    43.6566399,
+    7.146819
   ],
-  "avenue du 11 novembre, saint-laurent-du-var, france": [
-    43.6727064,
-    7.1915163
+  "avenue de grasse- cagnes sur mer, cagnes-sur-mer, france": [
+    43.6566399,
+    7.146819
   ],
-  "avenue du général leclerc, saint-laurent-du-var, france": [
-    43.6739463,
-    7.1897577
+  "avenue de grasseuil, saint-jean-cap-ferrat, france": [
+    43.6979608,
+    7.3259458
   ],
-  "rue jules michel, saint-laurent-du-var, france": [
-    43.674139,
-    7.1889719
+  "avenue de l'arbre inférieur, nice, france": [
+    43.7110503,
+    7.2789823
   ],
-  "route de saint-jeannet du n, saint-laurent-du-var, france": [
-    43.6914811,
-    7.1768932
+  "avenue de l'hotel de ville, clans, france": [
+    43.9948943,
+    7.1475482
   ],
-  "chemin sainte pétronille, cagnes-sur-mer, france": [
-    43.6812865,
-    7.1722212
+  "avenue de la californie, nice, france": [
+    43.6776684,
+    7.2285626
   ],
-  "promenade du paillon, nice, france": [
-    43.6974111,
-    7.2717905
+  "avenue de la condamine, villefranche-sur-mer, france": [
+    43.7169691,
+    7.316818
   ],
-  "rue principale, ilonse, france": [
-    44.0319924,
-    7.1000191
+  "avenue de la gare, cap-d'ail, france": [
+    43.72116,
+    7.3964484
   ],
-  "chemin du siège, vence, france": [
-    43.7204889,
-    7.1202166
+  "avenue de la gaude n, cagnes-sur-mer, france": [
+    43.685677,
+    7.1495941
   ],
-  "chemin des serres, gattières, france": [
-    43.7573241,
-    7.1737544
+  "avenue de la lanterne, nice, france": [
+    43.6830934,
+    7.2179542
   ],
-  "rue du loup, carros, france": [
-    43.7703986,
-    7.1938589
+  "avenue de la liberté, èze, france": [
+    43.7219603,
+    7.3557532
   ],
-  "chemin du clos, saint-jeannet, france": [
-    43.7418817,
-    7.1481767
-  ],
-  "chemin du peyrouas, saint-jeannet, france": [
-    43.7491312,
-    7.1577128
-  ],
-  "promenade sainte-pétronille, saint-jeannet, france": [
-    43.7497368,
-    7.1480709
-  ],
-  "impasse de l'hôpital, saint-jeannet, france": [
-    43.7472145,
-    7.1413469
-  ],
-  "route de cagnes n, vence, france": [
-    43.713972,
-    7.1268074
-  ],
-  "avenue elise, vence, france": [
-    43.7232768,
-    7.1087629
+  "avenue de la roseraie, cagnes-sur-mer, france": [
+    43.660154,
+    7.1378647
   ],
   "avenue de la résistance, vence, france": [
     43.7230285,
     7.1079351
   ],
-  "avenue tuby, vence, france": [
-    43.7238458,
-    7.1071081
-  ],
-  "boulevard paul andre, vence, france": [
-    43.7234477,
-    7.1138349
-  ],
-  "avenue du général de gaulle, saint-laurent-du-var, france": [
-    43.6710945,
-    7.1906129
-  ],
-  "rue jean baptiste bermond, saint-laurent-du-var, france": [
-    43.6713146,
-    7.1911035
-  ],
   "avenue de nice n, cagnes-sur-mer, france": [
     43.6605661,
     7.1772018
   ],
-  "boulevard kennedy, cagnes-sur-mer, france": [
-    43.6515909,
-    7.1518218
+  "avenue de nice, cagnes-sur-mer, france": [
+    43.6574262,
+    7.1580564
   ],
-  "route de la gaude, saint-jeannet, france": [
-    43.7411751,
-    7.1463149
+  "avenue de pessicart, nice, france": [
+    43.7143289,
+    7.2488026
   ],
-  "route de nice, le broc, france": [
-    43.8056243,
-    7.1668727
+  "avenue de provence n, vence, france": [
+    43.7392403,
+    7.1332358
   ],
-  "chemin sainte-petronille, la gaude, france": [
-    43.7187822,
-    7.1760463
+  "avenue de provence, vence, france": [
+    43.7282912,
+    7.1193474
   ],
-  "chemin de la bastide, gattières, france": [
-    43.7670129,
-    7.1841454
+  "avenue de rimiez, falicon, france": [
+    43.7433782,
+    7.2724337
   ],
-  "chemin des launes, carros, france": [
-    43.7764027,
-    7.2025494
+  "avenue de suède, nice, france": [
+    43.6964989,
+    7.2656554
   ],
-  "rue ladoumègue, cagnes-sur-mer, france": [
-    43.6583567,
-    7.1579384
-  ],
-  "route des sauces, gattières, france": [
-    43.7563828,
-    7.1691338
-  ],
-  "route des plans, carros, france": [
-    43.7787216,
-    7.2024848
-  ],
-  "chemin des collines n, cagnes-sur-mer, france": [
-    43.6769211,
-    7.1320048
+  "avenue de valombrose, nice, france": [
+    43.7252061,
+    7.279427
   ],
   "avenue de verdun, cagnes-sur-mer, france": [
     43.6626022,
     7.1481366
   ],
-  "chemin auguste renoir, cagnes-sur-mer, france": [
-    43.6671045,
-    7.1578383
+  "avenue de verdun, la bollène-vésubie, france": [
+    43.9903056,
+    7.330584
   ],
-  "chemin des collettes n, cagnes-sur-mer, france": [
-    43.6660162,
-    7.1555495
+  "avenue denis semeria, saint-jean-cap-ferrat, france": [
+    43.6918585,
+    7.3292082
   ],
-  "rue des jonquilles, cagnes-sur-mer, france": [
-    43.6632329,
-    7.1630014
+  "avenue des acacias, cagnes-sur-mer, france": [
+    43.6617544,
+    7.1364238
+  ],
+  "avenue des agaves, nice, france": [
+    43.7001892,
+    7.2359041
+  ],
+  "avenue des blavets, saint-sauveur-sur-tinée, france": [
+    44.0835169,
+    7.1051591
   ],
   "avenue des bréguières n, cagnes-sur-mer, france": [
     43.6641264,
     7.1640835
+  ],
+  "avenue des chênes, cagnes-sur-mer, france": [
+    43.6611106,
+    7.1554133
+  ],
+  "avenue des chênes, vence, france": [
+    43.7193336,
+    7.1016347
+  ],
+  "avenue des citronniers, cagnes-sur-mer, france": [
+    43.6610341,
+    7.165691
+  ],
+  "avenue des diables bleus, nice, france": [
+    43.7083022,
+    7.2901017
+  ],
+  "avenue des diables bleus, èze, france": [
+    43.7384688,
+    7.3879944
+  ],
+  "avenue des filagnes, saint-laurent-du-var, france": [
+    43.6772415,
+    7.1867459
+  ],
+  "avenue des grenouillères, nice, france": [
+    43.6673572,
+    7.2128146
+  ],
+  "avenue des magnolias, nice, france": [
+    43.679613,
+    7.2211179
+  ],
+  "avenue des mimosas, cagnes-sur-mer, france": [
+    43.6575681,
+    7.1769899
+  ],
+  "avenue des mimosas, saint-laurent-du-var, france": [
+    43.6639418,
+    7.1952739
+  ],
+  "avenue des orangers, nice, france": [
+    43.6969892,
+    7.2519469
+  ],
+  "avenue des orangers, saint-laurent-du-var, france": [
+    43.6645546,
+    7.195109
+  ],
+  "avenue des pins, vence, france": [
+    43.7180533,
+    7.1038497
+  ],
+  "avenue des platanes, nice, france": [
+    43.7195132,
+    7.2512422
+  ],
+  "avenue docteur donat n, cagnes-sur-mer, france": [
+    43.6607562,
+    7.136826
+  ],
+  "avenue du 11 novembre, saint-laurent-du-var, france": [
+    43.6727064,
+    7.1915163
+  ],
+  "avenue du 3 septembre, cap-d'ail, france": [
+    43.7259245,
+    7.4105583
+  ],
+  "avenue du collet, saint-blaise, france": [
+    43.8213822,
+    7.2375665
+  ],
+  "avenue du docteur donat n, cagnes-sur-mer, france": [
+    43.6607525,
+    7.148006
+  ],
+  "avenue du docteur donat, cagnes-sur-mer, france": [
+    43.6607525,
+    7.148006
+  ],
+  "avenue du général de gaulle, cap-d'ail, france": [
+    43.7252724,
+    7.3999562
+  ],
+  "avenue du général de gaulle, saint-laurent-du-var, france": [
+    43.6710945,
+    7.1906129
+  ],
+  "avenue du général de gaulle, villefranche-sur-mer, france": [
+    43.7007757,
+    7.3075785
+  ],
+  "avenue du général leclerc, saint-laurent-du-var, france": [
+    43.6739463,
+    7.1897577
+  ],
+  "avenue du haut-pays, tourrette-levens, france": [
+    43.768699,
+    7.2810839
+  ],
+  "avenue du monastère, nice, france": [
+    43.7207595,
+    7.2765886
+  ],
+  "avenue du mont alban, nice, france": [
+    43.701883,
+    7.2947828
+  ],
+  "avenue du mont-alban, nice, france": [
+    43.7017571,
+    7.294438
+  ],
+  "avenue du parc, cagnes-sur-mer, france": [
+    43.6562908,
+    7.1436748
+  ],
+  "avenue du petit fabron, nice, france": [
+    43.6897401,
+    7.2384718
+  ],
+  "avenue du rond point, nice, france": [
+    43.6855709,
+    7.2321774
+  ],
+  "avenue du train des pignes, colomars, france": [
+    43.7642283,
+    7.2081643
+  ],
+  "avenue edouard grinda, nice, france": [
+    43.6729818,
+    7.2201648
+  ],
+  "avenue elise, vence, france": [
+    43.7232768,
+    7.1087629
+  ],
+  "avenue emile ripert, nice, france": [
+    43.7371044,
+    7.3038248
+  ],
+  "avenue emmanuel bridault, nice, france": [
+    43.7079378,
+    7.2660397
+  ],
+  "avenue fighiera, nice, france": [
+    43.7242149,
+    7.252417
+  ],
+  "avenue foch, vence, france": [
+    43.7232078,
+    7.1070308
+  ],
+  "avenue france outre-mer, saint-laurent-du-var, france": [
+    43.6591482,
+    7.191225
+  ],
+  "avenue frédéric mistral, saint-laurent-du-var, france": [
+    43.659989,
+    7.1895817
+  ],
+  "avenue gallin, nice, france": [
+    43.7179735,
+    7.2605728
+  ],
+  "avenue germaine, cagnes-sur-mer, france": [
+    43.6554058,
+    7.1495631
+  ],
+  "avenue géneral leclerc, cagnes-sur-mer, france": [
+    43.6588448,
+    7.1628595
+  ],
+  "avenue général de gaulle, drap, france": [
+    43.7613366,
+    7.3205431
+  ],
+  "avenue général marcel paroldi, belvédère, france": [
+    44.0160074,
+    7.3196463
+  ],
+  "avenue général olry, nice, france": [
+    43.7387548,
+    7.2999059
+  ],
+  "avenue henri dunant, nice, france": [
+    43.7240269,
+    7.2660899
+  ],
+  "avenue henri matisse, vence, france": [
+    43.7262206,
+    7.1094737
+  ],
+  "avenue henry musso, nice, france": [
+    43.7327631,
+    7.2711486
+  ],
+  "avenue jean aicard n, saint-laurent-du-var, france": [
+    43.6829701,
+    7.185372
+  ],
+  "avenue jean de la fontaine, nice, france": [
+    43.727895,
+    7.2688691
+  ],
+  "avenue jean mermoz, cagnes-sur-mer, france": [
+    43.6734106,
+    7.1524497
+  ],
+  "avenue jean mermoz, saint-jean-cap-ferrat, france": [
+    43.6878774,
+    7.3379965
+  ],
+  "avenue joseph durandy, nice, france": [
+    43.7187126,
+    7.2170387
+  ],
+  "avenue joseph revelli, nice, france": [
+    43.6939624,
+    7.2443779
+  ],
+  "avenue jules romains, nice, france": [
+    43.74035,
+    7.2581719
+  ],
+  "avenue le broc, le broc, france": [
+    43.8027949,
+    7.1897109
+  ],
+  "avenue leopold ii, villefranche-sur-mer, france": [
+    43.7087082,
+    7.3140044
+  ],
+  "avenue leopold, villefranche-sur-mer, france": [
+    43.7087082,
+    7.3140044
+  ],
+  "avenue louis ravet, saint-laurent-du-var, france": [
+    43.6689553,
+    7.1824321
+  ],
+  "avenue lympia, nice, france": [
+    43.6959841,
+    7.2886202
+  ],
+  "avenue marcel pagnol, la gaude, france": [
+    43.7049367,
+    7.164428
+  ],
+  "avenue maréchal foch, nice, france": [
+    43.7019958,
+    7.3075344
+  ],
+  "avenue maréchal joffre, vence, france": [
+    43.7262794,
+    7.106893
+  ],
+  "avenue maréchal lyautey, nice, france": [
+    43.7152456,
+    7.281409
+  ],
+  "avenue maurice donat n, cagnes-sur-mer, france": [
+    43.6607562,
+    7.136826
+  ],
+  "avenue maurice donat, cagnes-sur-mer, france": [
+    43.6610512,
+    7.143146
+  ],
+  "avenue maurice donat, saint-laurent-du-var, france": [
+    43.6615729,
+    7.1868152
+  ],
+  "avenue mireio, nice, france": [
+    43.725643,
+    7.2766898
+  ],
+  "avenue monte croce, nice, france": [
+    43.7183564,
+    7.2760689
+  ],
+  "avenue moschetti, saint-laurent-du-var, france": [
+    43.6687323,
+    7.1891587
+  ],
+  "avenue musso, nice, france": [
+    43.7327631,
+    7.2711486
+  ],
+  "avenue notre dame, nice, france": [
+    43.7042428,
+    7.268744
+  ],
+  "avenue notre-dame, nice, france": [
+    43.7042428,
+    7.268744
+  ],
+  "avenue panéra, nice, france": [
+    43.7428248,
+    7.2482788
+  ],
+  "avenue paroldi, belvédère, france": [
+    44.0160074,
+    7.3196463
+  ],
+  "avenue paul cézanne, cagnes-sur-mer, france": [
+    43.6670841,
+    7.1609242
+  ],
+  "avenue pauliani, nice, france": [
+    43.7049998,
+    7.2796011
+  ],
+  "avenue pierre sauvaigo, saint-laurent-du-var, france": [
+    43.6630708,
+    7.1839705
+  ],
+  "avenue pins, nice, france": [
+    43.6755191,
+    7.225372
+  ],
+  "avenue raymond gramaglia, cap-d'ail, france": [
+    43.7205366,
+    7.3918825
+  ],
+  "avenue rené boylesve, nice, france": [
+    43.7167303,
+    7.2544453
+  ],
+  "avenue rhin danube n, vence, france": [
+    43.7237157,
+    7.0890763
+  ],
+  "avenue rhin et danube n, vence, france": [
+    43.7237157,
+    7.0890763
+  ],
+  "avenue rhin et danube, vence, france": [
+    43.7237157,
+    7.0890763
+  ],
+  "avenue saint maurice, nice, france": [
+    43.717636,
+    7.262125
+  ],
+  "avenue sainte marguerite, nice, france": [
+    43.6772798,
+    7.2254987
+  ],
+  "avenue salonina, nice, france": [
+    43.7179674,
+    7.2758205
+  ],
+  "avenue scudéri, nice, france": [
+    43.7287309,
+    7.2698725
+  ],
+  "avenue shakespeare, nice, france": [
+    43.6997372,
+    7.2535669
+  ],
+  "avenue ste-marguerite, nice, france": [
+    43.6904747,
+    7.2012427
+  ],
+  "avenue stephen liégeard, nice, france": [
+    43.720917,
+    7.252488
+  ],
+  "avenue thiers, nice, france": [
+    43.7019658,
+    7.2570176
+  ],
+  "avenue trident, nice, france": [
+    43.7163117,
+    7.2851902
+  ],
+  "avenue tuby, vence, france": [
+    43.7238458,
+    7.1071081
+  ],
+  "avenue tuilières, cagnes-sur-mer, france": [
+    43.6654075,
+    7.1550306
+  ],
+  "avenue villebois-mareuil, nice, france": [
+    43.7114602,
+    7.2728977
+  ],
+  "avenue villermont, nice, france": [
+    43.7094065,
+    7.264223
+  ],
+  "avenue virgile barel nice, nice, france": [
+    43.7701525,
+    7.3302757
+  ],
+  "avenue walkanaer, nice, france": [
+    43.7198605,
+    7.261183
   ],
   "avenue ziem n, cagnes-sur-mer, france": [
     43.6641844,
@@ -1259,1088 +659,1688 @@
     43.6648686,
     7.1628833
   ],
-  "avenue du mont-alban, nice, france": [
-    43.7017571,
-    7.294438
-  ],
-  "rue vanloo, nice, france": [
-    43.6954047,
-    7.2696712
-  ],
-  "rue candia, nice, france": [
-    43.7012476,
-    7.2521811
-  ],
   "boulevard auguste raynaud, nice, france": [
     43.7165916,
     7.257315
   ],
-  "avenue walkanaer, nice, france": [
-    43.7198605,
-    7.261183
+  "boulevard de l'observatoire, nice, france": [
+    43.7268365,
+    7.2949076
   ],
-  "avenue saint maurice, nice, france": [
-    43.717636,
-    7.262125
-  ],
-  "avenue henri dunant, nice, france": [
-    43.7240269,
-    7.2660899
-  ],
-  "rue saint honoré, nice, france": [
-    43.6930813,
-    7.2402227
-  ],
-  "chemin du baou des noirs, vence, france": [
-    43.7360448,
-    7.1212401
-  ],
-  "chemin de saint-laurent, cagnes-sur-mer, france": [
-    43.6652134,
-    7.1730758
-  ],
-  "route de la cavagne, carros, france": [
-    43.7760511,
-    7.1759145
-  ],
-  "rue des selves, carros, france": [
-    43.7736084,
-    7.1935251
-  ],
-  "avenue de grasse, cagnes-sur-mer, france": [
-    43.6566399,
-    7.146819
-  ],
-  "avenue moschetti, saint-laurent-du-var, france": [
-    43.6687323,
-    7.1891587
-  ],
-  "avenue général de gaulle, drap, france": [
-    43.7613366,
-    7.3205431
-  ],
-  "chemin de saint véran, cagnes-sur-mer, france": [
-    43.6553651,
-    7.1455999
-  ],
-  "rue de la condamine, cagnes-sur-mer, france": [
-    43.6554914,
-    7.1445262
-  ],
-  "avenue jean mermoz, cagnes-sur-mer, france": [
-    43.6734106,
-    7.1524497
-  ],
-  "chemin guillaumet, cagnes-sur-mer, france": [
-    43.6877066,
-    7.1513737
-  ],
-  "chemin du poutaouchoun, vence, france": [
-    43.7219549,
-    7.1366499
-  ],
-  "chemin de la maure, cagnes-sur-mer, france": [
-    43.680845,
-    7.1609012
-  ],
-  "chemin du moulin n, saint-jeannet, france": [
-    43.7470011,
-    7.1362141
-  ],
-  "chemin de beaume gairard, saint-jeannet, france": [
-    43.7471282,
-    7.1678631
-  ],
-  "place trastour, saint-jeannet, france": [
-    43.747868,
-    7.1432792
-  ],
-  "chemin du château, saint-jeannet, france": [
-    43.7434323,
-    7.1659531
-  ],
-  "chemin de la tourraque, saint-jeannet, france": [
-    43.747552,
-    7.1450022
-  ],
-  "route de vence, gattières, france": [
-    43.7558048,
-    7.1719163
-  ],
-  "chemin des serres n, gattières, france": [
-    43.7573241,
-    7.1737544
-  ],
-  "place clémenceau, drap, france": [
-    43.7557903,
-    7.320413
-  ],
-  "chemin de toscane inferieur, èze, france": [
-    43.7262306,
-    7.3770093
-  ],
-  "rue auguste pégurier- nice, nice, france": [
-    43.6707851,
-    7.2185039
-  ],
-  "boulevard des jardiniers, nice, france": [
-    43.7022511,
-    7.1934476
-  ],
-  "chemin de saquier, nice, france": [
-    43.7346496,
-    7.1991076
-  ],
-  "avenue raymond gramaglia, cap-d'ail, france": [
-    43.7205366,
-    7.3918825
-  ],
-  "corniche eze, èze, france": [
-    43.7392892,
-    7.364991
-  ],
-  "route de villevieille, châteauneuf-villevieille, france": [
-    43.8087415,
-    7.2956266
-  ],
-  "chemin de la costiere, nice, france": [
-    43.7281613,
-    7.2287296
-  ],
-  "chemin de la ginestiere, nice, france": [
-    43.7068893,
-    7.2097279
-  ],
-  "avenue de suède, nice, france": [
-    43.6964989,
-    7.2656554
-  ],
-  "route du clos martel, le broc, france": [
-    43.8303476,
-    7.1732396
-  ],
-  "rue louis negro, cagnes-sur-mer, france": [
-    43.6634691,
-    7.152809
-  ],
-  "allée des bouleaux, cagnes-sur-mer, france": [
-    43.6533349,
-    7.1541473
-  ],
-  "chemin du vallon des vaux, cagnes-sur-mer, france": [
-    43.6887412,
-    7.156481
-  ],
-  "chemin des vallières, cagnes-sur-mer, france": [
-    43.6673163,
-    7.1324623
-  ],
-  "route de saint-laurent, la gaude, france": [
-    43.7275986,
-    7.1695815
+  "boulevard de l'ouest, nice, france": [
+    43.7100369,
+    7.3120953
   ],
   "boulevard de la colle-belle, carros, france": [
     43.7735766,
     7.1943993
   ],
-  "route des fraises, carros, france": [
-    43.7905508,
-    7.1846903
-  ],
-  "place alexandre médecin, nice, france": [
-    43.7198012,
-    7.2626126
-  ],
-  "rue des géraniums, cagnes-sur-mer, france": [
-    43.6587522,
-    7.1775654
-  ],
-  "route de vence pr10, saint-jeannet, france": [
-    43.7489448,
-    7.1665642
-  ],
-  "rue des oliviers, carros, france": [
-    43.7719367,
-    7.1903082
-  ],
-  "route de vence n, saint-jeannet, france": [
-    43.7489448,
-    7.1665642
-  ],
-  "rue pastorelli, nice, france": [
-    43.7019365,
-    7.273296
-  ],
-  "passage occelli, nice, france": [
-    43.7014103,
-    7.2888832
-  ],
-  "rue des arbousiers, carros, france": [
-    43.7725468,
-    7.1903629
-  ],
-  "chemin des canebiers, cagnes-sur-mer, france": [
-    43.6680255,
-    7.1494342
-  ],
-  "chemin du puy, cagnes-sur-mer, france": [
-    43.6549267,
-    7.1363979
-  ],
-  "avenue frédéric mistral, saint-laurent-du-var, france": [
-    43.659989,
-    7.1895817
-  ],
-  "place saint antoine, saint-laurent-du-var, france": [
-    43.6754325,
-    7.1887659
-  ],
-  "avenue maurice donat, saint-laurent-du-var, france": [
-    43.6615729,
-    7.1868152
-  ],
-  "route de la redoute, le broc, france": [
-    43.8192055,
-    7.1695793
-  ],
-  "route de france, cagnes-sur-mer, france": [
-    43.6621553,
-    7.1311975
-  ],
-  "rue berlioz, cagnes-sur-mer, france": [
-    43.6557855,
-    7.1598791
-  ],
-  "montée du château, cagnes-sur-mer, france": [
-    43.6678598,
-    7.1460332
-  ],
-  "route de france n, cagnes-sur-mer, france": [
-    43.6620467,
-    7.1311542
-  ],
-  "avenue germaine, cagnes-sur-mer, france": [
-    43.6554058,
-    7.1495631
-  ],
-  "chemin du gué, cagnes-sur-mer, france": [
-    43.6691566,
-    7.1246305
-  ],
-  "allée des pins, cagnes-sur-mer, france": [
-    43.6572306,
-    7.1629225
-  ],
-  "rue jean barnoin, cagnes-sur-mer, france": [
-    43.6550281,
-    7.1562857
-  ],
-  "avenue de la gaude n, cagnes-sur-mer, france": [
-    43.685677,
-    7.1495941
-  ],
-  "boulevard delfino, nice, france": [
-    43.7057026,
-    7.2837028
-  ],
-  "rue delille, nice, france": [
-    43.7013198,
-    7.2768643
-  ],
-  "rue de la gendarmerie, nice, france": [
-    43.7113497,
-    7.2801902
-  ],
-  "chemin roland garros, cagnes-sur-mer, france": [
-    43.698661,
-    7.1500907
-  ],
-  "impasse des iris, cagnes-sur-mer, france": [
-    43.6558946,
-    7.160878
-  ],
-  "avenue docteur donat n, cagnes-sur-mer, france": [
-    43.6607562,
-    7.136826
-  ],
-  "chemin de l'estelle, cagnes-sur-mer, france": [
-    43.6908625,
-    7.1711002
-  ],
-  "avenue de la roseraie, cagnes-sur-mer, france": [
-    43.660154,
-    7.1378647
-  ],
-  "avenue maurice donat n, cagnes-sur-mer, france": [
-    43.6607562,
-    7.136826
-  ],
-  "avenue du docteur donat, cagnes-sur-mer, france": [
-    43.6607525,
-    7.148006
-  ],
-  "avenue antoine martin, nice, france": [
-    43.6858287,
-    7.2058523
-  ],
-  "chemin célestin freinet n, vence, france": [
-    43.7305658,
-    7.1331182
-  ],
-  "rue de stamford, vence, france": [
-    43.7217875,
-    7.1089942
-  ],
-  "chemin de la gaude, vence, france": [
-    43.7177455,
-    7.1340192
-  ],
-  "chemin du claret, carros, france": [
-    43.797711,
-    7.1814051
-  ],
-  "avenue du train des pignes, colomars, france": [
-    43.7642283,
-    7.2081643
-  ],
-  "route jean natale, carros, france": [
-    43.7760289,
-    7.1749852
-  ],
-  "avenue marcel pagnol, la gaude, france": [
-    43.7049367,
-    7.164428
-  ],
-  "impasse pasteur, saint-martin-du-var, france": [
-    43.8225573,
-    7.1903092
-  ],
-  "chemin tourrettes, châteauneuf-villevieille, france": [
-    43.7969994,
-    7.2842164
-  ],
-  "route de la baronne, saint-laurent-du-var, france": [
-    43.7047707,
-    7.1778518
-  ],
-  "chemin alphonse daudet, cagnes-sur-mer, france": [
-    43.6699664,
-    7.172655
-  ],
-  "chemin du couleret -vence, vence, france": [
-    43.7332011,
-    7.0968929
-  ],
-  "avenue de grasse- cagnes sur mer, cagnes-sur-mer, france": [
-    43.6566399,
-    7.146819
-  ],
-  "chemin des quatre vents, vence, france": [
-    43.7270416,
-    7.0927144
-  ],
-  "chemin du frogier superieur, tourrette-levens, france": [
-    43.7913765,
-    7.2634162
-  ],
-  "avenue le broc, le broc, france": [
-    43.8027949,
-    7.1897109
-  ],
-  "chemin des arnaud- saint -andre-de-la-roche, saint-andré-de-la-roche, france": [
-    43.7457032,
-    7.287531
-  ],
-  "avenue pins, nice, france": [
-    43.6755191,
-    7.225372
-  ],
-  "avenue trident, nice, france": [
-    43.7163117,
-    7.2851902
-  ],
-  "place jules musso, saint-andré-de-la-roche, france": [
-    43.7397075,
-    7.2877273
-  ],
-  "avenue du général de gaulle, cap-d'ail, france": [
-    43.7252724,
-    7.3999562
-  ],
-  "avenue rhin et danube n, vence, france": [
-    43.7237157,
-    7.0890763
-  ],
-  "chemin sainte colombe, vence, france": [
-    43.7401063,
-    7.1343937
-  ],
-  "route de st jeannet n, vence, france": [
-    43.7318385,
-    7.1188568
-  ],
-  "avenue henri matisse, vence, france": [
-    43.7262206,
-    7.1094737
-  ],
-  "place clémenceau, vence, france": [
-    43.722565,
-    7.1135219
-  ],
-  "rue gustave garaud, nice, france": [
-    43.70575,
-    7.2922182
-  ],
-  "route de gattières n, saint-jeannet, france": [
-    43.74335,
-    7.1447507
-  ],
-  "chemin des mauberts n, cagnes-sur-mer, france": [
-    43.6845286,
-    7.1686406
-  ],
-  "chemin de ste colombe, cagnes-sur-mer, france": [
-    43.6675399,
-    7.1413037
-  ],
-  "rue du puits, cagnes-sur-mer, france": [
-    43.6579072,
-    7.141917
-  ],
-  "avenue géneral leclerc, cagnes-sur-mer, france": [
-    43.6588448,
-    7.1628595
-  ],
-  "rue françois plésent, colomars, france": [
-    43.7650844,
-    7.2212587
-  ],
-  "avenue des orangers, nice, france": [
-    43.6969892,
-    7.2519469
-  ],
-  "chemin du haut magnan, nice, france": [
-    43.7052755,
-    7.2390655
-  ],
-  "avenue de gairaut, nice, france": [
-    43.7309671,
-    7.2566023
-  ],
-  "chemin de gairaut, nice, france": [
-    43.7280402,
-    7.2610845
-  ],
-  "avenue maréchal lyautey, nice, france": [
-    43.7152456,
-    7.281409
-  ],
-  "avenue général olry, nice, france": [
-    43.7387548,
-    7.2999059
-  ],
-  "route de saint pancrace, nice, france": [
-    43.7415221,
-    7.2387744
-  ],
-  "route de st pierre de féric, nice, france": [
-    43.7102451,
-    7.2467875
-  ],
-  "rue castel, nice, france": [
-    43.7095853,
-    7.2584865
-  ],
-  "avenue comba, nice, france": [
-    43.700468,
-    7.2556301
-  ],
-  "rue edouard dalmas, nice, france": [
-    43.7119351,
-    7.2609731
-  ],
-  "rue cros de capeu, nice, france": [
-    43.7120039,
-    7.2546336
-  ],
-  "rue du grand pin, nice, france": [
-    43.7127476,
-    7.2546024
-  ],
-  "rue andrioli, nice, france": [
-    43.6951601,
-    7.2541733
-  ],
-  "rue de la préfecture, nice, france": [
-    43.696316,
-    7.2763478
-  ],
-  "rue bonaparte, nice, france": [
-    43.7005632,
-    7.2848673
-  ],
-  "rue de la croix, nice, france": [
-    43.6979247,
-    7.2778932
-  ],
-  "avenue claude debussy, nice, france": [
-    43.6855865,
-    7.200414
-  ],
-  "rue léon bertrand, nice, france": [
-    43.6741121,
-    7.2244284
-  ],
-  "boulevard winston churchill, nice, france": [
-    43.6940653,
-    7.2915268
-  ],
-  "rue chanoine bailet, nice, france": [
-    43.7135595,
-    7.2918393
-  ],
-  "avenue de fabron, nice, france": [
-    43.7067319,
-    7.2094694
-  ],
-  "place du général de gaulle, la bollène-vésubie, france": [
-    43.9906722,
-    7.3320026
-  ],
-  "chemin st hospice, saint-jean-cap-ferrat, france": [
-    43.6861361,
-    7.3455138
-  ],
-  "allée mala, cap-d'ail, france": [
-    43.7223481,
-    7.3928758
-  ],
-  "avenue de la gare, cap-d'ail, france": [
-    43.72116,
-    7.3964484
-  ],
-  "rue du lieutenant colonelli, beaulieu-sur-mer, france": [
-    43.7055574,
-    7.3320277
-  ],
-  "rue pasteur, villefranche-sur-mer, france": [
-    43.704686,
-    7.3123073
-  ],
-  "route forestière du mont boron, nice, france": [
-    43.6897354,
-    7.2970848
-  ],
-  "rue du val gele, saint-étienne-de-tinée, france": [
-    44.2567154,
-    6.9235982
-  ],
-  "rue joseph albert bovis, nice, france": [
-    43.7131971,
-    7.2920231
-  ],
-  "avenue leopold ii, villefranche-sur-mer, france": [
-    43.7087082,
-    7.3140044
-  ],
-  "boulevard du jardin exotique, cap-d'ail, france": [
-    43.7303184,
-    7.4093067
-  ],
-  "chemin de l'arbre, la trinité, france": [
-    43.7382584,
-    7.3110316
-  ],
-  "rue las planas, saint-dalmas-le-selvage, france": [
-    44.2845283,
-    6.8660093
-  ],
-  "route de la forêt, venanson, france": [
-    44.0534966,
-    7.2496227
-  ],
-  "rue st michel, vence, france": [
-    43.7215598,
-    7.1159754
-  ],
-  "avenue de provence n, vence, france": [
-    43.7392403,
-    7.1332358
-  ],
-  "chemin du val de cagnes, cagnes-sur-mer, france": [
-    43.6886882,
-    7.1480369
-  ],
-  "chemin des colles et régagnades cr, la gaude, france": [
-    43.7015139,
-    7.1524062
-  ],
-  "chemin des vallières, colomars, france": [
-    43.7623857,
-    7.2262887
-  ],
-  "rue des plaqueminiers, cagnes-sur-mer, france": [
-    43.6582641,
-    7.1644161
-  ],
-  "impasse des genêts er n, saint-laurent-du-var, france": [
-    43.6739265,
-    7.1775092
-  ],
-  "route de pessicart, nice, france": [
-    43.7217867,
-    7.2390852
-  ],
-  "avenue jean mermoz, saint-jean-cap-ferrat, france": [
-    43.6878774,
-    7.3379965
-  ],
-  "chemin de la minoterie, cagnes-sur-mer, france": [
-    43.6563721,
-    7.1476499
-  ],
-  "avenue thiers, nice, france": [
-    43.7019658,
-    7.2570176
-  ],
-  "promenade des anglais, nice, france": [
-    43.6859892,
-    7.2374765
-  ],
-  "avenue des citronniers, cagnes-sur-mer, france": [
-    43.6610341,
-    7.165691
-  ],
-  "place frédéric mistral, vence, france": [
-    43.7232982,
-    7.109481
-  ],
-  "boulevard dubouchage, nice, france": [
-    43.7038613,
-    7.2733662
-  ],
-  "route de st jeannet n, cagnes-sur-mer, france": [
-    43.6841268,
-    7.1792235
-  ],
-  "chemin du lautin, cagnes-sur-mer, france": [
-    43.6584508,
-    7.1547244
-  ],
-  "rue du docteur gonin, cagnes-sur-mer, france": [
-    43.6629461,
-    7.1511896
-  ],
-  "allée des jacinthes, cagnes-sur-mer, france": [
-    43.6619226,
-    7.174834
-  ],
-  "chemin du mont gros, la gaude, france": [
-    43.722454,
-    7.166403
-  ],
-  "impasse des bigaradiers, cagnes-sur-mer, france": [
-    43.6672146,
-    7.131414
-  ],
-  "chemin de cagnes, la gaude, france": [
-    43.7122057,
-    7.1523171
-  ],
-  "chemin des carrières, saint-jeannet, france": [
-    43.7417039,
-    7.1711792
-  ],
-  "avenue maréchal joffre, vence, france": [
-    43.7262794,
-    7.106893
-  ],
-  "rue ouahigouya, vence, france": [
-    43.7210045,
-    7.0819356
-  ],
-  "chemin de la fontette, vence, france": [
-    43.7271502,
-    7.1140913
-  ],
-  "impasse des serres, saint-martin-du-var, france": [
-    43.8035494,
-    7.2009293
-  ],
-  "avenue joseph revelli, nice, france": [
-    43.6939624,
-    7.2443779
-  ],
-  "chemin st michel, èze, france": [
-    43.7200932,
-    7.3490431
-  ],
-  "rue baou, la gaude, france": [
-    43.7220188,
-    7.1493997
-  ],
-  "rue place neuve, la gaude, france": [
-    43.7226039,
-    7.1503672
-  ],
-  "rue gabriel ponzone, la gaude, france": [
-    43.723106,
-    7.1515556
-  ],
-  "rue du four, la gaude, france": [
-    43.721882,
-    7.1496829
-  ],
-  "avenue virgile barel nice, nice, france": [
-    43.7701525,
-    7.3302757
-  ],
-  "rue navel, belvédère, france": [
-    44.0148221,
-    7.3203655
-  ],
-  "chemin du portion, castagniers, france": [
-    43.7994083,
-    7.2315413
-  ],
-  "avenue auber, nice, france": [
-    43.6995362,
-    7.261344
-  ],
-  "chemin de saint roman, nice, france": [
-    43.7440277,
-    7.1998876
-  ],
-  "avenue fighiera, nice, france": [
-    43.7242149,
-    7.252417
-  ],
-  "route de grenoble, nice, france": [
-    43.7155041,
-    7.1868565
-  ],
-  "avenue maréchal foch, nice, france": [
-    43.7019958,
-    7.3075344
-  ],
-  "quai de la banquière, nice, france": [
-    43.7352517,
-    7.2877695
-  ],
-  "chemin st pierre de féric, nice, france": [
-    43.7268865,
-    7.22857
-  ],
-  "avenue henry musso, nice, france": [
-    43.7327631,
-    7.2711486
-  ],
-  "rue reine jeanne, nice, france": [
-    43.7057194,
-    7.2590141
-  ],
-  "route du cimetiére de l'est, nice, france": [
-    43.741621,
-    7.3072906
-  ],
-  "avenue des blavets, saint-sauveur-sur-tinée, france": [
-    44.0835169,
-    7.1051591
-  ],
-  "rue droite, saint-étienne-de-tinée, france": [
-    44.2539965,
-    6.9266474
-  ],
-  "place du château, cagnes-sur-mer, france": [
-    43.667382,
-    7.1456725
-  ],
-  "chemin de la pouncia, nice, france": [
-    43.7261149,
-    7.205077
-  ],
-  "chemin des graves, la roquette-sur-var, france": [
-    43.8359946,
-    7.1950672
-  ],
-  "chemin de la ginestière, nice, france": [
-    43.7068893,
-    7.2097279
-  ],
-  "rue du vallon, saint-jean-cap-ferrat, france": [
-    43.6894965,
-    7.3328399
-  ],
-  "rue saint-gaëtan, nice, france": [
-    43.6960621,
-    7.2755599
+  "boulevard de la madeleine, nice, france": [
+    43.7188039,
+    7.2235026
   ],
   "boulevard de las planas, nice, france": [
     43.7309806,
     7.2439215
   ],
-  "rue de paris n, nice, france": [
-    43.7048966,
-    7.267937
+  "boulevard de madeleine, nice, france": [
+    43.6974088,
+    7.2408006
   ],
-  "route de turin, nice, france": [
-    43.730572,
-    7.2853922
+  "boulevard delfino, nice, france": [
+    43.7057026,
+    7.2837028
   ],
-  "avenue charles buchet, nice, france": [
-    43.6690676,
-    7.2158763
+  "boulevard des jardiniers, nice, france": [
+    43.7022511,
+    7.1934476
   ],
-  "rue alphonse 1er n, nice, france": [
-    43.6763001,
-    7.211282
+  "boulevard du jardin exotique, cap-d'ail, france": [
+    43.7303184,
+    7.4093067
   ],
-  "avenue du petit fabron, nice, france": [
-    43.6897401,
-    7.2384718
+  "boulevard du mercantour, nice, france": [
+    43.7068799,
+    7.1882783
   ],
-  "route des condamines, saint-martin-du-var, france": [
-    43.8111033,
-    7.196062
+  "boulevard dubouchage, nice, france": [
+    43.7038613,
+    7.2733662
   ],
-  "route du puy, saint-martin-du-var, france": [
-    43.816988,
-    7.1936172
+  "boulevard edouard vii, beaulieu-sur-mer, france": [
+    43.7114198,
+    7.3307368
   ],
-  "avenue des platanes, nice, france": [
-    43.7195132,
-    7.2512422
+  "boulevard franck pilatte, nice, france": [
+    43.6941351,
+    7.2880177
   ],
-  "rue francois plesent, colomars, france": [
-    43.766312,
-    7.2209507
+  "boulevard françois grosso, nice, france": [
+    43.6984277,
+    7.2512706
   ],
-  "avenue ste-marguerite, nice, france": [
-    43.6904747,
-    7.2012427
+  "boulevard général louis delfino, nice, france": [
+    43.7057026,
+    7.2837028
   ],
-  "place wilson, villefranche-sur-mer, france": [
-    43.7020972,
-    7.3118644
+  "boulevard joseph garnier, nice, france": [
+    43.7101119,
+    7.2609252
   ],
-  "rue barberis, nice, france": [
-    43.7048079,
-    7.2844334
+  "boulevard kennedy, cagnes-sur-mer, france": [
+    43.6515909,
+    7.1518218
   ],
-  "allée des chênes, gattières, france": [
-    43.75421,
-    7.1607639
+  "boulevard maréchal juin, cagnes-sur-mer, france": [
+    43.661937,
+    7.1506389
   ],
-  "route du cros d'utelle, utelle, france": [
-    43.8839874,
-    7.2353241
+  "boulevard napoléon iii, nice, france": [
+    43.68402,
+    7.2238084
   ],
-  "place de l'eglise, saint-blaise, france": [
-    43.8214601,
-    7.2391684
+  "boulevard paul andre, vence, france": [
+    43.7234477,
+    7.1138349
   ],
-  "rue hôtel de ville, la trinité, france": [
-    43.7427573,
-    7.3138044
+  "boulevard philippe corniglion, la bollène-vésubie, france": [
+    43.9912621,
+    7.3334531
+  ],
+  "boulevard reine jeanne, vence, france": [
+    43.7179494,
+    7.1118862
+  ],
+  "boulevard rené cassin, nice, france": [
+    43.6698501,
+    7.2166021
+  ],
+  "boulevard winston churchill, nice, france": [
+    43.6940653,
+    7.2915268
+  ],
+  "chemin alphonse daudet, cagnes-sur-mer, france": [
+    43.6699664,
+    7.172655
+  ],
+  "chemin auguste renoir, cagnes-sur-mer, france": [
+    43.6671045,
+    7.1578383
+  ],
+  "chemin célestin freinet n, vence, france": [
+    43.7305658,
+    7.1331182
+  ],
+  "chemin de beaume gairard, saint-jeannet, france": [
+    43.7471282,
+    7.1678631
+  ],
+  "chemin de berthemont, saint-martin-vésubie, france": [
+    44.0497362,
+    7.284893
+  ],
+  "chemin de bezaudun, gattières, france": [
+    43.7587447,
+    7.1652846
+  ],
+  "chemin de cagnes, la gaude, france": [
+    43.7122057,
+    7.1523171
+  ],
+  "chemin de cimiez, nice, france": [
+    43.715845,
+    7.2776744
+  ],
+  "chemin de crémat, nice, france": [
+    43.7165089,
+    7.1966016
   ],
   "chemin de fontaine d'agneau, colomars, france": [
     43.7596188,
     7.2185333
   ],
-  "boulevard de madeleine, nice, france": [
-    43.6974088,
-    7.2408006
+  "chemin de gairaut, nice, france": [
+    43.7280402,
+    7.2610845
   ],
-  "place du général de gaulle, saint-martin-vésubie, france": [
-    44.0701244,
-    7.2564222
+  "chemin de l'abadie, saint-andré-de-la-roche, france": [
+    43.7511648,
+    7.2962016
   ],
-  "rue du portalet, saint-étienne-de-tinée, france": [
-    44.2563643,
-    6.9252817
+  "chemin de l'arbre, la trinité, france": [
+    43.7382584,
+    7.3110316
   ],
-  "avenue du docteur donat n, cagnes-sur-mer, france": [
-    43.6607525,
-    7.148006
+  "chemin de l'estelle, cagnes-sur-mer, france": [
+    43.6908625,
+    7.1711002
   ],
-  "rue valperga, nice, france": [
-    43.7043406,
-    7.2703221
+  "chemin de l'houmé, saint-jeannet, france": [
+    43.74376,
+    7.1572124
   ],
-  "rue lamartine, nice, france": [
-    43.7048682,
-    7.2672787
+  "chemin de l'ibac, colomars, france": [
+    43.7424607,
+    7.2204812
   ],
-  "avenue alfred borriglione, nice, france": [
-    43.7125613,
-    7.261665
+  "chemin de l'ormée, vence, france": [
+    43.7298329,
+    7.0901136
   ],
-  "rue gioffredo, nice, france": [
-    43.7013004,
-    7.2759261
+  "chemin de la bastide, gattières, france": [
+    43.7670129,
+    7.1841454
   ],
-  "rue gustave deloye, nice, france": [
-    43.700389,
-    7.2691696
-  ],
-  "rue barla, nice, france": [
-    43.701439,
-    7.2842434
-  ],
-  "rue louis genari, nice, france": [
-    43.7182042,
-    7.2931256
-  ],
-  "avenue d'estienne d'orves, nice, france": [
-    43.7010049,
-    7.2527125
-  ],
-  "rue jean canavèse, nice, france": [
-    43.7221856,
-    7.2493943
-  ],
-  "rue michel ange, nice, france": [
-    43.7122412,
-    7.260524
-  ],
-  "rue jean bonfante, nice, france": [
-    43.7120256,
-    7.2823618
-  ],
-  "rue roger martin du gard, nice, france": [
-    43.7075562,
-    7.2529444
-  ],
-  "rue gabriel hanotaux, nice, france": [
-    43.7078029,
-    7.2523094
-  ],
-  "montée du chateau, tourrette-levens, france": [
-    43.7846748,
-    7.2762201
-  ],
-  "rue acchiardi de saint léger, nice, france": [
-    43.714258,
-    7.2910026
-  ],
-  "rue autun, nice, france": [
-    43.7076753,
-    7.2613563
-  ],
-  "quai de la banquière, saint-andré-de-la-roche, france": [
-    43.7352517,
-    7.2877695
-  ],
-  "quai des etats-unis, nice, france": [
-    43.6949659,
-    7.2766024
-  ],
-  "rue victor contesso, villefranche-sur-mer, france": [
-    43.7047901,
-    7.3113576
-  ],
-  "rue volti, villefranche-sur-mer, france": [
-    43.7045967,
-    7.3115316
-  ],
-  "avenue du collet, saint-blaise, france": [
-    43.8213822,
-    7.2375665
-  ],
-  "rue chabrier, nice, france": [
-    43.7073188,
-    7.2914167
-  ],
-  "rue fernand barbary, carros, france": [
-    43.7924262,
-    7.1858799
-  ],
-  "impasse chaillon, saint-laurent-du-var, france": [
-    43.6593257,
-    7.1829217
-  ],
-  "rue monseigneur alfred daumas, nice, france": [
-    43.710247,
-    7.2891626
-  ],
-  "rue d'alger, nice, france": [
-    43.7039501,
-    7.2693487
-  ],
-  "avenue de pessicart, nice, france": [
-    43.7143289,
-    7.2488026
-  ],
-  "rue gubernatis, nice, france": [
-    43.698872,
-    7.2738376
-  ],
-  "corniche frère marc, nice, france": [
-    43.7189705,
-    7.2798508
+  "chemin de la carrière, saint-jean-cap-ferrat, france": [
+    43.6798593,
+    7.3351516
   ],
   "chemin de la cascade de gairaut, nice, france": [
     43.7377197,
     7.2595766
   ],
-  "rue marie bashkirtseff, nice, france": [
-    43.6751555,
-    7.2248514
+  "chemin de la colle germaine, colomars, france": [
+    43.7499046,
+    7.2217168
   ],
-  "rue maurice mignon, nice, france": [
-    43.6724064,
-    7.2230218
+  "chemin de la colmiane, venanson, france": [
+    44.0535963,
+    7.2512849
   ],
-  "rue jean vigo, nice, france": [
-    43.6718868,
-    7.2222501
+  "chemin de la costiere, nice, france": [
+    43.7281613,
+    7.2287296
   ],
-  "rue jules belleudy, nice, france": [
-    43.6702207,
-    7.217971
+  "chemin de la costière, nice, france": [
+    43.7125924,
+    7.2312959
   ],
-  "chemin du vallon sabatier, nice, france": [
-    43.7093757,
-    7.2317222
+  "chemin de la destourbe, cagnes-sur-mer, france": [
+    43.6589102,
+    7.1500307
   ],
-  "rue colonel guide, nice, france": [
-    43.7064125,
-    7.29101
+  "chemin de la fontaine des boeufs, saint-jeannet, france": [
+    43.748021,
+    7.1384657
   ],
-  "rue raynardi, nice, france": [
-    43.6997331,
-    7.2668144
+  "chemin de la fontette, vence, france": [
+    43.7271502,
+    7.1140913
   ],
-  "corniche sainte rosalie, nice, france": [
-    43.7148701,
-    7.2764831
+  "chemin de la gaude, vence, france": [
+    43.7177455,
+    7.1340192
   ],
-  "impasse saint eloi, nice, france": [
-    43.7136116,
-    7.2761798
+  "chemin de la ginestiere, nice, france": [
+    43.7068893,
+    7.2097279
   ],
-  "avenue du rond point, nice, france": [
-    43.6855709,
-    7.2321774
+  "chemin de la ginestière, nice, france": [
+    43.7068893,
+    7.2097279
   ],
-  "rue delrieu, nice, france": [
-    43.7229887,
-    7.2496708
+  "chemin de la lauvette, nice, france": [
+    43.7480149,
+    7.3079366
   ],
-  "rue cais de gilette, nice, france": [
-    43.7121268,
-    7.2934775
+  "chemin de la maure, cagnes-sur-mer, france": [
+    43.680845,
+    7.1609012
   ],
-  "rue colonel gassin, nice, france": [
-    43.7223911,
-    7.2854514
+  "chemin de la minoterie, cagnes-sur-mer, france": [
+    43.6563721,
+    7.1476499
+  ],
+  "chemin de la petite source, nice, france": [
+    43.7076558,
+    7.2511888
+  ],
+  "chemin de la pouncia, nice, france": [
+    43.7261149,
+    7.205077
+  ],
+  "chemin de la prairie, aspremont, france": [
+    43.7844637,
+    7.2509642
+  ],
+  "chemin de la sine, vence, france": [
+    43.7094566,
+    7.0954828
+  ],
+  "chemin de la tourraque, saint-jeannet, france": [
+    43.747552,
+    7.1450022
+  ],
+  "chemin de lombardie, saint-andré-de-la-roche, france": [
+    43.7403542,
+    7.2837986
+  ],
+  "chemin de romegiero, saint-martin-vésubie, france": [
+    44.0546193,
+    7.2625958
+  ],
+  "chemin de saint antoine, clans, france": [
+    43.9940271,
+    7.1468472
+  ],
+  "chemin de saint roman, nice, france": [
+    43.7440277,
+    7.1998876
+  ],
+  "chemin de saint véran, cagnes-sur-mer, france": [
+    43.6553651,
+    7.1455999
+  ],
+  "chemin de saint-blaise, belvédère, france": [
+    44.0150863,
+    7.3268541
+  ],
+  "chemin de saint-laurent, cagnes-sur-mer, france": [
+    43.6652134,
+    7.1730758
+  ],
+  "chemin de saquier, nice, france": [
+    43.7346496,
+    7.1991076
+  ],
+  "chemin de sidonie, saint-laurent-du-var, france": [
+    43.6901958,
+    7.1826686
+  ],
+  "chemin de ste colombe, cagnes-sur-mer, france": [
+    43.6675399,
+    7.1413037
+  ],
+  "chemin de toscane inferieur, èze, france": [
+    43.7262306,
+    7.3770093
+  ],
+  "chemin de valrose, nice, france": [
+    43.7155256,
+    7.2642296
+  ],
+  "chemin de vosgelade, vence, france": [
+    43.7182514,
+    7.1290771
+  ],
+  "chemin des arnaud- saint -andre-de-la-roche, saint-andré-de-la-roche, france": [
+    43.7457032,
+    7.287531
+  ],
+  "chemin des camps dalmas, gattières, france": [
+    43.7602123,
+    7.1845393
+  ],
+  "chemin des canebiers, cagnes-sur-mer, france": [
+    43.6680255,
+    7.1494342
+  ],
+  "chemin des carrières, saint-jeannet, france": [
+    43.7417039,
+    7.1711792
+  ],
+  "chemin des castagniers, vence, france": [
+    43.7202138,
+    7.093073
+  ],
+  "chemin des colles et régagnades cr, la gaude, france": [
+    43.7015139,
+    7.1524062
+  ],
+  "chemin des collettes n, cagnes-sur-mer, france": [
+    43.6660162,
+    7.1555495
+  ],
+  "chemin des collines n, cagnes-sur-mer, france": [
+    43.6769211,
+    7.1320048
+  ],
+  "chemin des crêtes du mont boron, nice, france": [
+    43.6923683,
+    7.2944551
+  ],
+  "chemin des glycines, cagnes-sur-mer, france": [
+    43.6584105,
+    7.1605479
+  ],
+  "chemin des graves, la roquette-sur-var, france": [
+    43.8359946,
+    7.1950672
+  ],
+  "chemin des gros buaux, cagnes-sur-mer, france": [
+    43.6724542,
+    7.1707188
+  ],
+  "chemin des launes, carros, france": [
+    43.7764027,
+    7.2025494
+  ],
+  "chemin des mauberts n, cagnes-sur-mer, france": [
+    43.6845286,
+    7.1686406
+  ],
+  "chemin des noisetiers, cagnes-sur-mer, france": [
+    43.6753472,
+    7.1697041
+  ],
+  "chemin des oliviers, cap-d'ail, france": [
+    43.7227656,
+    7.4027211
+  ],
+  "chemin des quatre vents, vence, france": [
+    43.7270416,
+    7.0927144
+  ],
+  "chemin des rascas, saint-laurent-du-var, france": [
+    43.6799441,
+    7.1864793
+  ],
+  "chemin des rougières, carros, france": [
+    43.7783501,
+    7.1956154
+  ],
+  "chemin des salles, cagnes-sur-mer, france": [
+    43.6819593,
+    7.1449217
+  ],
+  "chemin des serres n, gattières, france": [
+    43.7573241,
+    7.1737544
+  ],
+  "chemin des serres, gattières, france": [
+    43.7573241,
+    7.1737544
+  ],
+  "chemin des vallières, cagnes-sur-mer, france": [
+    43.6673163,
+    7.1324623
+  ],
+  "chemin des vallières, colomars, france": [
+    43.7623857,
+    7.2262887
+  ],
+  "chemin du baou des noirs, vence, france": [
+    43.7360448,
+    7.1212401
+  ],
+  "chemin du canet, castagniers, france": [
+    43.7935335,
+    7.2334817
+  ],
+  "chemin du château de la ginestière, nice, france": [
+    43.706437,
+    7.2040257
+  ],
+  "chemin du château, saint-jeannet, france": [
+    43.7434323,
+    7.1659531
+  ],
+  "chemin du claout, tourrette-levens, france": [
+    43.7880791,
+    7.2712924
+  ],
+  "chemin du claret, carros, france": [
+    43.797711,
+    7.1814051
+  ],
+  "chemin du clos, saint-jeannet, france": [
+    43.7418817,
+    7.1481767
+  ],
+  "chemin du collet des fourniers, nice, france": [
+    43.7391103,
+    7.214053
+  ],
+  "chemin du contéo, nice, france": [
+    43.7153486,
+    7.307116
+  ],
+  "chemin du couleret -vence, vence, france": [
+    43.7332011,
+    7.0968929
+  ],
+  "chemin du faliconnet, falicon, france": [
+    43.7585856,
+    7.2647115
+  ],
+  "chemin du frogier superieur, tourrette-levens, france": [
+    43.7913765,
+    7.2634162
+  ],
+  "chemin du grec, drap, france": [
+    43.7514211,
+    7.3295089
+  ],
+  "chemin du gué, cagnes-sur-mer, france": [
+    43.6691566,
+    7.1246305
   ],
   "chemin du génie du n, nice, france": [
     43.7422846,
     7.2169081
   ],
+  "chemin du génie, colomars, france": [
+    43.7607294,
+    7.2284262
+  ],
+  "chemin du haut magnan, nice, france": [
+    43.7052755,
+    7.2390655
+  ],
+  "chemin du lautin, cagnes-sur-mer, france": [
+    43.6584508,
+    7.1547244
+  ],
+  "chemin du lazaret, villefranche-sur-mer, france": [
+    43.6965238,
+    7.3065098
+  ],
+  "chemin du mont des mignons, nice, france": [
+    43.7276367,
+    7.2932598
+  ],
+  "chemin du mont gros, la gaude, france": [
+    43.722454,
+    7.166403
+  ],
+  "chemin du moulin n, saint-jeannet, france": [
+    43.7470011,
+    7.1362141
+  ],
+  "chemin du paraire, belvédère, france": [
+    44.0145946,
+    7.3210854
+  ],
+  "chemin du peyrouas, saint-jeannet, france": [
+    43.7491312,
+    7.1577128
+  ],
+  "chemin du pilon, nice, france": [
+    43.8036792,
+    7.3217857
+  ],
+  "chemin du portion, castagniers, france": [
+    43.7994083,
+    7.2315413
+  ],
+  "chemin du poutaouchoun, vence, france": [
+    43.7219549,
+    7.1366499
+  ],
+  "chemin du puy, cagnes-sur-mer, france": [
+    43.6549267,
+    7.1363979
+  ],
+  "chemin du siège, vence, france": [
+    43.7204889,
+    7.1202166
+  ],
+  "chemin du souvenir, saint-andré-de-la-roche, france": [
+    43.7418319,
+    7.2866515
+  ],
+  "chemin du val de cagnes, cagnes-sur-mer, france": [
+    43.6886882,
+    7.1480369
+  ],
+  "chemin du val fleuri, cagnes-sur-mer, france": [
+    43.6703641,
+    7.1642602
+  ],
+  "chemin du vallon des vaux, cagnes-sur-mer, france": [
+    43.6887412,
+    7.156481
+  ],
+  "chemin du vallon sabatier, nice, france": [
+    43.7093757,
+    7.2317222
+  ],
+  "chemin du vieux village, tournefort, france": [
+    43.9460177,
+    7.1506873
+  ],
+  "chemin ferdinand garino, nice, france": [
+    43.7356002,
+    7.2734037
+  ],
+  "chemin guillaumet, cagnes-sur-mer, france": [
+    43.6877066,
+    7.1513737
+  ],
+  "chemin hugues bérenguier, la gaude, france": [
+    43.7322437,
+    7.1482546
+  ],
+  "chemin puy d'auron, saint-étienne-de-tinée, france": [
+    44.2302229,
+    6.9298169
+  ],
+  "chemin roland garros, cagnes-sur-mer, france": [
+    43.698661,
+    7.1500907
+  ],
+  "chemin sainte colombe, vence, france": [
+    43.7401063,
+    7.1343937
+  ],
+  "chemin sainte pétronille, cagnes-sur-mer, france": [
+    43.6812865,
+    7.1722212
+  ],
+  "chemin sainte pétronille, la gaude, france": [
+    43.7187822,
+    7.1760463
+  ],
+  "chemin sainte-petronille, la gaude, france": [
+    43.7187822,
+    7.1760463
+  ],
+  "chemin st hospice, saint-jean-cap-ferrat, france": [
+    43.6861361,
+    7.3455138
+  ],
+  "chemin st michel, èze, france": [
+    43.7200932,
+    7.3490431
+  ],
+  "chemin st pierre de féric, nice, france": [
+    43.7268865,
+    7.22857
+  ],
+  "chemin st pierre, la trinité, france": [
+    43.7471508,
+    7.3732071
+  ],
+  "chemin tourrettes, châteauneuf-villevieille, france": [
+    43.7969994,
+    7.2842164
+  ],
+  "chemin vieux, falicon, france": [
+    43.7518892,
+    7.2701622
+  ],
+  "corniche d'agrimont, saint-laurent-du-var, france": [
+    43.6709399,
+    7.1839807
+  ],
+  "corniche de magnan, nice, france": [
+    43.711563,
+    7.2368289
+  ],
+  "corniche eze, èze, france": [
+    43.7392892,
+    7.364991
+  ],
+  "corniche fleurie, nice, france": [
+    43.683826,
+    7.2126331
+  ],
+  "corniche frère marc, nice, france": [
+    43.7189705,
+    7.2798508
+  ],
+  "corniche sainte rosalie, nice, france": [
+    43.7148701,
+    7.2764831
+  ],
+  "impasse chaillon, saint-laurent-du-var, france": [
+    43.6593257,
+    7.1829217
+  ],
+  "impasse de l'emigra, carros, france": [
+    43.7869192,
+    7.2065545
+  ],
+  "impasse de l'hôpital, saint-jeannet, france": [
+    43.7472145,
+    7.1413469
+  ],
+  "impasse des bigaradiers, cagnes-sur-mer, france": [
+    43.6672146,
+    7.131414
+  ],
+  "impasse des collettes, cagnes-sur-mer, france": [
+    43.6722844,
+    7.1580938
+  ],
+  "impasse des genêts er n, saint-laurent-du-var, france": [
+    43.6739265,
+    7.1775092
+  ],
+  "impasse des genêts, cagnes-sur-mer, france": [
+    43.6689504,
+    7.1710757
+  ],
+  "impasse des iris, cagnes-sur-mer, france": [
+    43.6558946,
+    7.160878
+  ],
+  "impasse des serres, saint-martin-du-var, france": [
+    43.8035494,
+    7.2009293
+  ],
+  "impasse jean moulin, cagnes-sur-mer, france": [
+    43.6633801,
+    7.1563098
+  ],
+  "impasse pasteur, saint-martin-du-var, france": [
+    43.8225573,
+    7.1903092
+  ],
+  "impasse saint eloi, nice, france": [
+    43.7136116,
+    7.2761798
+  ],
+  "montée de la tour, saint-laurent-du-var, france": [
+    43.7076945,
+    7.1754746
+  ],
+  "montée de verdun, falicon, france": [
+    43.7495012,
+    7.2773667
+  ],
+  "montée du chateau, tourrette-levens, france": [
+    43.7846748,
+    7.2762201
+  ],
+  "montée du château, cagnes-sur-mer, france": [
+    43.6678598,
+    7.1460332
+  ],
+  "montée du coteau, cagnes-sur-mer, france": [
+    43.6612273,
+    7.1480646
+  ],
+  "passage lido, cagnes-sur-mer, france": [
+    43.6593328,
+    7.1710177
+  ],
+  "passage occelli, nice, france": [
+    43.7014103,
+    7.2888832
+  ],
+  "passage renoir, cagnes-sur-mer, france": [
+    43.6658216,
+    7.1545999
+  ],
+  "place alexandre médecin, nice, france": [
+    43.7198012,
+    7.2626126
+  ],
+  "place amélie pollonais, villefranche-sur-mer, france": [
+    43.7029327,
+    7.3114717
+  ],
+  "place clémenceau, drap, france": [
+    43.7557903,
+    7.320413
+  ],
+  "place clémenceau, vence, france": [
+    43.722565,
+    7.1135219
+  ],
+  "place d'anjou, villefranche-sur-mer, france": [
+    43.7042733,
+    7.3102146
+  ],
+  "place d'auron, saint-étienne-de-tinée, france": [
+    44.2249566,
+    6.9314898
+  ],
+  "place de l'eglise, saint-blaise, france": [
+    43.8214601,
+    7.2391684
+  ],
+  "place de la république, villefranche-sur-mer, france": [
+    43.703278,
+    7.3110233
+  ],
+  "place des tilleuls, belvédère, france": [
+    44.0154794,
+    7.319741
+  ],
+  "place du château, cagnes-sur-mer, france": [
+    43.667382,
+    7.1456725
+  ],
+  "place du général de gaulle, la bollène-vésubie, france": [
+    43.9906722,
+    7.3320026
+  ],
+  "place du général de gaulle, saint-martin-vésubie, france": [
+    44.0701244,
+    7.2564222
+  ],
+  "place frédéric mistral, vence, france": [
+    43.7232982,
+    7.109481
+  ],
+  "place georges clémenceau, beaulieu-sur-mer, france": [
+    43.706641,
+    7.3312799
+  ],
+  "place jules musso, saint-andré-de-la-roche, france": [
+    43.7397075,
+    7.2877273
+  ],
+  "place saint antoine, saint-laurent-du-var, france": [
+    43.6754325,
+    7.1887659
+  ],
+  "place trastour, saint-jeannet, france": [
+    43.747868,
+    7.1432792
+  ],
+  "place wilson, villefranche-sur-mer, france": [
+    43.7020972,
+    7.3118644
+  ],
+  "promenade de la plage, cagnes-sur-mer, france": [
+    43.6534646,
+    7.1562473
+  ],
+  "promenade des anglais, nice, france": [
+    43.6859892,
+    7.2374765
+  ],
+  "promenade du martinet, saint-sauveur-sur-tinée, france": [
+    44.0843156,
+    7.1034637
+  ],
+  "promenade du paillon, nice, france": [
+    43.6974111,
+    7.2717905
+  ],
+  "promenade sainte-pétronille, saint-jeannet, france": [
+    43.7497368,
+    7.1480709
+  ],
+  "quai de la banquière, nice, france": [
+    43.7352517,
+    7.2877695
+  ],
+  "quai de la banquière, saint-andré-de-la-roche, france": [
+    43.7352517,
+    7.2877695
+  ],
+  "quai de la corderie, villefranche-sur-mer, france": [
+    43.6981019,
+    7.3067906
+  ],
+  "quai des etats-unis, nice, france": [
+    43.6949659,
+    7.2766024
+  ],
+  "route d'aspremont, tourrette-levens, france": [
+    43.7911153,
+    7.2734194
+  ],
+  "route d'utelle, la tour, france": [
+    43.9427106,
+    7.1885962
+  ],
+  "route de bellet, nice, france": [
+    43.6990639,
+    7.2351218
+  ],
+  "route de cagnes n, vence, france": [
+    43.713972,
+    7.1268074
+  ],
+  "route de cagnes, la gaude, france": [
+    43.7115072,
+    7.1496016
+  ],
+  "route de carros, gattières, france": [
+    43.7677788,
+    7.1738165
+  ],
+  "route de casternou, châteauneuf-villevieille, france": [
+    43.8027132,
+    7.2862389
+  ],
+  "route de châteauneuf, châteauneuf-villevieille, france": [
+    43.807585,
+    7.2978232
+  ],
+  "route de châteauneuf-villevieille, tourrette-levens, france": [
+    43.8130179,
+    7.2686059
+  ],
+  "route de colomars, aspremont, france": [
+    43.7685478,
+    7.2365906
+  ],
+  "route de france n, cagnes-sur-mer, france": [
+    43.6620467,
+    7.1311542
+  ],
+  "route de france, cagnes-sur-mer, france": [
+    43.6621553,
+    7.1311975
+  ],
+  "route de fuonmurade, le broc, france": [
+    43.8089202,
+    7.1670879
+  ],
+  "route de gattières n, saint-jeannet, france": [
+    43.74335,
+    7.1447507
+  ],
+  "route de gilette, gilette, france": [
+    43.8485991,
+    7.1650794
+  ],
+  "route de grenoble, nice, france": [
+    43.7155041,
+    7.1868565
+  ],
+  "route de l'abadie, saint-andré-de-la-roche, france": [
+    43.7390874,
+    7.2926132
+  ],
+  "route de l'energie, bonson, france": [
+    43.851339,
+    7.1946192
+  ],
+  "route de la baronne, gattières, france": [
+    43.7563561,
+    7.1855769
+  ],
+  "route de la baronne, la gaude, france": [
+    43.7201465,
+    7.1791269
+  ],
+  "route de la baronne, saint-jeannet, france": [
+    43.7452728,
+    7.177587
+  ],
+  "route de la baronne, saint-laurent-du-var, france": [
+    43.7047707,
+    7.1778518
+  ],
+  "route de la cavagne, carros, france": [
+    43.7760511,
+    7.1759145
+  ],
+  "route de la colmiane, saint-martin-vésubie, france": [
+    44.0761918,
+    7.2417811
+  ],
+  "route de la forêt, venanson, france": [
+    44.0534966,
+    7.2496227
+  ],
+  "route de la gaude, saint-jeannet, france": [
+    43.7411751,
+    7.1463149
+  ],
+  "route de la redoute, le broc, france": [
+    43.8192055,
+    7.1695793
+  ],
+  "route de la roquette, la roquette-sur-var, france": [
+    43.8474048,
+    7.2198271
+  ],
+  "route de la roquette, levens, france": [
+    43.8474048,
+    7.2198271
+  ],
+  "route de loda, lantosque, france": [
+    43.9547686,
+    7.3003303
+  ],
+  "route de nice, aspremont, france": [
+    43.7847154,
+    7.2440691
+  ],
+  "route de nice, le broc, france": [
+    43.8056243,
+    7.1668727
+  ],
+  "route de nice, saint-martin-vésubie, france": [
+    44.0579233,
+    7.2624766
+  ],
+  "route de pessicart, nice, france": [
+    43.7217867,
+    7.2390852
+  ],
+  "route de revest, gilette, france": [
+    43.8523866,
+    7.1645857
+  ],
+  "route de saint jeannet, saint-laurent-du-var, france": [
+    43.6914811,
+    7.1768932
+  ],
+  "route de saint laurent, la gaude, france": [
+    43.7275986,
+    7.1695815
+  ],
+  "route de saint pancrace, nice, france": [
+    43.7415221,
+    7.2387744
+  ],
+  "route de saint-jeannet du n, saint-laurent-du-var, france": [
+    43.6914811,
+    7.1768932
+  ],
+  "route de saint-jeannet, saint-laurent-du-var, france": [
+    43.6914811,
+    7.1768932
+  ],
+  "route de saint-laurent, la gaude, france": [
+    43.7275986,
+    7.1695815
+  ],
+  "route de st jeannet n, cagnes-sur-mer, france": [
+    43.6841268,
+    7.1792235
+  ],
+  "route de st jeannet n, vence, france": [
+    43.7318385,
+    7.1188568
+  ],
+  "route de st pierre de féric, nice, france": [
+    43.7102451,
+    7.2467875
+  ],
+  "route de turin, nice, france": [
+    43.730572,
+    7.2853922
+  ],
+  "route de vence n, saint-jeannet, france": [
+    43.7489448,
+    7.1665642
+  ],
+  "route de vence pr10, saint-jeannet, france": [
+    43.7489448,
+    7.1665642
+  ],
+  "route de vence, gattières, france": [
+    43.7558048,
+    7.1719163
+  ],
+  "route de villevieille, châteauneuf-villevieille, france": [
+    43.8087415,
+    7.2956266
+  ],
+  "route des condamines, saint-martin-du-var, france": [
+    43.8111033,
+    7.196062
+  ],
+  "route des fraises, carros, france": [
+    43.7905508,
+    7.1846903
+  ],
+  "route des plans, carros, france": [
+    43.7787216,
+    7.2024848
+  ],
+  "route des pugets n, saint-laurent-du-var, france": [
+    43.6850161,
+    7.1852372
+  ],
+  "route des pugets, saint-laurent-du-var, france": [
+    43.684111,
+    7.1855858
+  ],
+  "route des ribes, le broc, france": [
+    43.8184354,
+    7.173419
+  ],
+  "route des sauces, gattières, france": [
+    43.7563828,
+    7.1691338
+  ],
+  "route des vespins, saint-laurent-du-var, france": [
+    43.6602718,
+    7.180415
+  ],
+  "route du bord de mer, saint-laurent-du-var, france": [
+    43.6612359,
+    7.1938602
+  ],
+  "route du cimetière de l'est, nice, france": [
+    43.741621,
+    7.3072906
+  ],
+  "route du cimetiére de l'est, nice, france": [
+    43.741621,
+    7.3072906
+  ],
+  "route du clos martel, le broc, france": [
+    43.8303476,
+    7.1732396
+  ],
+  "route du cros d'utelle, utelle, france": [
+    43.8839874,
+    7.2353241
+  ],
+  "route du pont charles albert, le broc, france": [
+    43.836201,
+    7.1721263
+  ],
+  "route du puy, saint-martin-du-var, france": [
+    43.816988,
+    7.1936172
+  ],
+  "route du rivet, lantosque, france": [
+    43.9739473,
+    7.3143509
+  ],
+  "route felix garel, colomars, france": [
+    43.7580283,
+    7.2327241
+  ],
+  "route forestière du mont boron, nice, france": [
+    43.6897354,
+    7.2970848
+  ],
+  "route jean natale, carros, france": [
+    43.7760289,
+    7.1749852
+  ],
+  "route sainte-marguerite, le broc, france": [
+    43.8178588,
+    7.1647418
+  ],
+  "rue acchiardi de saint léger, nice, france": [
+    43.714258,
+    7.2910026
+  ],
+  "rue alberti, nice, france": [
+    43.6993171,
+    7.2720777
+  ],
+  "rue alfred corniglion, roquebillière, france": [
+    44.0122495,
+    7.3067488
+  ],
+  "rue alphonse 1er n, nice, france": [
+    43.6763001,
+    7.211282
+  ],
+  "rue anatole france, nice, france": [
+    43.7378091,
+    7.3030985
+  ],
+  "rue andrioli, nice, france": [
+    43.6951601,
+    7.2541733
+  ],
+  "rue auguste pégurier- nice, nice, france": [
+    43.6707851,
+    7.2185039
+  ],
+  "rue autun, nice, france": [
+    43.7076753,
+    7.2613563
+  ],
+  "rue baou, la gaude, france": [
+    43.7220188,
+    7.1493997
+  ],
+  "rue barberis, nice, france": [
+    43.7048079,
+    7.2844334
+  ],
+  "rue barla, nice, france": [
+    43.701439,
+    7.2842434
+  ],
+  "rue berlioz, cagnes-sur-mer, france": [
+    43.6557855,
+    7.1598791
+  ],
+  "rue berlioz, nice, france": [
+    43.7004801,
+    7.2593982
+  ],
+  "rue bonaparte, nice, france": [
+    43.7005632,
+    7.2848673
+  ],
+  "rue cais de gilette, nice, france": [
+    43.7121268,
+    7.2934775
+  ],
+  "rue candia, nice, france": [
+    43.7012476,
+    7.2521811
+  ],
+  "rue castel, nice, france": [
+    43.7095853,
+    7.2584865
+  ],
+  "rue chabrier, nice, france": [
+    43.7073188,
+    7.2914167
+  ],
+  "rue chanoine bailet, nice, france": [
+    43.7135595,
+    7.2918393
+  ],
+  "rue charles chauve, nice, france": [
+    43.6719253,
+    7.2243255
+  ],
+  "rue colonel gassin, nice, france": [
+    43.7223911,
+    7.2854514
+  ],
+  "rue colonel guide, nice, france": [
+    43.7064125,
+    7.29101
+  ],
+  "rue commandant cahuzac, saint-laurent-du-var, france": [
+    43.6604303,
+    7.1854852
+  ],
+  "rue cros de capeu, nice, france": [
+    43.7120039,
+    7.2546336
+  ],
+  "rue d'alger, nice, france": [
+    43.7039501,
+    7.2693487
+  ],
+  "rue d'arménie, nice, france": [
+    43.7137793,
+    7.2249635
+  ],
+  "rue d'autun, nice, france": [
+    43.7076753,
+    7.2613563
+  ],
+  "rue de france, nice, france": [
+    43.6938248,
+    7.2518869
+  ],
+  "rue de l'abbaye, nice, france": [
+    43.6968337,
+    7.2751503
+  ],
+  "rue de l'hôtel des postes, nice, france": [
+    43.6993598,
+    7.2708885
+  ],
+  "rue de l'industrie, nice, france": [
+    43.7274071,
+    7.4132741
+  ],
+  "rue de la calade, la bollène-vésubie, france": [
+    43.9895959,
+    7.3299947
+  ],
+  "rue de la condamine, cagnes-sur-mer, france": [
+    43.6554914,
+    7.1445262
+  ],
+  "rue de la croix, nice, france": [
+    43.6979247,
+    7.2778932
+  ],
+  "rue de la gendarmerie, nice, france": [
+    43.7113497,
+    7.2801902
+  ],
+  "rue de la préfecture, nice, france": [
+    43.696316,
+    7.2763478
+  ],
+  "rue de paris n, nice, france": [
+    43.7048966,
+    7.267937
+  ],
+  "rue de stamford, vence, france": [
+    43.7217875,
+    7.1089942
+  ],
+  "rue de villeneuve, nice, france": [
+    43.7067815,
+    7.261935
+  ],
+  "rue delille, nice, france": [
+    43.7013198,
+    7.2768643
+  ],
+  "rue delrieu, nice, france": [
+    43.7229887,
+    7.2496708
+  ],
+  "rue des arbousiers, carros, france": [
+    43.7725468,
+    7.1903629
+  ],
+  "rue des chevaliers de malte, nice, france": [
+    43.7242474,
+    7.2541499
+  ],
+  "rue des géraniums, cagnes-sur-mer, france": [
+    43.6587522,
+    7.1775654
+  ],
+  "rue des jonquilles, cagnes-sur-mer, france": [
+    43.6632329,
+    7.1630014
+  ],
+  "rue des mas de l'adrech, saint-martin-du-var, france": [
+    43.8251569,
+    7.1904325
+  ],
+  "rue des oliviers, carros, france": [
+    43.7719367,
+    7.1903082
+  ],
+  "rue des orangers, nice, france": [
+    43.713472,
+    7.2936899
+  ],
+  "rue des plaqueminiers, cagnes-sur-mer, france": [
+    43.6582641,
+    7.1644161
+  ],
+  "rue des ponchettes, nice, france": [
+    43.6949956,
+    7.2782845
+  ],
+  "rue des roses, nice, france": [
+    43.7153412,
+    7.2592404
+  ],
+  "rue des selves, carros, france": [
+    43.7736084,
+    7.1935251
+  ],
+  "rue droite, saint-étienne-de-tinée, france": [
+    44.2539965,
+    6.9266474
+  ],
+  "rue du bocage, cagnes-sur-mer, france": [
+    43.6559851,
+    7.1418349
+  ],
+  "rue du collet, belvédère, france": [
+    44.0160432,
+    7.3211379
+  ],
+  "rue du collet, la bollène-vésubie, france": [
+    43.989725,
+    7.3304894
+  ],
+  "rue du docteur gonin, cagnes-sur-mer, france": [
+    43.6629461,
+    7.1511896
+  ],
+  "rue du four, la gaude, france": [
+    43.721882,
+    7.1496829
+  ],
+  "rue du grand pin, nice, france": [
+    43.7127476,
+    7.2546024
+  ],
+  "rue du lieutenant colonelli, beaulieu-sur-mer, france": [
+    43.7055574,
+    7.3320277
+  ],
+  "rue du loup, carros, france": [
+    43.7703986,
+    7.1938589
+  ],
+  "rue du pavillon, vence, france": [
+    43.7218111,
+    7.1100915
+  ],
+  "rue du planet, saint-étienne-de-tinée, france": [
+    44.2569879,
+    6.9250348
+  ],
+  "rue du poilu, villefranche-sur-mer, france": [
+    43.7056127,
+    7.3126983
+  ],
+  "rue du port, beaulieu-sur-mer, france": [
+    43.7074378,
+    7.3340503
+  ],
+  "rue du portalet, saint-étienne-de-tinée, france": [
+    44.2563643,
+    6.9252817
+  ],
+  "rue du puits, cagnes-sur-mer, france": [
+    43.6579072,
+    7.141917
+  ],
+  "rue du samint, belvédère, france": [
+    44.0147089,
+    7.3231419
+  ],
+  "rue du val gele, saint-étienne-de-tinée, france": [
+    44.2567154,
+    6.9235982
+  ],
+  "rue du val gelé, saint-étienne-de-tinée, france": [
+    44.2567154,
+    6.9235982
+  ],
+  "rue du vallon, saint-jean-cap-ferrat, france": [
+    43.6894965,
+    7.3328399
+  ],
+  "rue edouard beri, nice, france": [
+    43.7034583,
+    7.2745792
+  ],
+  "rue edouard dalmas, nice, france": [
+    43.7119351,
+    7.2609731
+  ],
+  "rue edouard scoffier, nice, france": [
+    43.703935,
+    7.29216
+  ],
+  "rue fernand barbary, carros, france": [
+    43.7924262,
+    7.1858799
+  ],
+  "rue fragonard, cagnes-sur-mer, france": [
+    43.6687585,
+    7.1589291
+  ],
+  "rue francois plesent, colomars, france": [
+    43.766312,
+    7.2209507
+  ],
+  "rue françois guisol, nice, france": [
+    43.700352,
+    7.2842093
+  ],
+  "rue françois plésent, colomars, france": [
+    43.7650844,
+    7.2212587
+  ],
+  "rue frédéric passy, nice, france": [
+    43.6995774,
+    7.2559101
+  ],
+  "rue gabriel hanotaux, nice, france": [
+    43.7078029,
+    7.2523094
+  ],
+  "rue gabriel ponzone, la gaude, france": [
+    43.723106,
+    7.1515556
+  ],
+  "rue galléan, nice, france": [
+    43.7033319,
+    7.2717485
+  ],
+  "rue gambetta prolongée, vence, france": [
+    43.7199151,
+    7.1126574
+  ],
+  "rue gambetta, vence, france": [
+    43.7218877,
+    7.1125691
+  ],
+  "rue gauthier roux, nice, france": [
+    43.7223365,
+    7.285444
+  ],
+  "rue georges ville, nice, france": [
+    43.7033264,
+    7.2836736
+  ],
+  "rue gioffredo, nice, france": [
+    43.7013004,
+    7.2759261
+  ],
+  "rue gubernatis, nice, france": [
+    43.698872,
+    7.2738376
+  ],
+  "rue gustave deloye, nice, france": [
+    43.700389,
+    7.2691696
+  ],
+  "rue gustave garaud, nice, france": [
+    43.70575,
+    7.2922182
+  ],
+  "rue gutenberg, nice, france": [
+    43.7095702,
+    7.2584943
+  ],
+  "rue hôtel de ville, la trinité, france": [
+    43.7427573,
+    7.3138044
+  ],
+  "rue jacques barraja, saint-martin-vésubie, france": [
+    44.0684241,
+    7.2564394
+  ],
+  "rue jean baptiste bermond, saint-laurent-du-var, france": [
+    43.6713146,
+    7.1911035
+  ],
+  "rue jean baptiste spinetta, nice, france": [
+    43.6967826,
+    7.2520028
+  ],
+  "rue jean barnoin, cagnes-sur-mer, france": [
+    43.6550281,
+    7.1562857
+  ],
+  "rue jean bonfante, nice, france": [
+    43.7120256,
+    7.2823618
+  ],
+  "rue jean canavèse, nice, france": [
+    43.7221856,
+    7.2493943
+  ],
+  "rue jean vigo, nice, france": [
+    43.6718868,
+    7.2222501
+  ],
+  "rue jean-pierre papon, nice, france": [
+    43.7013918,
+    7.2825692
+  ],
+  "rue jeanne jugan, nice, france": [
+    43.7107473,
+    7.2811598
+  ],
+  "rue joseph albert bovis, nice, france": [
+    43.7131971,
+    7.2920231
+  ],
+  "rue joseph blanchi, saint-martin-vésubie, france": [
+    44.0673799,
+    7.2566219
+  ],
+  "rue jules belleudy, nice, france": [
+    43.6702207,
+    7.217971
+  ],
+  "rue jules ladoumegue, cagnes-sur-mer, france": [
+    43.6583567,
+    7.1579384
+  ],
+  "rue jules michel, saint-laurent-du-var, france": [
+    43.674139,
+    7.1889719
+  ],
+  "rue ladoumegue, cagnes-sur-mer, france": [
+    43.6583567,
+    7.1579384
+  ],
+  "rue ladoumègue, cagnes-sur-mer, france": [
+    43.6583567,
+    7.1579384
+  ],
+  "rue lamartine, nice, france": [
+    43.7048682,
+    7.2672787
+  ],
+  "rue las planas, saint-dalmas-le-selvage, france": [
+    44.2845283,
+    6.8660093
+  ],
+  "rue longue, saint-étienne-de-tinée, france": [
+    44.256912,
+    6.9256474
+  ],
+  "rue louis garneray, nice, france": [
+    43.7061809,
+    7.293691
+  ],
+  "rue louis genari, nice, france": [
+    43.7182042,
+    7.2931256
+  ],
+  "rue louis negro, cagnes-sur-mer, france": [
+    43.6634691,
+    7.152809
+  ],
+  "rue léon bertrand, nice, france": [
+    43.6741121,
+    7.2244284
+  ],
+  "rue marie bashkirtseff, nice, france": [
+    43.6751555,
+    7.2248514
+  ],
+  "rue maréchal vauban, nice, france": [
+    43.7115848,
+    7.2865161
+  ],
+  "rue maurice mignon, nice, france": [
+    43.6724064,
+    7.2230218
+  ],
+  "rue michel ange, nice, france": [
+    43.7122412,
+    7.260524
+  ],
+  "rue molière, nice, france": [
+    43.7129861,
+    7.2602636
+  ],
+  "rue monseigneur alfred daumas, nice, france": [
+    43.710247,
+    7.2891626
+  ],
+  "rue navel, belvédère, france": [
+    44.0148221,
+    7.3203655
+  ],
+  "rue niepce, nice, france": [
+    43.7047675,
+    7.2689348
+  ],
+  "rue ouahigouya, vence, france": [
+    43.7210045,
+    7.0819356
+  ],
+  "rue parmentier, nice, france": [
+    43.7137792,
+    7.2581795
+  ],
+  "rue pasteur, villefranche-sur-mer, france": [
+    43.704686,
+    7.3123073
+  ],
+  "rue pastorelli, nice, france": [
+    43.7019365,
+    7.273296
+  ],
+  "rue paul déroulède, nice, france": [
+    43.7006307,
+    7.2644993
+  ],
   "rue penchienatti, nice, france": [
     43.7025519,
     7.277044
+  ],
+  "rue pierre lambert, saint-laurent-du-var, france": [
+    43.6744351,
+    7.1882739
+  ],
+  "rue place neuve, la gaude, france": [
+    43.7226039,
+    7.1503672
+  ],
+  "rue principale, ilonse, france": [
+    44.0319924,
+    7.1000191
+  ],
+  "rue raynardi, nice, france": [
+    43.6997331,
+    7.2668144
+  ],
+  "rue reine jeanne, nice, france": [
+    43.7057194,
+    7.2590141
+  ],
+  "rue roger martin du gard, nice, france": [
+    43.7075562,
+    7.2529444
+  ],
+  "rue saint honoré, nice, france": [
+    43.6930813,
+    7.2402227
+  ],
+  "rue saint-gaëtan, nice, france": [
+    43.6960621,
+    7.2755599
+  ],
+  "rue saint-honoré, nice, france": [
+    43.6930813,
+    7.2402227
+  ],
+  "rue st michel, vence, france": [
+    43.7215598,
+    7.1159754
+  ],
+  "rue valperga, nice, france": [
+    43.7043406,
+    7.2703221
+  ],
+  "rue vanloo, nice, france": [
+    43.6954047,
+    7.2696712
+  ],
+  "rue verdi, nice, france": [
+    43.699601,
+    7.2603721
+  ],
+  "rue victor contesso, villefranche-sur-mer, france": [
+    43.7047901,
+    7.3113576
+  ],
+  "rue voltaire, nice, france": [
+    43.6997533,
+    7.2701099
+  ],
+  "rue volti, villefranche-sur-mer, france": [
+    43.7045967,
+    7.3115316
+  ],
+  "square bénès, saint-laurent-du-var, france": [
+    43.6710722,
+    7.190355
+  ],
+  "square colonel jean-pierre, nice, france": [
+    43.7058633,
+    7.2586603
+  ],
+  "voie romaine, nice, france": [
+    43.723567,
+    7.2817919
   ]
 }

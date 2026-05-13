@@ -4,11 +4,19 @@ import re
 import time
 import json
 import os
+import sys
 import threading
 import urllib.request
 import urllib.parse
 
 from database import get_db
+
+_NOMI_DIR = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "database", "build-sqlite")
+)
+if _NOMI_DIR not in sys.path:
+    sys.path.insert(0, _NOMI_DIR)
+import nominatim_geocode as ngeo
 
 
 router = APIRouter(prefix="/api", tags=["GeoJSON"])
@@ -44,36 +52,26 @@ _TRAILING_NOISE = re.compile(
 
 
 def _load_cache() -> None:
+    """Charge le cache disque (lecture robuste + nettoyage aligné sur le build)."""
     global _cache
-    try:
-        if os.path.exists(_CACHE_PATH):
-            with open(_CACHE_PATH, "r", encoding="utf-8") as f:
-                _cache = json.load(f)
-    except Exception:
-        _cache = {}
+    raw = ngeo.load_disk_cache(_CACHE_PATH)
+    _cache = ngeo.clean_stale_cache_entries(raw)
+    if len(_cache) < len(raw):
+        ngeo.save_disk_cache(_CACHE_PATH, _cache)
 
 
 def _save_cache() -> None:
+    """Persiste le cache (écriture atomique, même logique que le build)."""
     with _cache_lock:
-        try:
-            with open(_CACHE_PATH, "w", encoding="utf-8") as f:
-                json.dump(_cache, f, ensure_ascii=False, indent=2)
-        except Exception:
-            pass
+        ngeo.save_disk_cache(_CACHE_PATH, _cache)
 
 
 def _clean_stale_cache() -> None:
-    """
-    Supprime :
-    - les entrées ancien format (sans commune, ne finissent pas par ', france')
-    - les entrées None (re-tentées avec la recherche structurée)
-    Garde uniquement les hits valides au nouveau format.
-    """
+    """Nettoie le cache en mémoire et réécrit le fichier si des entrées ont été retirées."""
     global _cache
     before = len(_cache)
-    _cache = {k: v for k, v in _cache.items() if k.endswith(", france") and v is not None}
-    removed = before - len(_cache)
-    if removed > 0:
+    _cache = ngeo.clean_stale_cache_entries(_cache)
+    if len(_cache) < before:
         _save_cache()
 
 
@@ -182,14 +180,65 @@ def _geocode_batch(queries: list) -> None:
 @router.get("/geojson/chantiers")
 def get_geojson_chantiers():
     """
-    Retourne un GeoJSON des chantiers localisés par leur libellé.
-    Les chantiers non localisables ont geometry=null (non affichés côté client).
-    Aucun fallback commune. La géocodage non-caché tourne en arrière-plan.
+    Retourne un GeoJSON des chantiers localisés.
+    Si la base contient latitude/longitude (remplies au build), lecture directe.
+    Sinon (base ancienne), repli sur le cache JSON + géocodage en arrière-plan.
     """
     global _geo_thread
 
     conn = get_db()
     cur = conn.cursor()
+    cur.execute("PRAGMA table_info(chantiers)")
+    col_names = {r[1] for r in cur.fetchall()}
+    has_geo = "latitude" in col_names and "longitude" in col_names
+    has_adresse = "adresse" in col_names
+
+    if has_geo:
+        cur.execute(
+            """
+            SELECT id, num_op, etat, date_debut, date_fin, commune, libelle,
+                   latitude, longitude"""
+            + (", adresse" if has_adresse else "")
+            + """
+            FROM chantiers
+            """
+        )
+        rows = cur.fetchall()
+        conn.close()
+
+        features = []
+        for row in rows:
+            libelle = row["libelle"] or ""
+            lat, lon = row["latitude"], row["longitude"]
+            geom = None
+            localise = False
+            if lat is not None and lon is not None:
+                lat_f, lon_f = float(lat), float(lon)
+                if ngeo.in_bbox(lat_f, lon_f):
+                    geom = {"type": "Point", "coordinates": [lon_f, lat_f]}
+                    localise = True
+
+            props = {
+                "id": row["id"],
+                "num_op": row["num_op"],
+                "etat": row["etat"],
+                "date_debut": row["date_debut"],
+                "date_fin": row["date_fin"],
+                "libelle": libelle,
+                "localise": localise,
+            }
+            if has_adresse:
+                props["adresse"] = row["adresse"] or ""
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": geom,
+                    "properties": props,
+                }
+            )
+
+        return {"type": "FeatureCollection", "features": features}
+
     cur.execute(
         "SELECT id, num_op, etat, date_debut, date_fin, commune, libelle FROM chantiers"
     )
@@ -208,33 +257,32 @@ def get_geojson_chantiers():
         localise = False
 
         if street is not None and commune:
-            # Clé unique voie + commune pour éviter les confusions inter-communes
             full_q = f"{street}, {commune}, France"
             key = full_q.lower().strip()
             if key in _cache:
                 coords = _cache[key]
                 if coords:
-                    # GeoJSON Point : [longitude, latitude]
                     geom = {"type": "Point", "coordinates": [coords[1], coords[0]]}
                     localise = True
             else:
                 uncached.append(full_q)
 
-        features.append({
-            "type": "Feature",
-            "geometry": geom,
-            "properties": {
-                "id": row["id"],
-                "num_op": row["num_op"],
-                "etat": row["etat"],
-                "date_debut": row["date_debut"],
-                "date_fin": row["date_fin"],
-                "libelle": libelle,
-                "localise": localise,
-            },
-        })
+        features.append(
+            {
+                "type": "Feature",
+                "geometry": geom,
+                "properties": {
+                    "id": row["id"],
+                    "num_op": row["num_op"],
+                    "etat": row["etat"],
+                    "date_debut": row["date_debut"],
+                    "date_fin": row["date_fin"],
+                    "libelle": libelle,
+                    "localise": localise,
+                },
+            }
+        )
 
-    # Dédupliquer et lancer le géocodage en arrière-plan pour les manquants
     unique_uncached = list(dict.fromkeys(uncached))
     if unique_uncached and (_geo_thread is None or not _geo_thread.is_alive()):
         _geo_thread = threading.Thread(
