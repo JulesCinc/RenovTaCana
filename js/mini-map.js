@@ -57,6 +57,7 @@
     let miniMap = null;
     let miniLayer = null;
     let baseTileLayer = null;
+    let highlightedLayer = null;
 
     document.addEventListener("DOMContentLoaded", initMiniMap);
 
@@ -110,8 +111,17 @@
         }
     }
 
+    function resetHighlight() {
+        if (!highlightedLayer) return;
+        try {
+            highlightedLayer.setStyle(getLineStyle(highlightedLayer.feature?.properties?.crit));
+        } catch (_) {}
+        highlightedLayer = null;
+    }
+
     function renderFeatures(features) {
         if (miniLayer) miniMap.removeLayer(miniLayer);
+        highlightedLayer = null;
         miniLayer = L.geoJSON({ type: "FeatureCollection", features }, {
             style: f => getLineStyle(f.properties?.crit),
             onEachFeature: function (feature, layer) {
@@ -177,6 +187,30 @@
         if (crit >= 10) return { color: "#84cc16", weight: 1.4, opacity: 0.7 };
         return { color: "#00d4aa", weight: 1.2, opacity: 0.65 };
     }
+
+    /**
+     * Zoome la mini-carte sur la canalisation dont la propriété `id` vaut `facilityid`
+     * et la met en surbrillance. Retourne true si trouvé, false sinon.
+     */
+    window.rtcMiniMapFocus = function (facilityid) {
+        if (!miniLayer || !miniMap) return false;
+
+        let found = null;
+        miniLayer.eachLayer(function (layer) {
+            if (layer.feature?.properties?.id === facilityid) found = layer;
+        });
+        if (!found) return false;
+
+        resetHighlight();
+        highlightedLayer = found;
+        found.setStyle({ color: "#38bdf8", weight: 5, opacity: 1 });
+
+        try {
+            miniMap.fitBounds(found.getBounds(), { padding: [40, 40], maxZoom: 17, animate: true });
+        } catch (_) {}
+
+        return true;
+    };
 
     function escapeHtml(str) {
         return String(str)

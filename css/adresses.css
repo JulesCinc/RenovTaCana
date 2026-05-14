@@ -497,6 +497,18 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     .tabs-bar { overflow-x: auto; }
 }
 
+.row-actions {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.row-action-btn--locate:hover {
+    border-color: var(--c-blue, #38bdf8);
+    color: var(--c-blue, #38bdf8);
+    background: color-mix(in srgb, #38bdf8 12%, transparent);
+}
+
 .row-action-btn {
     width: 30px;
     height: 30px;

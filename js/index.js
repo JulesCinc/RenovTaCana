@@ -488,14 +488,19 @@ function renderTable(data) {
             <td>${row.nb_fuites != null ? row.nb_fuites : "—"}</td>
             <td>${row.criticite != null ? critBar(row.criticite) : unknownValueIcon("Criticité inconnue")}</td>
             <td>${row.score_priorite != null ? row.score_priorite : unknownValueIcon("Score de priorité inconnu")}</td>
-            <td>
+            <td><div class="row-actions">
                 <button class="row-action-btn" type="button" title="Voir le détail" data-action="view" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Voir le détail">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </td>
+                <button class="row-action-btn row-action-btn--locate" type="button" title="Localiser sur la mini-carte" data-action="locate" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Localiser sur la mini-carte">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </button>
+            </div></td>
         </tr>
     `).join("");
 }
@@ -939,6 +944,12 @@ function initDetailModal() {
     if (!tbody || !modal) return;
 
     tbody.addEventListener("click", function (e) {
+        const locateBtn = e.target.closest("button[data-action='locate'][data-facilityid]");
+        if (locateBtn) {
+            const id = locateBtn.dataset.facilityid;
+            if (id) focusCanalOnMiniMap(id);
+            return;
+        }
         const btn = e.target.closest("button[data-action='view'][data-facilityid]");
         if (!btn) return;
         const facilityid = btn.dataset.facilityid;
@@ -999,6 +1010,12 @@ async function openDetailModal(facilityid) {
     } catch (e) {
         body.innerHTML = `<div class="row-empty-msg">Impossible de charger le détail de la canalisation.</div>`;
     }
+}
+
+function focusCanalOnMiniMap(facilityid) {
+    window.rtcMiniMapFocus?.(facilityid);
+    document.querySelector(".address-side-card")
+        ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function closeDetailModal() {
