@@ -296,27 +296,18 @@ def get_geojson_chantiers():
 @router.get("/geojson/canalisations")
 def get_geojson_canalisations():
     """
-    Construit un GeoJSON dynamique depuis la table `conduites`.
+    Construit un GeoJSON dynamique depuis la table `conduites` avec la criticité depuis `canalisations`.
     """
     conn = get_db()
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT FACILITYID, ADRESSE, MATERIAL, DIAMETER, longueur, Predicti_1, TXcasse, geometry
-        FROM conduites
-        WHERE geometry IS NOT NULL AND TRIM(geometry) != ''
+        SELECT c.FACILITYID, c.ADRESSE, c.MATERIAL, c.DIAMETER, c.longueur, c.geometry, can.criticite
+        FROM conduites c
+        LEFT JOIN canalisations can ON c.FACILITYID = can.facilityid
+        WHERE c.geometry IS NOT NULL AND TRIM(c.geometry) != ''
         """
     )
-
-    tx_to_pct = {
-        "Négligeable": 5.0,
-        "Negligeable": 5.0,
-        "Faible": 25.0,
-        "Moyen": 50.0,
-        "Important": 75.0,
-        "Très important": 95.0,
-        "Tres important": 95.0,
-    }
 
     features = []
     for row in cur.fetchall():
@@ -324,12 +315,8 @@ def get_geojson_canalisations():
         if geom is None:
             continue
 
-        pred = row["Predicti_1"]
-        crit = None
-        if isinstance(pred, (int, float)):
-            crit = round(float(pred) * 100.0, 1)
-        elif row["TXcasse"] in tx_to_pct:
-            crit = tx_to_pct[row["TXcasse"]]
+        # Utilise la criticite depuis la table canalisations (JOIN), sinon None
+        crit = row["criticite"]
 
         features.append(
             {
