@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/carte.css">
+    <link rel="stylesheet" href="css/plan-travaux.css">
 </head>
 
 <body>
@@ -86,6 +87,16 @@
                 </svg>
                 Dashboard
             </a>
+            <a href="plan-travaux.html" class="map-toggle-btn" id="btn-plan-nav">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="8" y1="8" x2="13" y2="8" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <line x1="8" y1="16" x2="11" y2="16" />
+                </svg>
+                Plan <span id="plan-nav-count"></span>
+            </a>
         </div>
 
         <div class="mh-right">
@@ -131,7 +142,29 @@
                 </div>
                 <strong id="tt-crit-val"></strong>
             </div>
-            <div class="map-tooltip__action">Cliquer pour voir le detail -></div>
+            <div class="map-tooltip__action">Cliquer pour les actions →</div>
+        </div>
+
+        <!-- Popup d'action — apparaît au clic sur une canalisation -->
+        <div class="pipe-action-popup" id="pipe-popup" style="display:none">
+            <div class="pipe-popup__id" id="pp-id"></div>
+            <a class="pipe-popup__btn pipe-popup__btn--detail" id="pp-detail" href="#">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                Voir le détail
+            </a>
+            <button class="pipe-popup__btn pipe-popup__btn--plan" id="pp-plan">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
+                Ajouter au plan
+            </button>
         </div>
 
         <div class="zone-panel" id="zone-panel" style="display:none">
@@ -156,6 +189,7 @@
     <script src="js/config.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/search.js"></script>
+    <script src="js/plan-travaux.js"></script>
     <script src="js/carte.js"></script>
 </body>
 

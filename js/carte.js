@@ -13,6 +13,8 @@ let allFeatures = [];
 let activeFilter = "all";
 let selectMode = false;
 
+let currentClickPipe = null; // données de la canalisation cliquée
+
 let chantierLayer = null;
 let chantiersLoaded = false;
 
@@ -24,6 +26,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     initSearch();
     initZoneSelect();
     initChantierToggle();
+    initPipePopup();
+    updatePlanNavCount();
 });
 
 // -- Carte Leaflet -----------------------------------------
@@ -92,9 +96,12 @@ function renderLayer(features) {
             layer.on("mouseover", e => { layer.setStyle({ weight: 5, opacity: 1 }); showTooltip(e, p); });
             layer.on("mousemove", e => moveTooltip(e));
             layer.on("mouseout", () => { if (!selectMode) geoLayer.resetStyle(layer); hideTooltip(); });
-            layer.on("click", () => {
+            layer.on("click", (e) => {
                 if (selectMode) return;
-                if (p.adr) window.location.href = `index.html?adresse=${encodeURIComponent(p.adr)}`;
+                L.DomEvent.stopPropagation(e);
+                currentClickPipe = p;
+                showPipePopup(e, p);
+                hideTooltip();
             });
         }
     }).addTo(map);
@@ -373,4 +380,50 @@ function moveTooltip(e) {
 }
 
 function hideTooltip() { tooltip.style.display = "none"; }
+
+// -- Popup d'action (clic sur canalisation) ----------------
+function showPipePopup(e, p) {
+    const popup = document.getElementById("pipe-popup");
+    if (!popup) return;
+
+    document.getElementById("pp-id").textContent = p.id || "";
+    const detailLink = document.getElementById("pp-detail");
+    detailLink.href = p.adr ? `index.html?adresse=${encodeURIComponent(p.adr)}` : "#";
+
+    popup.style.display = "flex";
+
+    const rect = document.getElementById("map").getBoundingClientRect();
+    let x = e.originalEvent.clientX - rect.left + 12;
+    let y = e.originalEvent.clientY - rect.top - 12;
+    if (x + 200 > rect.width)  x -= 210;
+    if (y + 90  > rect.height) y -= 100;
+    popup.style.left = x + "px";
+    popup.style.top  = y + "px";
+}
+
+function hidePipePopup() {
+    const popup = document.getElementById("pipe-popup");
+    if (popup) popup.style.display = "none";
+}
+
+function initPipePopup() {
+    map.on("click", () => hidePipePopup());
+
+    document.getElementById("pp-plan")?.addEventListener("click", () => {
+        if (currentClickPipe && window.ajouterAuPlan) {
+            window.ajouterAuPlan(currentClickPipe);
+            updatePlanNavCount();
+        }
+        hidePipePopup();
+    });
+}
+
+function updatePlanNavCount() {
+    const el = document.getElementById("plan-nav-count");
+    if (!el) return;
+    try {
+        const items = JSON.parse(localStorage.getItem("rtc_plan_travaux") || "[]");
+        el.textContent = items.length > 0 ? `(${items.length})` : "";
+    } catch { el.textContent = ""; }
+}
 

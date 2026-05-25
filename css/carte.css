@@ -392,6 +392,75 @@ body.theme-dark .map-tooltip {
     text-align: center;
 }
 
+/* ── Popup d'action sur canalisation ─────────────────────── */
+.pipe-action-popup {
+    position: absolute;
+    z-index: 2100;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border-2);
+    border-radius: var(--radius-md);
+    padding: 8px;
+    min-width: 186px;
+    pointer-events: auto;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+}
+
+body.theme-dark .pipe-action-popup {
+    background: rgba(17, 24, 32, 0.97);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+}
+
+.pipe-popup__id {
+    font-size: 0.62rem;
+    color: var(--c-text-dim);
+    font-family: var(--font-mono);
+    padding: 2px 6px 8px;
+    border-bottom: 1px solid var(--c-border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.pipe-popup__btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.74rem;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all var(--t-fast);
+    text-decoration: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--c-text-muted);
+    width: 100%;
+    text-align: left;
+}
+
+.pipe-popup__btn svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
+
+.pipe-popup__btn:hover {
+    background: var(--c-surface-2);
+    border-color: var(--c-border-2);
+    color: var(--c-text);
+}
+
+.pipe-popup__btn--plan:hover {
+    background: var(--c-cyan-dim);
+    border-color: var(--c-cyan);
+    color: var(--c-cyan);
+}
+
 /* ── Zone panel ──────────────────────────────────────────── */
 .zone-panel {
     position: absolute;
