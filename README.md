@@ -1,12 +1,29 @@
-# RenovTaCana · **version V2.0**
+# RenovTaCana · **version V2.1**
 
-Prototype hébergé en ligne : **https://k2vm-163.mde.epf.fr/**
+Prototype hébergé en ligne : **https://k2vm-163.mde.epf.fr**
 
-Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.0** : relier les fonctionnalités (carte, tableau d’adresses, tableau de bord, API) dans des **pages utilisables** et une navigation cohérente.
+Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.1** : consolider les fonctionnalités (carte, tableau d’adresses, tableau de bord, API) et livrer un **plan de travaux opérationnel**.
 
-Dans le périmètre fonctionnel de cette **V2.0**, le **build de la base SQLite** à partir des données brutes présentes dans `data/` est inclus, avec **gestion des versions antérieures** : à chaque nouveau build, la base précédente est déplacée dans `database/outdated` afin de conserver la traçabilité. 
+---
 
-En revanche, le **calcul du score de priorité** ainsi que le chantier de **raccourcissement des délais de chargement** sont explicitement **hors périmètre**. Ces deux sujets sont reportés et seront traités dans la **version 2.1**.
+## État des fonctionnalités (V2.1)
+
+### Fonctionnel
+
+- **Carte interactive** (heatmap / Leaflet) : affichage des canalisations, chantiers et couches géographiques.
+- **Tableau d'adresses** (`index.html`) : parcours, recherche, filtres et export des adresses.
+- **Tableau de bord** (`dashboard.html`) : visualisation des indicateurs clés.
+- **API FastAPI** : endpoints complets (canalisations, chantiers, opérations, adresses, etc.).
+- **Mini-map** sur la page adresses.
+- **Calcul du score de priorité** : le script de calcul est opérationnel et applique les poids définis par les clients.
+- **Recherche / suggestions** : barre de recherche avec auto-complétion via l'API.
+
+### En cours / à venir
+
+| Fonctionnalité | Statut | Cible |
+|---|---|---|
+| Affichage du score de priorité dans la web app (tâches) | Non implémenté | **V2.2** |
+| Optimisation du temps de chargement de la carte (données trop volumineuses) | En cours | **V2.2** |
 
 ---
 
@@ -66,21 +83,20 @@ Sous **Windows** : exécuter **`demarrer-web-app.bat`** (double-clic, ou `.\dema
 
 Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn script.main:app --reload`. Puis ouvrir **`http://127.0.0.1:8000/`** dans le navigateur. La base d’URL API est gérée dans **`js/config.js`**.
 
-## Prochaines étapes indispensables (Jalon 3)
+## Prochaines étapes (V2.2)
 
-- Créer le script qui calcule le **score de priorité** pour chaque canalisation, puis renseigne `canalisations.score_priorite` dans `database/renovTaCana.db`.
-- Raccourcir les délais de chargement.
-- Trouver comment afficher la commune d'une canalisation (texte et non code).
+- **Afficher le score de priorité** dans la web app (pages tâches / adresses).
+- **Optimiser le temps de chargement de la carte** (allègement des données géographiques, chargement progressif ou simplification des géométries).
 - Compléter le document de suivi de projet, avec product backlog, suivi des sprints et jalonage.
-- Rajouter un bouton d'action sur `index.html` pour que lorsqu'on clique sur un bouton "map", cela affiche la canalisation dans la mini heatmap.
 
 ## Association des tâches
 
 ```mermaid
 flowchart LR
     T[Tâche Jalon 3<br/>Créer le script de calcul du score de priorité] --> A[Assigné à : Jules CINC]
-    U1[Tâche Jalon 3<br/>Raccourcir les délais de chargement] --> U[Assigné à : Ulysse LONG]
-    U2[Tâche Jalon 3<br/>Afficher la commune d'une canalisation en texte] --> U
+    U1[Tâche Jalon 3<br/>Raccourcir les délais de chargement<br/>reste à optimiser chantiers et opérations] --> U[Assigné à : Ulysse LONG]
+    U2[Tâche Jalon 3<br/>Optimiser affichage des adresses sur index.html] --> U
+    U3[Tâche Jalon 3<br/>Adresse des opérations même processus que chantiers] --> U
     N1[Tâche Jalon 3<br/>Compléter le document de suivi de projet] --> N[Assigné à : Nicolas DEMARS]
     O1[Tâche Jalon 3<br/>Ajouter un bouton map sur index.html pour la mini heatmap] --> O[Assigné à : Oscar HUNAUT]
 ```

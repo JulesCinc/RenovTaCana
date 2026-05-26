@@ -1,36 +1,313 @@
 from fastapi import APIRouter
 import math
+import re
+import time
+import json
+import os
+import sys
+import threading
+import urllib.request
+import urllib.parse
 
 from database import get_db
+
+_NOMI_DIR = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "database", "build-sqlite")
+)
+if _NOMI_DIR not in sys.path:
+    sys.path.insert(0, _NOMI_DIR)
+import nominatim_geocode as ngeo
 
 
 router = APIRouter(prefix="/api", tags=["GeoJSON"])
 
 
+# ── Geocoding libelle → Nominatim ──────────────────────────────────────────────
+
+_CACHE_PATH = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "database", "geocode_cache.json")
+)
+_cache: dict = {}
+_cache_lock = threading.Lock()
+_geo_thread: threading.Thread | None = None
+_last_req_time = 0.0
+
+# Bounding box stricte de Nice et proche périphérie
+_LAT_MIN, _LAT_MAX = 43.62, 44.35
+_LON_MIN, _LON_MAX = 6.80, 7.42
+
+_STREET_RE = re.compile(
+    r"\b(rue|avenue|boulevard|allée|allee|chemin|impasse|place|voie|route|"
+    r"passage|square|domaine|résidence|residence|montée|montee|traverse|quai|"
+    r"promenade|corniche|esplanade|lotissement|sentier|draille)\b"
+    r"[\s\-]+"
+    r"([A-Za-zÀ-ÿ\'\-][A-Za-zÀ-ÿ\s\'\-\.0-9]{2,60})",
+    re.IGNORECASE | re.UNICODE,
+)
+
+_TRAILING_NOISE = re.compile(
+    r"\s+(?:phase|tranche|lot|section|suite|nord|sud|est|ouest|n°?\s*\d+|\d+)\s*$",
+    re.IGNORECASE,
+)
+
+
+def _load_cache() -> None:
+    """Charge le cache disque (lecture robuste + nettoyage aligné sur le build)."""
+    global _cache
+    raw = ngeo.load_disk_cache(_CACHE_PATH)
+    _cache = ngeo.clean_stale_cache_entries(raw)
+    if len(_cache) < len(raw):
+        ngeo.save_disk_cache(_CACHE_PATH, _cache)
+
+
+def _save_cache() -> None:
+    """Persiste le cache (écriture atomique, même logique que le build)."""
+    with _cache_lock:
+        ngeo.save_disk_cache(_CACHE_PATH, _cache)
+
+
+def _clean_stale_cache() -> None:
+    """Nettoie le cache en mémoire et réécrit le fichier si des entrées ont été retirées."""
+    global _cache
+    before = len(_cache)
+    _cache = ngeo.clean_stale_cache_entries(_cache)
+    if len(_cache) < before:
+        _save_cache()
+
+
+_load_cache()
+_clean_stale_cache()
+
+
+def _extract_query(libelle: str) -> str | None:
+    """Extrait un nom de voie depuis un libellé de chantier."""
+    if not libelle:
+        return None
+    m = _STREET_RE.search(libelle)
+    if not m:
+        return None
+    stype = m.group(1).strip()
+    sname = m.group(2).strip()
+    # Couper aux séparateurs forts et aux marqueurs d'action
+    for sep in (" - ", " / ", " (", ";", " : ",
+                " mise ", " pour ", " afin ", " ecl ", " proprié",
+                " renouvellement", " rénovation", " réfection", " réparation",
+                " création", " pose ", " travaux"):
+        idx = sname.lower().find(sep.lower())
+        if idx != -1:
+            sname = sname[:idx].strip()
+    # Supprimer le bruit en fin (phase 2, tranche 1, nord, …)
+    sname = _TRAILING_NOISE.sub("", sname).strip().rstrip(".,;:/- ")
+    if len(sname) < 2:
+        return None
+    # Limiter à 50 caractères sur une frontière de mot
+    if len(sname) > 50:
+        sname = sname[:50].rsplit(" ", 1)[0]
+    return f"{stype} {sname}"
+
+
+def _nominatim_request(params: dict) -> list | None:
+    """Exécute une requête Nominatim (rate-limitée) et retourne [lat, lon] ou None."""
+    global _last_req_time
+    elapsed = time.time() - _last_req_time
+    if elapsed < 1.15:
+        time.sleep(1.15 - elapsed)
+    req = urllib.request.Request(
+        f"https://nominatim.openstreetmap.org/search?{urllib.parse.urlencode(params)}",
+        headers={"User-Agent": "RenovTaCana/2.1 (+epf-academic-project)"},
+    )
+    _last_req_time = time.time()
+    try:
+        with urllib.request.urlopen(req, timeout=7) as resp:
+            results = json.loads(resp.read().decode())
+    except Exception:
+        return None
+    if not results:
+        return None
+    lat, lon = float(results[0]["lat"]), float(results[0]["lon"])
+    if _LAT_MIN <= lat <= _LAT_MAX and _LON_MIN <= lon <= _LON_MAX:
+        return [lat, lon]
+    return None
+
+
+def _geocode(query: str) -> list | None:
+    """
+    Géocode via Nominatim, deux tentatives :
+      1. Recherche free-text bornée : "Rue X, Commune, France"
+      2. Recherche structurée (street= + city=) si la première échoue
+    query format attendu : "{voie}, {commune}, France"
+    Retourne [lat, lon] ou None. Cache persistant.
+    """
+    key = query.lower().strip()
+    if key in _cache:
+        return _cache[key]
+
+    # --- Tentative 1 : free-text avec viewbox bounded ---
+    result = _nominatim_request({
+        "q": query,
+        "format": "json",
+        "limit": 1,
+        "countrycodes": "fr",
+        "viewbox": f"{_LON_MIN},{_LAT_MAX},{_LON_MAX},{_LAT_MIN}",
+        "bounded": 1,
+    })
+
+    # --- Tentative 2 : recherche structurée street= + city= ---
+    if result is None:
+        parts = query.split(", ")
+        if len(parts) >= 3:
+            street_part = parts[0]
+            city_part = ", ".join(parts[1:-1])   # tout entre voie et "France"
+            result = _nominatim_request({
+                "street": street_part,
+                "city": city_part,
+                "country": "fr",
+                "format": "json",
+                "limit": 1,
+            })
+
+    _cache[key] = result
+    _save_cache()
+    return result
+
+
+def _geocode_batch(queries: list) -> None:
+    """Thread daemon : géocode les requêtes non encore en cache."""
+    for q in queries:
+        _geocode(q)
+
+
+@router.get("/geojson/chantiers")
+def get_geojson_chantiers():
+    """
+    Retourne un GeoJSON des chantiers localisés.
+    Si la base contient latitude/longitude (remplies au build), lecture directe.
+    Sinon (base ancienne), repli sur le cache JSON + géocodage en arrière-plan.
+    """
+    global _geo_thread
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("PRAGMA table_info(chantiers)")
+    col_names = {r[1] for r in cur.fetchall()}
+    has_geo = "latitude" in col_names and "longitude" in col_names
+    has_adresse = "adresse" in col_names
+
+    if has_geo:
+        cur.execute(
+            """
+            SELECT id, num_op, etat, date_debut, date_fin, commune, libelle,
+                   latitude, longitude"""
+            + (", adresse" if has_adresse else "")
+            + """
+            FROM chantiers
+            """
+        )
+        rows = cur.fetchall()
+        conn.close()
+
+        features = []
+        for row in rows:
+            libelle = row["libelle"] or ""
+            lat, lon = row["latitude"], row["longitude"]
+            geom = None
+            localise = False
+            if lat is not None and lon is not None:
+                lat_f, lon_f = float(lat), float(lon)
+                if ngeo.in_bbox(lat_f, lon_f):
+                    geom = {"type": "Point", "coordinates": [lon_f, lat_f]}
+                    localise = True
+
+            props = {
+                "id": row["id"],
+                "num_op": row["num_op"],
+                "etat": row["etat"],
+                "date_debut": row["date_debut"],
+                "date_fin": row["date_fin"],
+                "libelle": libelle,
+                "localise": localise,
+            }
+            if has_adresse:
+                props["adresse"] = row["adresse"] or ""
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": geom,
+                    "properties": props,
+                }
+            )
+
+        return {"type": "FeatureCollection", "features": features}
+
+    cur.execute(
+        "SELECT id, num_op, etat, date_debut, date_fin, commune, libelle FROM chantiers"
+    )
+    rows = cur.fetchall()
+    conn.close()
+
+    features = []
+    uncached: list[str] = []
+
+    for row in rows:
+        libelle = row["libelle"] or ""
+        commune = (row["commune"] or "").strip()
+        street = _extract_query(libelle)
+
+        geom = None
+        localise = False
+
+        if street is not None and commune:
+            full_q = f"{street}, {commune}, France"
+            key = full_q.lower().strip()
+            if key in _cache:
+                coords = _cache[key]
+                if coords:
+                    geom = {"type": "Point", "coordinates": [coords[1], coords[0]]}
+                    localise = True
+            else:
+                uncached.append(full_q)
+
+        features.append(
+            {
+                "type": "Feature",
+                "geometry": geom,
+                "properties": {
+                    "id": row["id"],
+                    "num_op": row["num_op"],
+                    "etat": row["etat"],
+                    "date_debut": row["date_debut"],
+                    "date_fin": row["date_fin"],
+                    "libelle": libelle,
+                    "localise": localise,
+                },
+            }
+        )
+
+    unique_uncached = list(dict.fromkeys(uncached))
+    if unique_uncached and (_geo_thread is None or not _geo_thread.is_alive()):
+        _geo_thread = threading.Thread(
+            target=_geocode_batch, args=(unique_uncached,), daemon=True
+        )
+        _geo_thread.start()
+
+    return {"type": "FeatureCollection", "features": features}
+
+
 @router.get("/geojson/canalisations")
 def get_geojson_canalisations():
     """
-    Construit un GeoJSON dynamique depuis la table `conduites`.
+    Construit un GeoJSON dynamique depuis la table `conduites` avec la criticité depuis `canalisations`.
     """
     conn = get_db()
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT FACILITYID, ADRESSE, MATERIAL, DIAMETER, longueur, Predicti_1, TXcasse, geometry
-        FROM conduites
-        WHERE geometry IS NOT NULL AND TRIM(geometry) != ''
+        SELECT c.FACILITYID, c.ADRESSE, c.MATERIAL, c.DIAMETER, c.longueur, c.geometry, can.criticite
+        FROM conduites c
+        LEFT JOIN canalisations can ON c.FACILITYID = can.facilityid
+        WHERE c.geometry IS NOT NULL AND TRIM(c.geometry) != ''
         """
     )
-
-    tx_to_pct = {
-        "Négligeable": 5.0,
-        "Negligeable": 5.0,
-        "Faible": 25.0,
-        "Moyen": 50.0,
-        "Important": 75.0,
-        "Très important": 95.0,
-        "Tres important": 95.0,
-    }
 
     features = []
     for row in cur.fetchall():
@@ -38,12 +315,8 @@ def get_geojson_canalisations():
         if geom is None:
             continue
 
-        pred = row["Predicti_1"]
-        crit = None
-        if isinstance(pred, (int, float)):
-            crit = round(float(pred) * 100.0, 1)
-        elif row["TXcasse"] in tx_to_pct:
-            crit = tx_to_pct[row["TXcasse"]]
+        # Utilise la criticite depuis la table canalisations (JOIN), sinon None
+        crit = row["criticite"]
 
         features.append(
             {

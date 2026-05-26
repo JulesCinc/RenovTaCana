@@ -1,4 +1,4 @@
-﻿/* =========================================================
+/* =========================================================
    adresses.css â€” Styles spÃ©cifiques page rÃ©sultats
    ========================================================= */
 
@@ -91,12 +91,31 @@
     gap: 5px;
 }
 
+.filter-group--checkbox {
+    justify-content: flex-end;
+}
+
 .filter-label {
     font-size: 0.67rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--c-text-dim);
     white-space: nowrap;
+}
+
+.filter-label--checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 33px;
+    padding: 0 2px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    cursor: pointer;
+}
+
+.filter-label--checkbox input[type="checkbox"] {
+    margin: 0;
 }
 
 .filter-select,
@@ -268,6 +287,16 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     text-align: right;
     color: var(--c-text);
     font-weight: 500;
+}
+
+.value-unknown-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--c-text-dim);
+    opacity: 0.9;
 }
 
 /* â”€â”€ Pills â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -468,6 +497,18 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     .tabs-bar { overflow-x: auto; }
 }
 
+.row-actions {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.row-action-btn--locate:hover {
+    border-color: var(--c-blue, #38bdf8);
+    color: var(--c-blue, #38bdf8);
+    background: color-mix(in srgb, #38bdf8 12%, transparent);
+}
+
 .row-action-btn {
     width: 30px;
     height: 30px;
@@ -642,5 +683,25 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Chantiers : colonne adresse, icône si vide */
+.cell-adresse {
+    max-width: 14rem;
+    overflow-wrap: anywhere;
+    color: var(--c-text);
+}
+
+.cell-adresse-empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    color: var(--c-text-muted);
+    opacity: 0.75;
+}
+
+.cell-adresse-empty i {
+    font-size: 0.85rem;
 }
 

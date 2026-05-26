@@ -29,12 +29,18 @@ def get_chantiers(
 
     where = " AND ".join(filters)
 
+    cur.execute("PRAGMA table_info(chantiers)")
+    col_names = {r[1] for r in cur.fetchall()}
+    select_cols = "num_op, etat, date_debut, date_fin, commune, libelle"
+    if "adresse" in col_names:
+        select_cols += ", adresse"
+
     cur.execute(f"SELECT COUNT(*) FROM chantiers WHERE {where}", params)
     total = cur.fetchone()[0]
 
     cur.execute(
         f"""
-        SELECT num_op, etat, date_debut, date_fin, commune, libelle
+        SELECT {select_cols}
         FROM chantiers
         WHERE {where}
         ORDER BY date_debut ASC

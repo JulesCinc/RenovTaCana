@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenovTaCana — Plan de travaux</title>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/plan-travaux.css">
+</head>
+
+<body>
+
+    <header class="site-header site-header--address">
+        <div class="site-header__left">
+            <img src="assets/images/logo_entreprise.png" alt="Logo" class="site-header__logo">
+            <a href="index.html" class="header-home" title="Accueil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+            </a>
+            <a href="carte.html" class="header-home" title="Carte interactive">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                    <line x1="8" y1="2" x2="8" y2="18" />
+                    <line x1="16" y1="6" x2="16" y2="22" />
+                </svg>
+            </a>
+            <a href="dashboard.html" class="header-home" title="Dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+            </a>
+        </div>
+        <div class="site-header__right">
+            <button class="header-export" id="btn-export">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Exporter CSV
+            </button>
+            <button class="theme-toggle" type="button" aria-label="Mode sombre">Mode sombre</button>
+            <h2 class="site-header__title">Renov<span>Ta</span>Cana</h2>
+        </div>
+    </header>
+
+    <main class="plan-page">
+        <div class="plan-layout">
+
+            <!-- ── Bloc tableau principal ─────────────────────── -->
+            <div class="plan-main">
+
+                <div class="plan-header-row">
+                    <div class="plan-title-group">
+                        <h1 class="plan-title">Plan de travaux</h1>
+                        <span class="plan-badge" id="plan-count">0 canalisation</span>
+                    </div>
+                    <div class="plan-header-actions">
+                        <a href="carte.html" class="plan-btn plan-btn--outline">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                            </svg>
+                            Ajouter depuis la carte
+                        </a>
+                        <button class="plan-btn plan-btn--ghost" id="btn-clear">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                <path d="M9 6V4h6v2" />
+                            </svg>
+                            Vider le plan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="plan-table-wrap">
+                    <table class="plan-table" id="plan-table" style="display:none">
+                        <thead>
+                            <tr>
+                                <th class="col-check">
+                                    <input type="checkbox" id="check-all" title="Tout cocher / décocher">
+                                </th>
+                                <th>ID Canalisation</th>
+                                <th>Adresse</th>
+                                <th>Matériau</th>
+                                <th class="col-num">Ø mm</th>
+                                <th class="col-num">Longueur (m)</th>
+                                <th class="col-num">Coût estimé</th>
+                                <th class="col-actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plan-tbody"></tbody>
+                    </table>
+
+                    <div class="plan-empty" id="plan-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M3 17l4-8 4 4 4-6 4 10" />
+                            <path d="M3 21h18" />
+                        </svg>
+                        <p>Aucune canalisation dans le plan.</p>
+                        <p class="plan-empty__hint">
+                            Survolez une canalisation sur la carte, cliquez dessus<br>
+                            puis choisissez <strong>Ajouter au plan</strong>.
+                        </p>
+                        <a href="carte.html" class="plan-btn plan-btn--primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+                            </svg>
+                            Aller sur la carte
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── Sidebar budget ─────────────────────────────── -->
+            <aside class="plan-sidebar">
+
+                <div class="plan-card">
+                    <h3 class="plan-card__title">Pilotage budgétaire</h3>
+
+                    <div class="plan-field-group">
+                        <label class="plan-field-label" for="budget-input">Enveloppe budgétaire</label>
+                        <div class="plan-input-wrap">
+                            <input type="number" id="budget-input" class="plan-field-input"
+                                value="0" min="0" step="10000" placeholder="0">
+                            <span class="plan-input-unit">€</span>
+                        </div>
+                    </div>
+
+                    <div class="plan-summary">
+                        <div class="plan-summary__row">
+                            <span>Lignes incluses</span>
+                            <strong id="sum-count">0</strong>
+                        </div>
+                        <div class="plan-summary__row">
+                            <span>Linéaire total</span>
+                            <strong id="sum-length">0 m</strong>
+                        </div>
+                        <div class="plan-summary__row plan-summary__row--total">
+                            <span>Total estimé</span>
+                            <strong id="sum-total">0 €</strong>
+                        </div>
+                    </div>
+
+                    <div class="plan-bar-group">
+                        <div class="plan-bar-track">
+                            <div class="plan-bar-fill" id="budget-fill"></div>
+                        </div>
+                        <div class="plan-bar-labels">
+                            <span id="budget-pct">0 %</span>
+                            <span>du budget</span>
+                        </div>
+                    </div>
+
+                    <div class="plan-solde">
+                        <span class="plan-solde__label" id="solde-label">Reste à dépenser</span>
+                        <strong class="plan-solde__value" id="solde-value">0 €</strong>
+                    </div>
+
+                    <div class="plan-card__actions">
+                        <button class="plan-btn plan-btn--primary plan-btn--full" id="btn-figer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            Figer le plan de travaux
+                        </button>
+                        <button class="plan-btn plan-btn--outline plan-btn--full" id="btn-export-sidebar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Exporter (CSV)
+                        </button>
+                    </div>
+
+                    <div class="plan-fige-badge" id="fige-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        Plan figé — lecture seule
+                    </div>
+                </div>
+
+                <div class="plan-card plan-card--info">
+                    <h3 class="plan-card__title">Tarification</h3>
+                    <div class="plan-info-row">
+                        <span>Base de calcul</span>
+                        <strong>1 000 € / ml</strong>
+                    </div>
+                    <p class="plan-info-note">
+                        Modifiez la longueur de chaque ligne pour affiner l'estimation.
+                        L'action <em>Séparer</em> divise un tronçon en deux phases de travaux distinctes.
+                    </p>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+    <div class="plan-toast" id="plan-toast"></div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/plan-travaux.js"></script>
+
+</body>
+
+</html>

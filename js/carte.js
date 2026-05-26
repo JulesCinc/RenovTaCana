@@ -13,6 +13,11 @@ let allFeatures = [];
 let activeFilter = "all";
 let selectMode = false;
 
+let currentClickPipe = null; // données de la canalisation cliquée
+
+let chantierLayer = null;
+let chantiersLoaded = false;
+
 // -- Init --------------------------------------------------
 document.addEventListener("DOMContentLoaded", async function () {
     initMap();
@@ -20,6 +25,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     initFilters();
     initSearch();
     initZoneSelect();
+    initChantierToggle();
+    initPipePopup();
+    updatePlanNavCount();
 });
 
 // -- Carte Leaflet -----------------------------------------
@@ -88,9 +96,12 @@ function renderLayer(features) {
             layer.on("mouseover", e => { layer.setStyle({ weight: 5, opacity: 1 }); showTooltip(e, p); });
             layer.on("mousemove", e => moveTooltip(e));
             layer.on("mouseout", () => { if (!selectMode) geoLayer.resetStyle(layer); hideTooltip(); });
-            layer.on("click", () => {
+            layer.on("click", (e) => {
                 if (selectMode) return;
-                if (p.adr) window.location.href = `index.html?adresse=${encodeURIComponent(p.adr)}`;
+                L.DomEvent.stopPropagation(e);
+                currentClickPipe = p;
+                showPipePopup(e, p);
+                hideTooltip();
             });
         }
     }).addTo(map);
@@ -255,6 +266,86 @@ function initSearch() {
     });
 }
 
+// -- Chantiers overlay -------------------------------------
+function initChantierToggle() {
+    const btn = document.getElementById("toggle-chantiers");
+    if (!btn) return;
+    btn.addEventListener("click", async function () {
+        if (!chantiersLoaded) {
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            await loadChantiers();
+            chantiersLoaded = true;
+            btn.disabled = false;
+            btn.style.opacity = "";
+            btn.classList.add("active");
+            return;
+        }
+        if (chantierLayer && map.hasLayer(chantierLayer)) {
+            map.removeLayer(chantierLayer);
+            btn.classList.remove("active");
+        } else {
+            if (chantierLayer) chantierLayer.addTo(map);
+            btn.classList.add("active");
+        }
+    });
+}
+
+async function loadChantiers() {
+    try {
+        const base = window.__RTC_API_BASE__ || "http://127.0.0.1:8000";
+        const res = await fetch(`${base}/api/geojson/chantiers`);
+        const data = await res.json();
+
+        // Leaflet ignore les features à geometry:null, mais on filtre explicitement
+        const localized = (data.features || []).filter(f => f.geometry !== null);
+
+        chantierLayer = L.geoJSON(
+            { type: "FeatureCollection", features: localized },
+            {
+                pointToLayer(feature, latlng) {
+                    const etat = (feature.properties.etat || "").toLowerCase();
+                    const fill = etat.includes("valid") ? "#22c55e" : "#f59e0b";
+                    return L.circleMarker(latlng, {
+                        radius: 7,
+                        fillColor: fill,
+                        color: "#0a0e14",
+                        weight: 1.5,
+                        opacity: 1,
+                        fillOpacity: 0.9,
+                    });
+                },
+                onEachFeature(feature, layer) {
+                    const p = feature.properties;
+                    const etat = p.etat || "-";
+                    const etatColor = etat.toLowerCase().includes("valid") ? "#22c55e" : "#f59e0b";
+                    layer.bindPopup(
+                        `<div style="font-size:0.78rem;min-width:210px">
+                            <div style="color:#888;font-size:0.63rem;margin-bottom:4px">${p.num_op || ""}</div>
+                            <div style="font-weight:600;margin-bottom:8px;line-height:1.35">${p.libelle || "-"}</div>
+                            <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px">
+                                <span style="color:#888">État</span>
+                                <strong style="color:${etatColor}">${etat}</strong>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px">
+                                <span style="color:#888">Début</span>
+                                <strong>${p.date_debut || "-"}</strong>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;gap:8px">
+                                <span style="color:#888">Fin</span>
+                                <strong>${p.date_fin || "-"}</strong>
+                            </div>
+                        </div>`,
+                        { className: "dark-popup" }
+                    );
+                },
+            }
+        ).addTo(map);
+    } catch (e) {
+        console.error("Erreur chargement chantiers", e);
+    }
+}
+
 // -- Tooltip -----------------------------------------------
 const tooltip = document.getElementById("map-tooltip");
 
@@ -289,4 +380,50 @@ function moveTooltip(e) {
 }
 
 function hideTooltip() { tooltip.style.display = "none"; }
+
+// -- Popup d'action (clic sur canalisation) ----------------
+function showPipePopup(e, p) {
+    const popup = document.getElementById("pipe-popup");
+    if (!popup) return;
+
+    document.getElementById("pp-id").textContent = p.id || "";
+    const detailLink = document.getElementById("pp-detail");
+    detailLink.href = p.adr ? `index.html?adresse=${encodeURIComponent(p.adr)}` : "#";
+
+    popup.style.display = "flex";
+
+    const rect = document.getElementById("map").getBoundingClientRect();
+    let x = e.originalEvent.clientX - rect.left + 12;
+    let y = e.originalEvent.clientY - rect.top - 12;
+    if (x + 200 > rect.width)  x -= 210;
+    if (y + 90  > rect.height) y -= 100;
+    popup.style.left = x + "px";
+    popup.style.top  = y + "px";
+}
+
+function hidePipePopup() {
+    const popup = document.getElementById("pipe-popup");
+    if (popup) popup.style.display = "none";
+}
+
+function initPipePopup() {
+    map.on("click", () => hidePipePopup());
+
+    document.getElementById("pp-plan")?.addEventListener("click", () => {
+        if (currentClickPipe && window.ajouterAuPlan) {
+            window.ajouterAuPlan(currentClickPipe);
+            updatePlanNavCount();
+        }
+        hidePipePopup();
+    });
+}
+
+function updatePlanNavCount() {
+    const el = document.getElementById("plan-nav-count");
+    if (!el) return;
+    try {
+        const items = JSON.parse(localStorage.getItem("rtc_plan_travaux") || "[]");
+        el.textContent = items.length > 0 ? `(${items.length})` : "";
+    } catch { el.textContent = ""; }
+}
 

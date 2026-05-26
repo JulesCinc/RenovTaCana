@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RenovTaCana — RésuEtats</title>
+    <title>RenovTaCana — Accueil</title>
     <link rel="icon" type="image/png" href="assets/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/adresses.css">
 </head>
@@ -34,6 +35,15 @@
                     <rect x="14" y="3" width="7" height="7" />
                     <rect x="14" y="14" width="7" height="7" />
                     <rect x="3" y="14" width="7" height="7" />
+                </svg>
+            </a>
+            <a href="plan-travaux.html" class="header-home" title="Plan de travaux">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="8" y1="8" x2="13" y2="8" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <line x1="8" y1="16" x2="11" y2="16" />
                 </svg>
             </a>
         </div>
@@ -142,7 +152,7 @@
                         </div>
                         <div class="filter-group">
                             <label class="filter-label">Statut criticite</label>
-                            <select class="filter-select" id="filter-Etatut">
+                            <select class="filter-select" id="filter-statut">
                                 <option value="">Tous</option>
                                 <option value="critique">Critique (>= 70%)</option>
                                 <option value="attention">Attention (40-70%)</option>
@@ -163,6 +173,18 @@
                         <div class="filter-group">
                             <label class="filter-label">Recherche ID ou adresse</label>
                             <input type="text" class="filter-input" id="filter-id" placeholder="ID ou adresse">
+                        </div>
+                        <div class="filter-group filter-group--checkbox">
+                            <label class="filter-label filter-label--checkbox" for="filter-criticite-null">
+                                <input type="checkbox" id="filter-criticite-null">
+                                Uniquement criticite inconnue
+                            </label>
+                        </div>
+                        <div class="filter-group filter-group--checkbox">
+                            <label class="filter-label filter-label--checkbox" for="filter-priorite-null">
+                                <input type="checkbox" id="filter-priorite-null">
+                                Uniquement score priorite inconnu
+                            </label>
                         </div>
                         <button class="filter-reset" id="filter-reset">Reinitialiser</button>
                     </div>
@@ -200,13 +222,14 @@
                                     <th>N Operation</th>
                                     <th>Libelle</th>
                                     <th>Commune</th>
+                                    <th>Adresse</th>
                                     <th>Etat</th>
                                     <th>Periode</th>
                                 </tr>
                             </thead>
                             <tbody id="chantiers-body">
                                 <tr class="row-loading">
-                                    <td colspan="5">Chargement...</td>
+                                    <td colspan="6">Chargement...</td>
                                 </tr>
                             </tbody>
                         </table>

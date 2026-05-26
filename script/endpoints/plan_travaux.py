@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Query
-
 from database import get_db
-
 
 router = APIRouter(prefix="/api", tags=["Plan travaux"])
 
@@ -15,6 +13,7 @@ def get_plan_travaux(
     conn = get_db()
     cur = conn.cursor()
 
+    # Filtres de base
     filters = ["adresse != ''", "criticite IS NOT NULL"]
     params = []
 
@@ -24,6 +23,41 @@ def get_plan_travaux(
 
     where = " AND ".join(filters)
 
+    # nouveau score de priorité
+    priority_score = """
+    CASE
+        WHEN EXISTS (
+            SELECT 1 FROM chantiers c
+            WHERE c.commune = canalisations.commune
+            AND c.etat NOT IN ('Terminé', 'Annulé')
+            AND (
+                (c.date_debut <= date('now') AND c.date_fin >= date('now'))
+                OR c.date_debut <= date('now')
+            )
+        ) AND EXISTS (
+            SELECT 1 FROM operations o
+            WHERE o.commune = canalisations.commune
+            AND o.annee >= strftime('%Y', 'now')
+        ) THEN (criticite * 0.8) + 0.2
+        WHEN EXISTS (
+            SELECT 1 FROM chantiers c
+            WHERE c.commune = canalisations.commune
+            AND c.etat NOT IN ('Terminé', 'Annulé')
+            AND (
+                (c.date_debut <= date('now') AND c.date_fin >= date('now'))
+                OR c.date_debut <= date('now')
+            )
+        ) THEN (criticite * 0.8) + 0.1
+        WHEN EXISTS (
+            SELECT 1 FROM operations o
+            WHERE o.commune = canalisations.commune
+            AND o.annee >= strftime('%Y', 'now')
+        ) THEN (criticite * 0.8) + 0.1
+        ELSE criticite * 0.8
+    END
+    """
+
+    # Compte total des adresses uniques
     cur.execute(
         f"""
         SELECT COUNT(DISTINCT adresse || commune)
@@ -42,7 +76,7 @@ def get_plan_travaux(
         SELECT adresse, commune,
                COUNT(*) as nb_canalisations,
                ROUND(AVG(criticite),1) as crit_moy,
-               ROUND(MAX(score_priorite),1) as score_max,
+               ROUND(AVG({priority_score}),2) as score_max,
                CAST(SUM(nb_fuites) AS INTEGER) as total_fuites,
                ROUND(SUM(longueur),0) as longueur_tot,
                GROUP_CONCAT(DISTINCT materiau) as materiaux,

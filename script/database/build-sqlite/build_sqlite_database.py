@@ -4,6 +4,7 @@ Script RenovTaCana : construit la base SQLite applicative complete.
 Tables generees :
 - conduites (source shapefiles + enrichissements)
 - canalisations (schema API historique)
+- communes (noms + codes postaux depuis data/geo_localisation.sql, code INSEE via url villedereve)
 - chantiers (depuis data/chantiers.xlsx)
 - operations (depuis data/Operations.xlsx)
 
@@ -15,6 +16,7 @@ import re
 import shutil
 import sqlite3
 import sys
+import time
 from datetime import datetime
 
 try:
@@ -24,13 +26,20 @@ except ModuleNotFoundError:
     sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
     from script.utils import normalize_text
 
+_BUILD_SQLITE_DIR = os.path.dirname(os.path.abspath(__file__))
+if _BUILD_SQLITE_DIR not in sys.path:
+    sys.path.insert(0, _BUILD_SQLITE_DIR)
+from nominatim_geocode import populate_chantiers_adresse_from_libelle, populate_chantiers_geocodes
+
 # Racine du projet (au-dessus de script/database/build-sqlite/)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 PIPE_RANKING_CSV = os.path.join(DATA_DIR, "pipe_ranking_v1_clear.csv")
 CHANTIERS_XLSX = os.path.join(DATA_DIR, "chantiers.xlsx")
 OPERATIONS_XLSX = os.path.join(DATA_DIR, "Operations.xlsx")
+GEO_LOCALISATION_SQL = os.path.join(DATA_DIR, "geo_localisation.sql")
 OUT_DB = os.path.join(BASE_DIR, "database", "renovTaCana.db")
+GEOCODE_CACHE_JSON = os.path.join(BASE_DIR, "database", "geocode_cache.json")
 OUTDATED_DIR = os.path.join(BASE_DIR, "database", "outdated")
 
 
@@ -194,10 +203,39 @@ def archive_existing_db(db_path, archive_dir):
     print("Ancienne base archivee:", archived_path)
 
 
+def _tqdm(iterable, **kwargs):
+    """Barre de progression (tqdm) ; sans tqdm ou sans TTY, iteration simple."""
+    kwargs.setdefault("disable", not sys.stdout.isatty())
+    try:
+        from tqdm import tqdm as _tqdm_mod
+
+        return _tqdm_mod(iterable, **kwargs)
+    except ImportError:
+        return iterable
+
+
+def _build_timer():
+    """Retourne une fonction lap(label) qui affiche la duree depuis le dernier lap (secondes)."""
+    t0 = time.perf_counter()
+
+    def lap(label):
+        nonlocal t0
+        t1 = time.perf_counter()
+        dt = t1 - t0
+        t0 = t1
+        print(f"[build +{dt:8.2f}s] {label}", flush=True)
+
+    return lap
+
+
 def main():
     import geopandas as gpd
     import pandas as pd
     import numpy as np
+
+    t_build0 = time.perf_counter()
+    lap = _build_timer()
+    print("[build] demarrage", flush=True)
 
     os.makedirs(os.path.dirname(OUT_DB), exist_ok=True)
 
@@ -212,8 +250,10 @@ def main():
 
     print("Lecture wMain...")
     gdf_main = gpd.read_file(wmain_shp)
+    lap("lecture shapefile wMain.shp")
     print("Lecture wAbandonedLine...")
     gdf_ab = gpd.read_file(wabandoned_shp)
+    lap("lecture shapefile wAbandonedLine.shp")
 
     # --- wMain -> DataFrame CONDUITES ---
     df_main = gdf_main.copy()
@@ -237,6 +277,7 @@ def main():
 
     df_ab = df_ab.rename(columns={"DEPOSE": "DEPOT"})
     df_ab = df_ab.reindex(columns=COL_NAMES)
+    lap("pandas: preparation conduites (WKT, centroides, reindex colonnes)")
 
     # --- Gestion des doublons ---
     # Règle : un seul enregistrement par FACILITYID (clé primaire). En cas de conflit, on garde
@@ -280,6 +321,7 @@ def main():
     df = df.drop_duplicates(subset=["FACILITYID"], keep="first")
     n_after = len(df)
     n_dropped = n_before - n_after
+    lap("pandas: concat conduites, merge risque, dedoublonnage FACILITYID")
 
     if dup_main > 0 or dup_ab > 0 or common_id or n_dropped > 0:
         print("Doublons traites (ligne conservee = risque de casse le plus eleve) :")
@@ -295,7 +337,9 @@ def main():
     print("Creation de la base SQLite:", OUT_DB)
     os.makedirs(os.path.dirname(OUT_DB), exist_ok=True)
     archive_existing_db(OUT_DB, OUTDATED_DIR)
+    lap("archivage ancienne base SQLite (si existante)")
     conn = sqlite3.connect(OUT_DB)
+    # row_factory defini plus tard, avant le geocodage chantiers (sqlite3.Row)
     cur = conn.cursor()
 
     col_defs = ", ".join(f'"{c[0]}" {c[1]}' for c in CONDUITES_COLUMNS)
@@ -312,7 +356,17 @@ def main():
     cols = ", ".join(f'"{c}"' for c in COL_NAMES)
     sql = f"INSERT OR REPLACE INTO conduites ({cols}) VALUES ({placeholders})"
     rows = df[COL_NAMES].replace({np.nan: None}).to_numpy().tolist()
-    cur.executemany(sql, rows)
+    cur.executemany(
+        sql,
+        _tqdm(
+            rows,
+            desc="INSERT conduites",
+            unit="lig",
+            total=len(rows),
+            leave=True,
+        ),
+    )
+    lap(f"SQLite: CREATE conduites + index + INSERT ({len(rows)} lignes)")
 
     # --- Table canalisations (schema API historique) ---
     cur.execute(
@@ -348,10 +402,19 @@ def main():
     }
 
     df_can = df.copy()
+    # Le CSV de ranking contient la granularité principale du score de criticité.
+    # On le fusionne ici pour ne pas dépendre uniquement de Predicti_1/TXcasse.
+    if os.path.exists(PIPE_RANKING_CSV):
+        pr_criticite = pd.read_csv(PIPE_RANKING_CSV, usecols=["FACILITYID", "probabilite_casse"])
+        pr_criticite = pr_criticite.drop_duplicates(subset=["FACILITYID"], keep="first")
+        df_can = df_can.merge(pr_criticite, on="FACILITYID", how="left")
+    else:
+        df_can["probabilite_casse"] = np.nan
+
+    proba_casse = pd.to_numeric(df_can["probabilite_casse"], errors="coerce")
     install_year = df_can["INSTALLDAT"].apply(extract_year)
-    pred = pd.to_numeric(df_can["Predicti_1"], errors="coerce")
     tx_score = df_can["TXcasse"].map(tx_to_score) if "TXcasse" in df_can.columns else np.nan
-    criticite = pred.mul(100.0).fillna(tx_score)
+    criticite = proba_casse.mul(100.0).fillna(tx_score)
     # Le score de priorite n'est pas calcule au build.
     # Il sera renseigne plus tard par un script de scoring dedie.
     score_priorite = pd.Series([None] * len(df_can), index=df_can.index, dtype="object")
@@ -380,7 +443,20 @@ def main():
     can_placeholders = ", ".join(["?" for _ in can_cols])
     can_sql = f"INSERT OR REPLACE INTO canalisations ({', '.join(can_cols)}) VALUES ({can_placeholders})"
     can_rows = can_df.replace({np.nan: None}).to_numpy().tolist()
-    cur.executemany(can_sql, can_rows)
+    cur.executemany(
+        can_sql,
+        _tqdm(
+            can_rows,
+            desc="INSERT canalisations",
+            unit="lig",
+            total=len(can_rows),
+            leave=True,
+        ),
+    )
+
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_can_commune ON canalisations(commune)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_can_adresse_commune ON canalisations(adresse, commune)")
+    lap(f"SQLite: canalisations (build DataFrame + INSERT {len(can_rows)} lignes + index)")
 
     # --- Table chantiers depuis Excel ---
     cur.execute(
@@ -393,7 +469,10 @@ def main():
             date_fin    TEXT,
             commune     TEXT,
             libelle     TEXT,
-            page        INTEGER
+            adresse     TEXT,
+            page        INTEGER,
+            latitude    REAL,
+            longitude   REAL
         )
         """
     )
@@ -413,12 +492,31 @@ def main():
             }
         )
         mapped = mapped.where(pd.notnull(mapped), None)
+        ch_rows = mapped.to_records(index=False).tolist()
         cur.executemany(
             "INSERT INTO chantiers (num_op, etat, date_debut, date_fin, commune, libelle, page) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            mapped.to_records(index=False).tolist(),
+            _tqdm(
+                ch_rows,
+                desc="INSERT chantiers",
+                unit="lig",
+                total=len(ch_rows),
+                leave=True,
+            ),
         )
     else:
         print("Attention: fichier manquant", CHANTIERS_XLSX)
+    lap("SQLite: chantiers (CREATE + lecture Excel + INSERT)")
+
+    n_adresse = populate_chantiers_adresse_from_libelle(conn, cur)
+    print(f"  chantiers adresse (extraction libelle): {n_adresse} renseignees")
+
+    conn.row_factory = sqlite3.Row
+    n_geo, n_skip_geo, n_nom = populate_chantiers_geocodes(conn, cur, GEOCODE_CACHE_JSON)
+    print(
+        f"  chantiers geocode: {n_geo} coordonnees ecrites, "
+        f"{n_skip_geo} sans adresse ou commune pour geocoder, {n_nom} appels Nominatim"
+    )
+    lap(f"geocodage chantiers (cache + Nominatim, {n_nom} appels reseau)")
 
     # --- Table operations depuis Excel ---
     cur.execute(
@@ -453,14 +551,46 @@ def main():
             }
         )
         mapped = mapped.where(pd.notnull(mapped), None)
+        op_rows = mapped.to_records(index=False).tolist()
         cur.executemany(
             "INSERT INTO operations (id_projet, titre, commune, localisation, type_op, demandeur, annee, cpi) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            mapped.to_records(index=False).tolist(),
+            _tqdm(
+                op_rows,
+                desc="INSERT operations",
+                unit="lig",
+                total=len(op_rows),
+                leave=True,
+            ),
         )
     else:
         print("Attention: fichier manquant", OPERATIONS_XLSX)
 
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_ch_commune_etat ON chantiers(commune, etat)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_op_commune_annee ON operations(commune, annee)")
+    lap("SQLite: operations (CREATE + Excel + INSERT) + index chantiers/operations")
+
+    # --- Table communes (libellés INSEE + codes postaux, sans API gouv) ---
+    if os.path.exists(GEO_LOCALISATION_SQL):
+        from geo_communes_import import import_communes_from_geo_sql
+
+        n_communes = import_communes_from_geo_sql(conn, GEO_LOCALISATION_SQL)
+        print(f"  communes (depuis geo_localisation.sql): {n_communes}")
+    else:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS communes (
+                code_insee TEXT PRIMARY KEY,
+                nom_standard TEXT NOT NULL,
+                codes_postaux TEXT
+            )
+            """
+        )
+        n_communes = 0
+        print("Attention: fichier manquant", GEO_LOCALISATION_SQL, "(table communes vide)")
+    lap("table communes (import SQL ou DDL vide)")
+
     conn.commit()
+    lap("COMMIT SQLite")
     cur.execute("SELECT COUNT(*) FROM conduites")
     n_conduites = cur.fetchone()[0]
     cur.execute("SELECT COUNT(*) FROM canalisations")
@@ -469,14 +599,20 @@ def main():
     n_chantiers = cur.fetchone()[0]
     cur.execute("SELECT COUNT(*) FROM operations")
     n_operations = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM communes")
+    n_communes = cur.fetchone()[0]
     conn.close()
+    lap("comptages par table + fermeture connexion")
 
-    print("Tables generees: conduites, canalisations, chantiers, operations.")
+    print("Tables generees: conduites, canalisations, communes, chantiers, operations.")
     print("Base SQLite prete pour utilisation backend / frontend.")
     print(f"  conduites: {n_conduites}")
     print(f"  canalisations: {n_canalisations}")
     print(f"  chantiers: {n_chantiers}")
     print(f"  operations: {n_operations}")
+    print(f"  communes: {n_communes}")
+    total = time.perf_counter() - t_build0
+    print(f"[build] TOTAL (tout le script): {total:.2f}s ({total/60:.2f} min)", flush=True)
     return 0
 
 
