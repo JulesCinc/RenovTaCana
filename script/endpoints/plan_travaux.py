@@ -23,36 +23,45 @@ def get_plan_travaux(
 
     where = " AND ".join(filters)
 
-    # nouveau score de priorité
     priority_score = """
     CASE
-        WHEN EXISTS (
-            SELECT 1 FROM chantiers c
-            WHERE c.commune = canalisations.commune
-            AND c.etat NOT IN ('Terminé', 'Annulé')
-            AND (
-                (c.date_debut <= date('now') AND c.date_fin >= date('now'))
-                OR c.date_debut <= date('now')
-            )
-        ) AND EXISTS (
-            SELECT 1 FROM operations o
-            WHERE o.commune = canalisations.commune
-            AND o.annee >= strftime('%Y', 'now')
-        ) THEN (criticite * 0.8) + 0.2
-        WHEN EXISTS (
-            SELECT 1 FROM chantiers c
-            WHERE c.commune = canalisations.commune
-            AND c.etat NOT IN ('Terminé', 'Annulé')
-            AND (
-                (c.date_debut <= date('now') AND c.date_fin >= date('now'))
-                OR c.date_debut <= date('now')
-            )
-        ) THEN (criticite * 0.8) + 0.1
-        WHEN EXISTS (
-            SELECT 1 FROM operations o
-            WHERE o.commune = canalisations.commune
-            AND o.annee >= strftime('%Y', 'now')
-        ) THEN (criticite * 0.8) + 0.1
+        WHEN adresse IS NOT NULL AND adresse != ''
+             AND EXISTS (
+                SELECT 1 FROM chantiers c
+                WHERE c.adresse = canalisations.adresse
+                  AND c.etat NOT IN ('Terminé', 'Annulé')
+                  AND (
+                      (c.date_debut <= date('now') AND c.date_fin >= date('now'))
+                      OR c.date_debut <= date('now')
+                  )
+             )
+             AND EXISTS (
+                SELECT 1 FROM operations o
+                WHERE o.localisation = canalisations.adresse
+                  AND o.annee >= strftime('%Y', 'now')
+             )
+        THEN (criticite * 0.8) + 0.2
+
+        WHEN adresse IS NOT NULL AND adresse != ''
+             AND EXISTS (
+                SELECT 1 FROM chantiers c
+                WHERE c.adresse = canalisations.adresse
+                  AND c.etat NOT IN ('Terminé', 'Annulé')
+                  AND (
+                      (c.date_debut <= date('now') AND c.date_fin >= date('now'))
+                      OR c.date_debut <= date('now')
+                  )
+             )
+        THEN (criticite * 0.8) + 0.1
+
+        WHEN adresse IS NOT NULL AND adresse != ''
+             AND EXISTS (
+                SELECT 1 FROM operations o
+                WHERE o.localisation = canalisations.adresse
+                  AND o.annee >= strftime('%Y', 'now')
+             )
+        THEN (criticite * 0.8) + 0.1
+
         ELSE criticite * 0.8
     END
     """
