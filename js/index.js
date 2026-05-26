@@ -6,6 +6,133 @@
 const API        = window.__RTC_API_BASE__ || "http://127.0.0.1:8000";
 const PAGE_SIZE  = 100;
 
+/** Cache localStorage (filtres/stats ; liste canalisations = page 1 seule, une entrée max). */
+const INDEX_CACHE_VER = 4;
+const INDEX_CACHE_TTL_MS = 10 * 60 * 1000; // 10 min
+const INDEX_CACHE_PREFIX = `rtc_idx_v${INDEX_CACHE_VER}_`;
+
+function indexCacheStableHash(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h.toString(16);
+}
+
+function readIndexCache(key) {
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const o = JSON.parse(raw);
+        if (!o || typeof o.t !== "number") return null;
+        if (Date.now() - o.t > INDEX_CACHE_TTL_MS) return null;
+        return o;
+    } catch (_) {
+        return null;
+    }
+}
+
+function writeIndexCache(key, fields) {
+    try {
+        const payload = JSON.stringify({ t: Date.now(), ...fields });
+        localStorage.setItem(key, payload);
+    } catch (e) {
+        if (e.name === "QuotaExceededError" || e.code === 22) {
+            try {
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const k = localStorage.key(i);
+                    if (k && k.startsWith(INDEX_CACHE_PREFIX) && k.includes("_canal_")) localStorage.removeItem(k);
+                }
+                localStorage.setItem(key, JSON.stringify({ t: Date.now(), ...fields }));
+            } catch (_) { /* ignore */ }
+        }
+    }
+}
+
+/** Ne garde qu’une entrée liste canalisations (dernière page 1) pour limiter le quota. */
+function pruneCanalCacheExcept(keepKey) {
+    try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const k = localStorage.key(i);
+            if (!k || !k.startsWith(INDEX_CACHE_PREFIX) || !k.includes("_canal_")) continue;
+            if (k !== keepKey) localStorage.removeItem(k);
+        }
+    } catch (_) { /* ignore */ }
+}
+
+/** Réponses liste canalisations en RAM (même filtres/tri), pour pagination instantanée. */
+const CANAL_PAGE_MEMORY = new Map();
+let lastCanalListSessionKey = "";
+let canalPrefetchGen = 0;
+/** Au-delà, les pages restantes se chargent à la demande (évite de saturer le réseau). */
+const CANAL_PREFETCH_MAX_PAGES = 50;
+const CANAL_PREFETCH_PARALLEL = 3;
+
+function getCanalListSessionKey() {
+    const u = new URLSearchParams(buildQueryParams(1));
+    u.delete("offset");
+    return u.toString();
+}
+
+function canalMemoryKey(sessionKey, page) {
+    return `${sessionKey}|p${page}`;
+}
+
+async function prefetchCanalListPages(sessionKey, totalHint, gen) {
+    const total = Math.max(0, Number(totalHint) || 0);
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    const maxPage = Math.min(totalPages, CANAL_PREFETCH_MAX_PAGES);
+    const pages = [];
+    for (let p = 2; p <= maxPage; p++) {
+        const mk = canalMemoryKey(sessionKey, p);
+        if (!CANAL_PAGE_MEMORY.has(mk)) pages.push(p);
+    }
+    const worker = async () => {
+        for (;;) {
+            if (gen !== canalPrefetchGen) return;
+            if (getCanalListSessionKey() !== sessionKey) return;
+            const p = pages.pop();
+            if (p == null) return;
+            const mk = canalMemoryKey(sessionKey, p);
+            if (CANAL_PAGE_MEMORY.has(mk)) continue;
+            try {
+                const q = buildQueryParams(p);
+                const res = await fetch(`${API}/api/canalisations?${q}`);
+                if (!res.ok) continue;
+                const json = await res.json();
+                if (gen !== canalPrefetchGen) return;
+                if (getCanalListSessionKey() !== sessionKey) return;
+                CANAL_PAGE_MEMORY.set(mk, json);
+            } catch (_) { /* ignore */ }
+        }
+    };
+    await Promise.all(Array.from({ length: CANAL_PREFETCH_PARALLEL }, () => worker()));
+}
+
+/** Après affichage depuis le cache disque page 1 : rafraîchir puis précharger les autres pages. */
+async function refreshCanalPage1InBackground(query, cacheKey, sessionKey, gen) {
+    try {
+        const res = await fetch(`${API}/api/canalisations?${query}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        if (gen !== canalPrefetchGen) return;
+        if (getCanalListSessionKey() !== sessionKey) return;
+        CANAL_PAGE_MEMORY.set(canalMemoryKey(sessionKey, 1), json);
+        if (cacheKey) {
+            pruneCanalCacheExcept(cacheKey);
+            writeIndexCache(cacheKey, { qs: query, payload: json });
+        }
+        if (currentPage === 1) applyCanalisationsListPayload(json);
+        void prefetchCanalListPages(sessionKey, json.total || 0, gen);
+    } catch (_) { /* ignore */ }
+}
+
+function clearSelectKeepFirst(sel) {
+    if (!sel) return;
+    while (sel.options.length > 1) sel.remove(1);
+}
+
 // ── État global ───────────────────────────────────────────
 let currentPage  = 1;
 let totalResults = 0;
@@ -176,6 +303,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     on("filter-materiau",   "change", () => fetchPage(1));
     on("filter-statut",     "change", () => fetchPage(1));
     on("filter-anciennete", "change", () => fetchPage(1));
+    on("filter-criticite-null", "change", () => fetchPage(1));
+    on("filter-priorite-null", "change", () => fetchPage(1));
     on("filter-crit-min",   "input",  onRangeChange);
     on("filter-crit-max",   "input",  onRangeChange);
     on("filter-reset",      "click",  resetFilters);
@@ -219,6 +348,8 @@ function buildQueryParams(page) {
     const id       = val("filter-id");
     const critMin  = val("filter-crit-min") || "0";
     const critMax  = val("filter-crit-max") || "100";
+    const onlyCriticiteNull = document.getElementById("filter-criticite-null")?.checked;
+    const onlyPrioriteNull = document.getElementById("filter-priorite-null")?.checked;
 
     const p = new URLSearchParams({
         limit:    PAGE_SIZE,
@@ -235,6 +366,8 @@ function buildQueryParams(page) {
     if (statut)         p.append("statut",    statut);
     if (anc)            p.append("anciennete", anc);
     if (id)             p.append("search",    id);
+    if (onlyCriticiteNull) p.append("only_unknown_criticite", "true");
+    if (onlyPrioriteNull) p.append("only_unknown_priorite", "true");
 
     return p.toString();
 }
@@ -274,22 +407,61 @@ async function fetchZone(ids) {
     }
 }
 
+function applyCanalisationsListPayload(json) {
+    totalResults = json.total || 0;
+    renderTable(json.canalisations || [], json.sort_col, json.sort_dir);
+    renderPagination();
+    setEl("result-count", `${totalResults.toLocaleString("fr-FR")} résultat${totalResults > 1 ? "s" : ""}`);
+}
+
 async function fetchPage(page) {
     currentPage = page;
     const tbody = document.getElementById("table-body");
+    const sessionKey = getCanalListSessionKey();
+    if (sessionKey !== lastCanalListSessionKey) {
+        lastCanalListSessionKey = sessionKey;
+        canalPrefetchGen++;
+        CANAL_PAGE_MEMORY.clear();
+    }
+    const myGen = canalPrefetchGen;
+
+    const query = buildQueryParams(page);
+    const memKey = canalMemoryKey(sessionKey, page);
+    const memPayload = CANAL_PAGE_MEMORY.get(memKey);
+    if (memPayload) {
+        applyCanalisationsListPayload(memPayload);
+        return;
+    }
+
+    const useCanalCache = page === 1;
+    const cacheKey = useCanalCache ? `${INDEX_CACHE_PREFIX}canal_${indexCacheStableHash(query)}` : null;
+    const lsCached = useCanalCache && cacheKey ? readIndexCache(cacheKey) : null;
+
+    if (useCanalCache && lsCached && lsCached.qs === query && lsCached.payload) {
+        applyCanalisationsListPayload(lsCached.payload);
+        CANAL_PAGE_MEMORY.set(memKey, lsCached.payload);
+        void prefetchCanalListPages(sessionKey, lsCached.payload.total || 0, myGen);
+        void refreshCanalPage1InBackground(query, cacheKey, sessionKey, myGen);
+        return;
+    }
+
     tbody.innerHTML = `<tr class="row-loading"><td colspan="10">Chargement…</td></tr>`;
 
     try {
-        const query = buildQueryParams(page);
-        const res   = await fetch(`${API}/api/canalisations?${query}`);
-        const json  = await res.json();
+        const res = await fetch(`${API}/api/canalisations?${query}`);
+        if (!res.ok) throw new Error(String(res.status));
+        const json = await res.json();
+        if (myGen !== canalPrefetchGen) return;
+        if (getCanalListSessionKey() !== sessionKey) return;
 
-        totalResults = json.total || 0;
-        renderTable(json.canalisations || [], json.sort_col, json.sort_dir);
-        renderPagination();
-        setEl("result-count", `${totalResults.toLocaleString("fr-FR")} résultat${totalResults > 1 ? "s" : ""}`);
-
-    } catch(e) {
+        CANAL_PAGE_MEMORY.set(memKey, json);
+        if (useCanalCache && cacheKey) {
+            pruneCanalCacheExcept(cacheKey);
+            writeIndexCache(cacheKey, { qs: query, payload: json });
+        }
+        applyCanalisationsListPayload(json);
+        if (page === 1) void prefetchCanalListPages(sessionKey, json.total || 0, myGen);
+    } catch (e) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">
             ⚠️ Serveur non disponible — lancez <code>uvicorn main:app --reload</code>
         </td></tr>`;
@@ -314,16 +486,21 @@ function renderTable(data) {
             <td>${row.longueur != null ? row.longueur.toFixed(1) + " m" : "—"}</td>
             <td>${row.annee_pose || "—"}</td>
             <td>${row.nb_fuites != null ? row.nb_fuites : "—"}</td>
-            <td>${row.criticite != null ? critBar(row.criticite) : "—"}</td>
-            <td>${row.score_priorite != null ? row.score_priorite : "—"}</td>
-            <td>
+            <td>${row.criticite != null ? critBar(row.criticite) : unknownValueIcon("Criticité inconnue")}</td>
+            <td>${row.score_priorite != null ? row.score_priorite : unknownValueIcon("Score de priorité inconnu")}</td>
+            <td><div class="row-actions">
                 <button class="row-action-btn" type="button" title="Voir le détail" data-action="view" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Voir le détail">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </td>
+                <button class="row-action-btn row-action-btn--locate" type="button" title="Localiser sur la mini-carte" data-action="locate" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Localiser sur la mini-carte">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </button>
+            </div></td>
         </tr>
     `).join("");
 }
@@ -428,6 +605,10 @@ function resetFilters() {
     ["filter-commune","filter-materiau","filter-statut","filter-anciennete","filter-id"].forEach(id => setInputVal(id, ""));
     setInputVal("filter-crit-min", "0");
     setInputVal("filter-crit-max", "100");
+    const critNullEl = document.getElementById("filter-criticite-null");
+    const prioNullEl = document.getElementById("filter-priorite-null");
+    if (critNullEl) critNullEl.checked = false;
+    if (prioNullEl) prioNullEl.checked = false;
     setEl("criticite-range-label", "0% — 100%");
     sortCol = "criticite"; sortDir = "desc";
     markSortHeader("criticite", "desc");
@@ -435,59 +616,97 @@ function resetFilters() {
 }
 
 // ── Filtres dynamiques ────────────────────────────────────
+function applyFiltresPayload(data) {
+    const selCommune = document.getElementById("filter-commune");
+    const selMat = document.getElementById("filter-materiau");
+    const selAnc = document.getElementById("filter-anciennete");
+    clearSelectKeepFirst(selCommune);
+    clearSelectKeepFirst(selMat);
+    clearSelectKeepFirst(selAnc);
+
+    if (data.communes_options?.length) {
+        data.communes_options.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.value;
+            opt.textContent = c.label || c.value;
+            selCommune?.appendChild(opt);
+        });
+    } else {
+        data.communes?.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c;
+            opt.textContent = c;
+            selCommune?.appendChild(opt);
+        });
+    }
+
+    data.materiaux?.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        selMat?.appendChild(opt);
+    });
+
+    data.anciennetes?.forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a;
+        opt.textContent = a;
+        selAnc?.appendChild(opt);
+    });
+}
+
 async function loadFiltres() {
+    const key = `${INDEX_CACHE_PREFIX}filtres`;
+    const cached = readIndexCache(key);
+    if (cached && cached.payload) {
+        applyFiltresPayload(cached.payload);
+    }
+
     try {
-        const res  = await fetch(`${API}/api/filtres`);
+        const res = await fetch(`${API}/api/filtres`);
         const data = await res.json();
-
-        const selCommune = document.getElementById("filter-commune");
-        if (data.communes_options?.length) {
-            data.communes_options.forEach(c => {
-                const opt = document.createElement("option");
-                opt.value = c.value;
-                opt.textContent = c.label || c.value;
-                selCommune?.appendChild(opt);
-            });
-        } else {
-            data.communes?.forEach(c => {
-                const opt = document.createElement("option");
-                opt.value = c;
-                opt.textContent = c;
-                selCommune?.appendChild(opt);
-            });
+        writeIndexCache(key, { payload: data });
+        applyFiltresPayload(data);
+    } catch (e) {
+        if (!cached || !cached.payload) {
+            console.warn("Filtres non chargés", e);
         }
-
-        const selMat = document.getElementById("filter-materiau");
-        data.materiaux?.forEach(m => {
-            const opt = document.createElement("option");
-            opt.value = m; opt.textContent = m;
-            selMat?.appendChild(opt);
-        });
-
-        const selAnc = document.getElementById("filter-anciennete");
-        data.anciennetes?.forEach(a => {
-            const opt = document.createElement("option");
-            opt.value = a; opt.textContent = a;
-            selAnc?.appendChild(opt);
-        });
-    } catch(e) { console.warn("Filtres non chargés", e); }
+    }
 }
 
 // ── Stats adresse ─────────────────────────────────────────
+function applyStatsAdressePayload(data) {
+    setEl("side-total", data.nb_canalisations || "—");
+    setEl("side-crit-moy", data.criticite_moyenne != null ? `${data.criticite_moyenne}%` : "—");
+    setEl("side-critiques", data.critiques ?? "—");
+    setEl("side-nb-fuites", data.nb_fuites_total ?? "—");
+    setEl("side-longueur", data.longueur_totale != null ? `${data.longueur_totale} m` : "—");
+    setEl("side-crit-pct", data.criticite_moyenne != null ? `${data.criticite_moyenne}%` : "—");
+    const bar = document.getElementById("side-crit-bar");
+    if (bar) setTimeout(() => { bar.style.width = `${data.criticite_moyenne || 0}%`; }, 150);
+}
+
 async function fetchStatsAdresse(adresse) {
     if (!adresse) return;
+
+    const addrKey = String(adresse).trim();
+    const cacheKey = `${INDEX_CACHE_PREFIX}stats_${indexCacheStableHash(addrKey)}`;
+    const cached = readIndexCache(cacheKey);
+
+    if (cached && cached.adresse === addrKey && cached.payload) {
+        applyStatsAdressePayload(cached.payload);
+    }
+
     try {
-        const res  = await fetch(`${API}/api/stats/adresse?adresse=${encodeURIComponent(adresse)}`);
+        const res = await fetch(`${API}/api/stats/adresse?adresse=${encodeURIComponent(addrKey)}`);
         const data = await res.json();
-        setEl("side-total",     data.nb_canalisations || "—");
-        setEl("side-crit-moy",  data.criticite_moyenne != null ? `${data.criticite_moyenne}%` : "—");
-        setEl("side-critiques", data.critiques ?? "—");
-        setEl("side-nb-fuites", data.nb_fuites_total ?? "—");
-        setEl("side-longueur",  data.longueur_totale != null ? `${data.longueur_totale} m` : "—");
-        setEl("side-crit-pct",  data.criticite_moyenne != null ? `${data.criticite_moyenne}%` : "—");
-        const bar = document.getElementById("side-crit-bar");
-        if (bar) setTimeout(() => bar.style.width = `${data.criticite_moyenne || 0}%`, 150);
-    } catch(e) { console.warn(e); }
+        writeIndexCache(cacheKey, { adresse: addrKey, payload: data });
+        applyStatsAdressePayload(data);
+    } catch (e) {
+        if (!cached || !cached.payload || cached.adresse !== addrKey) {
+            console.warn(e);
+        }
+    }
 }
 
 // ── Chantiers (paginé) ───────────────────────────────────
@@ -505,7 +724,7 @@ async function fetchChantierPage(page) {
     chantierPage = page;
     const tbody = document.getElementById("chantiers-body");
     if (!tbody) return;
-    tbody.innerHTML = `<tr class="row-loading"><td colspan="5">Chargement…</td></tr>`;
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="6">Chargement…</td></tr>`;
     try {
         const offset = (page - 1) * PAGE_SIZE_CHANTIERS;
         const url = `${API}/api/chantiers?commune=${encodeURIComponent(chantierCommune)}&limit=${PAGE_SIZE_CHANTIERS}&offset=${offset}`;
@@ -516,14 +735,20 @@ async function fetchChantierPage(page) {
         setEl("chantiers-count", chantierTotal.toLocaleString("fr-FR"));
         renderTabPagination("chantiers-pagination", chantierPage, chantierTotal, PAGE_SIZE_CHANTIERS, fetchChantierPage);
     } catch(e) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="5">Données non disponibles</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="6">Données non disponibles</td></tr>`;
     }
+}
+
+function formatChantierAdresseCell(adresse) {
+    const s = adresse == null ? "" : String(adresse).trim();
+    if (s) return escapeHtml(s);
+    return `<span class="cell-adresse-empty" title="Adresse non renseignée" aria-label="Adresse non renseignée"><i class="fa-solid fa-minus" aria-hidden="true"></i></span>`;
 }
 
 function renderChantiers(data) {
     const tbody = document.getElementById("chantiers-body");
     if (!data.length) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="5">Aucun chantier trouvé pour cette zone</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="6">Aucun chantier trouvé pour cette zone</td></tr>`;
         return;
     }
     tbody.innerHTML = data.map(row => `
@@ -531,6 +756,7 @@ function renderChantiers(data) {
             <td class="cell-id">${row.num_op}</td>
             <td>${row.libelle || "—"}</td>
             <td>${row.commune}</td>
+            <td class="cell-adresse">${formatChantierAdresseCell(row.adresse)}</td>
             <td><span class="table-pill ${etatClass(row.etat)}">${row.etat}</span></td>
             <td>${row.date_debut} → ${row.date_fin}</td>
         </tr>
@@ -683,6 +909,12 @@ function critBar(value) {
     </div>`;
 }
 
+function unknownValueIcon(label = "Valeur inconnue") {
+    return `<span class="value-unknown-icon" title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">
+        <i class="fas fa-circle-question" aria-hidden="true"></i>
+    </span>`;
+}
+
 function statutLabel(crit) {
     if (crit == null) return "Non évalué";
     if (crit >= 70)   return "Critique";
@@ -712,6 +944,12 @@ function initDetailModal() {
     if (!tbody || !modal) return;
 
     tbody.addEventListener("click", function (e) {
+        const locateBtn = e.target.closest("button[data-action='locate'][data-facilityid]");
+        if (locateBtn) {
+            const id = locateBtn.dataset.facilityid;
+            if (id) focusCanalOnMiniMap(id);
+            return;
+        }
         const btn = e.target.closest("button[data-action='view'][data-facilityid]");
         if (!btn) return;
         const facilityid = btn.dataset.facilityid;
@@ -772,6 +1010,12 @@ async function openDetailModal(facilityid) {
     } catch (e) {
         body.innerHTML = `<div class="row-empty-msg">Impossible de charger le détail de la canalisation.</div>`;
     }
+}
+
+function focusCanalOnMiniMap(facilityid) {
+    window.rtcMiniMapFocus?.(facilityid);
+    document.querySelector(".address-side-card")
+        ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function closeDetailModal() {

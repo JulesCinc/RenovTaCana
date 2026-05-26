@@ -1,48 +1,20 @@
-import json
-from functools import lru_cache
-from urllib.error import URLError
-from urllib.request import urlopen
+import os
+import sys
 
 from fastapi import APIRouter
 
 from database import get_db
 
+_build_sqlite_dir = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "database", "build-sqlite")
+)
+if _build_sqlite_dir not in sys.path:
+    sys.path.insert(0, _build_sqlite_dir)
+
+from communes_lookup import commune_names_for_codes, normalize_commune_code
+
 
 router = APIRouter(prefix="/api", tags=["Filtres"])
-
-
-def normalize_commune_code(value):
-    code = str(value or "").strip()
-    if not code:
-        return ""
-    if code.isdigit() and len(code) == 4:
-        return f"0{code}"
-    return code
-
-
-@lru_cache(maxsize=1024)
-def fetch_commune_name_from_code(code):
-    if not code.isdigit() or len(code) != 5:
-        return None
-    url = f"https://geo.api.gouv.fr/communes/{code}?fields=nom&format=json&geometry=centre"
-    try:
-        with urlopen(url, timeout=2.0) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-            if isinstance(payload, dict):
-                name = str(payload.get("nom") or "").strip()
-                return name or None
-    except (TimeoutError, URLError, ValueError, json.JSONDecodeError):
-        return None
-    return None
-
-
-def commune_display_value(raw_value):
-    code = normalize_commune_code(raw_value)
-    if not code:
-        return ""
-    if not code.isdigit():
-        return code
-    return fetch_commune_name_from_code(code) or code
 
 
 @router.get("/filtres")
@@ -69,10 +41,17 @@ def get_filtres():
         """
     )
     communes = [r[0] for r in cur.fetchall()]
-    communes_options = [
-        {"value": c, "label": commune_display_value(c)}
-        for c in communes
-    ]
+    names = commune_names_for_codes(cur, communes)
+    communes_options = []
+    for c in communes:
+        code = normalize_commune_code(c)
+        if not code:
+            label = ""
+        elif not code.isdigit():
+            label = str(c).strip() or code
+        else:
+            label = names.get(code) or code
+        communes_options.append({"value": c, "label": label})
 
     cur.execute(
         """

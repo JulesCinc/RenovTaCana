@@ -1,12 +1,23 @@
-import json
-from functools import lru_cache
-from urllib.error import URLError
-from urllib.request import urlopen
+import os
+import sys
 
 from fastapi import APIRouter, HTTPException, Query
 
 from database import get_db
 from script.utils import normalize_text
+
+_build_sqlite_dir = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "database", "build-sqlite")
+)
+if _build_sqlite_dir not in sys.path:
+    sys.path.insert(0, _build_sqlite_dir)
+
+from communes_lookup import (
+    commune_display_value,
+    commune_names_for_codes,
+    enrich_rows_commune_display,
+    normalize_commune_code,
+)
 
 
 router = APIRouter(prefix="/api", tags=["Canalisations"])
@@ -26,46 +37,6 @@ ALLOWED_SORT_COLS = {
 }
 
 
-def normalize_commune_code(value):
-    code = str(value or "").strip()
-    if not code:
-        return ""
-    if code.isdigit() and len(code) == 4:
-        return f"0{code}"
-    return code
-
-
-@lru_cache(maxsize=1024)
-def fetch_commune_name_from_code(code):
-    if not code.isdigit() or len(code) != 5:
-        return None
-    url = f"https://geo.api.gouv.fr/communes/{code}?fields=nom&format=json&geometry=centre"
-    try:
-        with urlopen(url, timeout=2.0) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-            if isinstance(payload, dict):
-                name = str(payload.get("nom") or "").strip()
-                return name or None
-    except (TimeoutError, URLError, ValueError, json.JSONDecodeError):
-        return None
-    return None
-
-
-def commune_display_value(raw_value):
-    code = normalize_commune_code(raw_value)
-    if not code:
-        return ""
-    if not code.isdigit():
-        return code
-    return fetch_commune_name_from_code(code) or code
-
-
-def enrich_commune_display(rows):
-    for row in rows:
-        row["commune_display"] = commune_display_value(row.get("commune"))
-    return rows
-
-
 @router.get("/canalisations")
 def get_canalisations(
     adresse: str = Query(default=""),
@@ -78,6 +49,8 @@ def get_canalisations(
     crit_max: float = Query(default=100),
     sort_col: str = Query(default="score_priorite"),
     sort_dir: str = Query(default="desc"),
+    only_unknown_criticite: bool = Query(default=False),
+    only_unknown_priorite: bool = Query(default=False),
     limit: int = Query(default=100),
     offset: int = Query(default=0),
 ):
@@ -117,6 +90,10 @@ def get_canalisations(
 
     filters.append("(criticite IS NULL OR (criticite >= ? AND criticite <= ?))")
     params += [crit_min, crit_max]
+    if only_unknown_criticite:
+        filters.append("criticite IS NULL")
+    if only_unknown_priorite:
+        filters.append("score_priorite IS NULL")
 
     where = " AND ".join(filters)
     col = sort_col if sort_col in ALLOWED_SORT_COLS else "score_priorite"
@@ -138,7 +115,7 @@ def get_canalisations(
         params + [limit, offset],
     )
 
-    rows = enrich_commune_display([dict(r) for r in cur.fetchall()])
+    rows = enrich_rows_commune_display(cur, [dict(r) for r in cur.fetchall()])
     conn.close()
 
     return {
@@ -212,17 +189,25 @@ def get_adresse_suggestions(
         (q, limit),
     )
 
+    rows_s = cur.fetchall()
+    names = commune_names_for_codes(cur, [r["commune"] for r in rows_s])
     suggestions = []
 
-    for row in cur.fetchall():
+    for row in rows_s:
         adresse = row["adresse"] or ""
-        commune = commune_display_value(row["commune"] or "")
-        full_label = f"{adresse}, {commune}" if commune else adresse
+        code = normalize_commune_code(row["commune"] or "")
+        if not code:
+            commune_label = ""
+        elif not code.isdigit():
+            commune_label = str(row["commune"] or "").strip() or code
+        else:
+            commune_label = names.get(code) or code
+        full_label = f"{adresse}, {commune_label}" if commune_label else adresse
 
         suggestions.append(
             {
                 "adresse": adresse,
-                "commune": commune,
+                "commune": commune_label,
                 "label": full_label,
                 "count": row["nb"],
             }
@@ -266,7 +251,7 @@ def get_canalisations_zone(payload: dict):
         ids + [limit, offset],
     )
 
-    rows = enrich_commune_display([dict(r) for r in cur.fetchall()])
+    rows = enrich_rows_commune_display(cur, [dict(r) for r in cur.fetchall()])
     conn.close()
 
     return {
@@ -291,12 +276,12 @@ def get_canalisation_detail(facilityid: str):
 
     cur.execute("SELECT * FROM conduites WHERE FACILITYID = ?", (facilityid,))
     cond = cur.fetchone()
-    conn.close()
 
     cana_dict = dict(cana)
     cond_dict = dict(cond) if cond is not None else {}
-    cana_dict["commune_display"] = commune_display_value(cana_dict.get("commune"))
-    cond_dict["COMMUNE_DISPLAY"] = commune_display_value(cond_dict.get("COMMUNE"))
+    cana_dict["commune_display"] = commune_display_value(cur, cana_dict.get("commune"))
+    cond_dict["COMMUNE_DISPLAY"] = commune_display_value(cur, cond_dict.get("COMMUNE"))
+    conn.close()
     adresse = cana_dict.get("adresse") or cond_dict.get("ADRESSE")
 
     return {
