@@ -4,7 +4,26 @@ Prototype hébergé en ligne : **https://k2vm-163.mde.epf.fr**
 
 Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.1** : consolider les fonctionnalités (carte, tableau d’adresses, tableau de bord, API) et livrer un **plan de travaux opérationnel**.
 
-Pour ce faire on pourra **calculer le score de priorité**, en appliquant les **poids définis par les clients**.
+---
+
+## État des fonctionnalités (V2.1)
+
+### Fonctionnel
+
+- **Carte interactive** (heatmap / Leaflet) : affichage des canalisations, chantiers et couches géographiques.
+- **Tableau d'adresses** (`index.html`) : parcours, recherche, filtres et export des adresses.
+- **Tableau de bord** (`dashboard.html`) : visualisation des indicateurs clés.
+- **API FastAPI** : endpoints complets (canalisations, chantiers, opérations, adresses, etc.).
+- **Mini-map** sur la page adresses.
+- **Calcul du score de priorité** : le script de calcul est opérationnel et applique les poids définis par les clients.
+- **Recherche / suggestions** : barre de recherche avec auto-complétion via l'API.
+
+### En cours / à venir
+
+| Fonctionnalité | Statut | Cible |
+|---|---|---|
+| Affichage du score de priorité dans la web app (tâches) | Non implémenté | **V2.2** |
+| Optimisation du temps de chargement de la carte (données trop volumineuses) | En cours | **V2.2** |
 
 ---
 
@@ -64,14 +83,11 @@ Sous **Windows** : exécuter **`demarrer-web-app.bat`** (double-clic, ou `.\dema
 
 Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn script.main:app --reload`. Puis ouvrir **`http://127.0.0.1:8000/`** dans le navigateur. La base d’URL API est gérée dans **`js/config.js`**.
 
-## Prochaines étapes indispensables (Jalon 3)
+## Prochaines étapes (V2.2)
 
-- Créer le script qui calcule le **score de priorité** pour chaque canalisation, puis renseigne `canalisations.score_priorite` dans `database/renovTaCana.db`.
-- Raccourcir les délais de chargement (il reste notamment à optimiser le chargement des **chantiers** et des **opérations**).
+- **Afficher le score de priorité** dans la web app (pages tâches / adresses).
+- **Optimiser le temps de chargement de la carte** (allègement des données géographiques, chargement progressif ou simplification des géométries).
 - Compléter le document de suivi de projet, avec product backlog, suivi des sprints et jalonage.
-- Rajouter un bouton d'action sur `index.html` pour que lorsqu'on clique sur un bouton "map", cela affiche la canalisation dans la mini heatmap.
-- Optimiser l'affichage des adresses sur `index.html`.
-- Retrouver l'adresse des opérations (même processus que pour les chantiers : extraction / géocodage côté build ou équivalent).
 
 ## Association des tâches
 
