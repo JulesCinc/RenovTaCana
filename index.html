@@ -215,6 +215,23 @@
                 </div>
 
                 <div class="tab-panel" data-tab="chantiers" style="display:none">
+                    <div class="filters-bar filters-bar--subtab">
+                        <div class="filter-group">
+                            <label class="filter-label">Commune</label>
+                            <input type="text" class="filter-input" id="filter-chantiers-commune" placeholder="Ex: NICE">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Recherche adresse / N° operation</label>
+                            <input type="text" class="filter-input" id="filter-chantiers-search" placeholder="Adresse ou N° operation">
+                        </div>
+                        <div class="filter-group filter-group--checkbox">
+                            <label class="filter-label filter-label--checkbox" for="filter-chantiers-missing">
+                                <input type="checkbox" id="filter-chantiers-missing">
+                                Uniquement adresse manquante
+                            </label>
+                        </div>
+                        <div class="filters-warning-count" id="chantiers-missing-count">⚠ 0 adresse manquante</div>
+                    </div>
                     <div class="table-scroll">
                         <table class="address-table">
                             <thead>
@@ -237,6 +254,23 @@
                 </div>
 
                 <div class="tab-panel" data-tab="operations" style="display:none">
+                    <div class="filters-bar filters-bar--subtab">
+                        <div class="filter-group">
+                            <label class="filter-label">Commune</label>
+                            <input type="text" class="filter-input" id="filter-operations-commune" placeholder="Ex: NICE">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Recherche adresse / N° operation</label>
+                            <input type="text" class="filter-input" id="filter-operations-search" placeholder="Adresse ou N° operation">
+                        </div>
+                        <div class="filter-group filter-group--checkbox">
+                            <label class="filter-label filter-label--checkbox" for="filter-operations-missing">
+                                <input type="checkbox" id="filter-operations-missing">
+                                Uniquement adresse manquante
+                            </label>
+                        </div>
+                        <div class="filters-warning-count" id="operations-missing-count">⚠ 0 adresse manquante</div>
+                    </div>
                     <div class="table-scroll">
                         <table class="address-table">
                             <thead>
@@ -326,6 +360,30 @@
             </div>
             <div class="detail-modal__body" id="canalisation-modal-body">
                 <div class="row-loading">Chargement…</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-modal" id="adresse-modal" aria-hidden="true">
+        <div class="detail-modal__backdrop" id="adresse-modal-backdrop"></div>
+        <div class="detail-modal__dialog detail-modal__dialog--small" role="dialog" aria-modal="true" aria-labelledby="adresse-modal-title">
+            <div class="detail-modal__header">
+                <div>
+                    <div class="detail-modal__eyebrow">Mise a jour</div>
+                    <h3 class="detail-modal__title" id="adresse-modal-title">Completer l'adresse</h3>
+                    <div class="detail-modal__subtitle" id="adresse-modal-subtitle">—</div>
+                </div>
+                <button class="detail-modal__close" id="adresse-modal-close" aria-label="Fermer">✕</button>
+            </div>
+            <div class="detail-modal__body">
+                <div class="adresse-modal-form">
+                    <label class="adresse-modal-label" for="adresse-modal-input">Adresse</label>
+                    <input class="adresse-modal-input" id="adresse-modal-input" type="text" placeholder="Saisir l'adresse">
+                </div>
+                <div class="adresse-modal-actions">
+                    <button class="adresse-modal-btn adresse-modal-btn--ghost" id="adresse-modal-cancel" type="button">Annuler</button>
+                    <button class="adresse-modal-btn adresse-modal-btn--primary" id="adresse-modal-validate" type="button">Valider</button>
+                </div>
             </div>
         </div>
     </div>

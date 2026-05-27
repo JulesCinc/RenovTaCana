@@ -85,6 +85,25 @@
     flex-wrap: wrap;
 }
 
+.filters-bar--subtab {
+    border-bottom: 1px solid var(--c-border);
+    background: var(--c-surface);
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.filters-warning-count {
+    margin-left: auto;
+    align-self: center;
+    font-size: 0.74rem;
+    color: var(--c-warning);
+    border: 1px solid color-mix(in srgb, var(--c-warning) 35%, transparent);
+    background: color-mix(in srgb, var(--c-warning) 12%, transparent);
+    border-radius: 999px;
+    padding: 5px 10px;
+    white-space: nowrap;
+}
+
 .filter-group {
     display: flex;
     flex-direction: column;
@@ -241,6 +260,24 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
 }
 .address-table tbody tr:last-child { border-bottom: none; }
 .address-table tbody tr:hover { background: var(--c-surface-2); }
+
+/* Ligne chantier avec adresse manquante */
+#chantiers-body tr.chantier-row--missing-address {
+    background: color-mix(in srgb, #facc15 18%, transparent);
+}
+
+#chantiers-body tr.chantier-row--missing-address:hover {
+    background: color-mix(in srgb, #facc15 28%, var(--c-surface-2));
+}
+
+/* Ligne operation avec localisation manquante */
+#operations-body tr.operation-row--missing-address {
+    background: color-mix(in srgb, #facc15 18%, transparent);
+}
+
+#operations-body tr.operation-row--missing-address:hover {
+    background: color-mix(in srgb, #facc15 28%, var(--c-surface-2));
+}
 
 .address-table tbody td {
     padding: 10px 11px;
@@ -703,5 +740,99 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
 
 .cell-adresse-empty i {
     font-size: 0.85rem;
+}
+
+.cell-adresse-missing-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cell-adresse-complete-btn {
+    border: 1px solid var(--c-border-2);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--c-text);
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all var(--t-mid);
+}
+
+.cell-adresse-complete-btn:hover {
+    border-color: var(--c-cyan);
+    color: var(--c-cyan);
+    background: var(--c-cyan-dim);
+}
+
+.detail-modal__dialog--small {
+    width: min(520px, calc(100vw - 32px));
+}
+
+.adresse-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.adresse-modal-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-text-dim);
+}
+
+.adresse-modal-input {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border-2);
+    border-radius: var(--radius-sm);
+    color: var(--c-text);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 9px 10px;
+    outline: none;
+}
+
+.adresse-modal-input:focus {
+    border-color: var(--c-cyan);
+    box-shadow: 0 0 0 3px var(--c-cyan-glow);
+}
+
+.adresse-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.adresse-modal-btn {
+    border: 1px solid var(--c-border-2);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: all var(--t-mid);
+}
+
+.adresse-modal-btn--ghost {
+    background: transparent;
+    color: var(--c-text-muted);
+}
+
+.adresse-modal-btn--ghost:hover {
+    border-color: var(--c-text-muted);
+    color: var(--c-text);
+}
+
+.adresse-modal-btn--primary {
+    background: var(--c-cyan);
+    border-color: var(--c-cyan);
+    color: var(--c-bg);
+    font-weight: 600;
+}
+
+.adresse-modal-btn--primary:hover {
+    filter: brightness(1.08);
 }
 

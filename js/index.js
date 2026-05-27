@@ -142,6 +142,7 @@ let currentAdresse = "";
 let currentAdresseQuery = "";
 const COPY_PAYLOADS = new Map();
 let copyPayloadSeq = 0;
+const ADRESSE_EDIT_STATE = { kind: "", ref: "", id: "", rowEl: null, cellEl: null, prevCellHtml: "" };
 
 const DETAIL_LABELS = {
     facilityid: "ID canalisation",
@@ -326,9 +327,34 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.querySelectorAll(".tab-btn")
         .forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
 
+    // Filtres chantiers
+    let chantierDebounce;
+    on("filter-chantiers-missing", "change", () => fetchChantiers(currentAdresse));
+    on("filter-chantiers-commune", "input", () => {
+        clearTimeout(chantierDebounce);
+        chantierDebounce = setTimeout(() => fetchChantiers(currentAdresse), 300);
+    });
+    on("filter-chantiers-search", "input", () => {
+        clearTimeout(chantierDebounce);
+        chantierDebounce = setTimeout(() => fetchChantiers(currentAdresse), 300);
+    });
+
+    // Filtres operations
+    let opsDebounce;
+    on("filter-operations-missing", "change", () => fetchOperations(currentAdresse));
+    on("filter-operations-commune", "input", () => {
+        clearTimeout(opsDebounce);
+        opsDebounce = setTimeout(() => fetchOperations(currentAdresse), 300);
+    });
+    on("filter-operations-search", "input", () => {
+        clearTimeout(opsDebounce);
+        opsDebounce = setTimeout(() => fetchOperations(currentAdresse), 300);
+    });
+
     // Export CSV
     on("btn-export", "click", exportCSV);
     initDetailModal();
+    initAdresseModal();
 
     // Formulaire recherche
     document.getElementById("search-form")?.addEventListener("submit", e => {
@@ -757,9 +783,13 @@ const PAGE_SIZE_CHANTIERS = 100;
 let chantierPage  = 1;
 let chantierTotal = 0;
 let chantierCommune = "";
+let chantierSearch = "";
+let chantierOnlyMissing = false;
 
 async function fetchChantiers(adresse) {
-    chantierCommune = adresse.split(',').pop().trim();
+    chantierCommune = val("filter-chantiers-commune") || adresse.split(',').pop().trim();
+    chantierSearch = val("filter-chantiers-search");
+    chantierOnlyMissing = !!document.getElementById("filter-chantiers-missing")?.checked;
     await fetchChantierPage(1);
 }
 
@@ -770,22 +800,62 @@ async function fetchChantierPage(page) {
     tbody.innerHTML = `<tr class="row-loading"><td colspan="6">Chargement…</td></tr>`;
     try {
         const offset = (page - 1) * PAGE_SIZE_CHANTIERS;
-        const url = `${API}/api/chantiers?commune=${encodeURIComponent(chantierCommune)}&limit=${PAGE_SIZE_CHANTIERS}&offset=${offset}`;
+        const p = new URLSearchParams({
+            commune: chantierCommune,
+            search: chantierSearch,
+            only_missing_adresse: chantierOnlyMissing ? "true" : "false",
+            limit: String(PAGE_SIZE_CHANTIERS),
+            offset: String(offset),
+        });
+        const url = `${API}/api/chantiers?${p.toString()}`;
         const res  = await fetch(url);
         const json = await res.json();
         chantierTotal = json.total || 0;
         renderChantiers(json.chantiers || []);
         setEl("chantiers-count", chantierTotal.toLocaleString("fr-FR"));
+        setEl("chantiers-missing-count", `⚠ ${Number(json.missing_count || 0).toLocaleString("fr-FR")} adresse(s) manquante(s)`);
         renderTabPagination("chantiers-pagination", chantierPage, chantierTotal, PAGE_SIZE_CHANTIERS, fetchChantierPage);
     } catch(e) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="6">Données non disponibles</td></tr>`;
     }
 }
 
-function formatChantierAdresseCell(adresse) {
+function formatChantierAdresseCell(adresse, numOp = "") {
     const s = adresse == null ? "" : String(adresse).trim();
     if (s) return escapeHtml(s);
-    return `<span class="cell-adresse-empty" title="Adresse non renseignée" aria-label="Adresse non renseignée"><i class="fa-solid fa-minus" aria-hidden="true"></i></span>`;
+    return buildAdresseMissingCell("chantier", numOp, numOp);
+}
+
+function chantierHasMissingAdresse(adresse) {
+    return !(adresse != null && String(adresse).trim());
+}
+
+function operationHasMissingLocalisation(localisation) {
+    return !(localisation != null && String(localisation).trim());
+}
+
+function buildAdresseMissingCell(kind, id = "", ref = "") {
+    const safeKind = escapeHtml(kind);
+    const safeId = escapeHtml(id);
+    const safeRef = escapeHtml(ref);
+    return `
+        <div class="cell-adresse-missing-wrap">
+            <button
+                class="cell-adresse-complete-btn"
+                type="button"
+                data-action="complete-address"
+                data-kind="${safeKind}"
+                data-id="${safeId}"
+                data-ref="${safeRef}"
+            >Completer l'adresse</button>
+        </div>
+    `;
+}
+
+function formatOperationAdresseCell(localisation, idProjet = "", ref = "") {
+    const s = localisation == null ? "" : String(localisation).trim();
+    if (s) return escapeHtml(s);
+    return buildAdresseMissingCell("operation", idProjet, ref);
 }
 
 function renderChantiers(data) {
@@ -795,11 +865,11 @@ function renderChantiers(data) {
         return;
     }
     tbody.innerHTML = data.map(row => `
-        <tr>
+        <tr class="${chantierHasMissingAdresse(row.adresse) ? "chantier-row--missing-address" : ""}">
             <td class="cell-id">${row.num_op}</td>
             <td>${row.libelle || "—"}</td>
             <td>${row.commune}</td>
-            <td class="cell-adresse">${formatChantierAdresseCell(row.adresse)}</td>
+            <td class="cell-adresse">${formatChantierAdresseCell(row.adresse, row.num_op || "")}</td>
             <td><span class="table-pill ${etatClass(row.etat)}">${row.etat}</span></td>
             <td>${row.date_debut} → ${row.date_fin}</td>
         </tr>
@@ -811,9 +881,13 @@ const PAGE_SIZE_OPS = 100;
 let opsPage    = 1;
 let opsTotal   = 0;
 let opsCommune = "";
+let opsSearch = "";
+let opsOnlyMissing = false;
 
 async function fetchOperations(adresse) {
-    opsCommune = adresse.split(',').pop().trim();
+    opsCommune = val("filter-operations-commune") || adresse.split(',').pop().trim();
+    opsSearch = val("filter-operations-search");
+    opsOnlyMissing = !!document.getElementById("filter-operations-missing")?.checked;
     await fetchOpsPage(1);
 }
 
@@ -824,12 +898,20 @@ async function fetchOpsPage(page) {
     tbody.innerHTML = `<tr class="row-loading"><td colspan="5">Chargement…</td></tr>`;
     try {
         const offset = (page - 1) * PAGE_SIZE_OPS;
-        const url = `${API}/api/operations?commune=${encodeURIComponent(opsCommune)}&limit=${PAGE_SIZE_OPS}&offset=${offset}`;
+        const p = new URLSearchParams({
+            commune: opsCommune,
+            search: opsSearch,
+            only_missing_adresse: opsOnlyMissing ? "true" : "false",
+            limit: String(PAGE_SIZE_OPS),
+            offset: String(offset),
+        });
+        const url = `${API}/api/operations?${p.toString()}`;
         const res  = await fetch(url);
         const json = await res.json();
         opsTotal = json.total || 0;
         renderOperations(json.operations || []);
         setEl("operations-count", opsTotal.toLocaleString("fr-FR"));
+        setEl("operations-missing-count", `⚠ ${Number(json.missing_count || 0).toLocaleString("fr-FR")} adresse(s) manquante(s)`);
         renderTabPagination("operations-pagination", opsPage, opsTotal, PAGE_SIZE_OPS, fetchOpsPage);
     } catch(e) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="5">Données non disponibles</td></tr>`;
@@ -843,10 +925,10 @@ function renderOperations(data) {
         return;
     }
     tbody.innerHTML = data.map(row => `
-        <tr>
+        <tr class="${operationHasMissingLocalisation(row.localisation) ? "operation-row--missing-address" : ""}">
             <td>${row.titre || "—"}</td>
             <td>${row.commune || "—"}</td>
-            <td>${row.localisation || "—"}</td>
+            <td class="cell-adresse">${formatOperationAdresseCell(row.localisation, row.operation_rowid || "", row.titre || row.cpi || "")}</td>
             <td>${row.annee || "—"}</td>
             <td><span style="color:var(--c-cyan);font-weight:600">${row.cpi || "—"}</span></td>
         </tr>
@@ -1066,6 +1148,100 @@ function closeDetailModal() {
     if (!modal) return;
     modal.classList.remove("detail-modal--open");
     modal.setAttribute("aria-hidden", "true");
+}
+
+function initAdresseModal() {
+    const chantierBody = document.getElementById("chantiers-body");
+    const operationBody = document.getElementById("operations-body");
+    const modal = document.getElementById("adresse-modal");
+    const closeBtn = document.getElementById("adresse-modal-close");
+    const cancelBtn = document.getElementById("adresse-modal-cancel");
+    const validateBtn = document.getElementById("adresse-modal-validate");
+    const backdrop = document.getElementById("adresse-modal-backdrop");
+    const subtitle = document.getElementById("adresse-modal-subtitle");
+    const input = document.getElementById("adresse-modal-input");
+    if (!modal || !input || !subtitle) return;
+
+    const openFromButton = (btn) => {
+        const kind = btn.dataset.kind || "";
+        const id = btn.dataset.id || "";
+        const ref = btn.dataset.ref || "";
+        const rowEl = btn.closest("tr");
+        const cellEl = btn.closest("td");
+        ADRESSE_EDIT_STATE.kind = kind;
+        ADRESSE_EDIT_STATE.id = id;
+        ADRESSE_EDIT_STATE.ref = ref;
+        ADRESSE_EDIT_STATE.rowEl = rowEl;
+        ADRESSE_EDIT_STATE.cellEl = cellEl;
+        ADRESSE_EDIT_STATE.prevCellHtml = cellEl ? cellEl.innerHTML : "";
+        subtitle.textContent = ref ? `${kind} — ${ref}` : kind;
+        input.value = "";
+        modal.classList.add("detail-modal--open");
+        modal.setAttribute("aria-hidden", "false");
+        setTimeout(() => input.focus(), 0);
+    };
+
+    const onBodyClick = (e) => {
+        const btn = e.target.closest("button[data-action='complete-address']");
+        if (!btn) return;
+        openFromButton(btn);
+    };
+
+    chantierBody?.addEventListener("click", onBodyClick);
+    operationBody?.addEventListener("click", onBodyClick);
+
+    const close = () => {
+        modal.classList.remove("detail-modal--open");
+        modal.setAttribute("aria-hidden", "true");
+        ADRESSE_EDIT_STATE.kind = "";
+        ADRESSE_EDIT_STATE.id = "";
+        ADRESSE_EDIT_STATE.ref = "";
+        ADRESSE_EDIT_STATE.rowEl = null;
+        ADRESSE_EDIT_STATE.cellEl = null;
+        ADRESSE_EDIT_STATE.prevCellHtml = "";
+    };
+
+    closeBtn?.addEventListener("click", close);
+    cancelBtn?.addEventListener("click", close);
+    backdrop?.addEventListener("click", close);
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") close();
+    });
+
+    validateBtn?.addEventListener("click", async () => {
+        const adresse = String(input.value || "").trim();
+        if (!adresse) {
+            input.focus();
+            return;
+        }
+        const { kind, id, rowEl, cellEl, prevCellHtml } = ADRESSE_EDIT_STATE;
+        if (!kind || !id || !rowEl || !cellEl) return;
+
+        // 1) Mise a jour immediate en front
+        cellEl.textContent = adresse;
+        rowEl.classList.remove("chantier-row--missing-address", "operation-row--missing-address");
+
+        // 2) Persistance en base via endpoint dedie
+        try {
+            const isChantier = kind === "chantier";
+            const endpoint = isChantier ? `${API}/api/chantiers/adresse` : `${API}/api/operations/adresse`;
+            const payload = isChantier ? { num_op: id, adresse } : { operation_rowid: Number(id), adresse };
+            const res = await fetch(endpoint, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        } catch (e) {
+            // rollback front si l'API echoue
+            cellEl.innerHTML = prevCellHtml;
+            if (kind === "chantier") rowEl.classList.add("chantier-row--missing-address");
+            if (kind === "operation") rowEl.classList.add("operation-row--missing-address");
+            alert("La mise a jour de l'adresse a echoue cote serveur.");
+            return;
+        }
+        close();
+    });
 }
 
 function renderDetailSection(title, obj) {
