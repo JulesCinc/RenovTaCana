@@ -102,6 +102,42 @@ Sous **Windows** : exécuter **`demarrer-web-app.bat`** (double-clic, ou `.\dema
 
 Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn script.main:app --reload`. Puis ouvrir **`http://127.0.0.1:8000/`** dans le navigateur. La base d’URL API est gérée dans **`js/config.js`**.
 
+## Segmentation des canalisations
+
+Un nouveau script de preparation de donnees a ete ajoute :
+
+`script/database/segment_pipes.py`
+
+Il sert a decouper les canalisations trop longues en troncons de **250 m maximum** et a enregistrer le resultat dans la base SQLite, dans une table dediee :
+
+`segmentation`
+
+La segmentation est faite sur la geometrie reelle du tuyau, pas seulement sur une valeur de longueur. Les calculs de longueur sont effectues en metres, avec un systeme de coordonnees metrique (`EPSG:2154` par defaut).
+
+Commande de regeneration complete :
+
+```bash
+python script/database/segment_pipes.py --db database/renovTaCana.db --force-recompute
+```
+
+La table `segmentation` contient notamment :
+
+- `id` : identifiant unique du segment
+- `pipe_id_original` : identifiant de la canalisation d'origine
+- `segment_index` : ordre du segment dans la canalisation
+- `segment_length` : longueur reelle du segment en metres
+- `geometry` : geometrie WKT du segment
+- `created_at` : date de creation du segment
+
+Sans `--force-recompute`, le script evite de recreer les segments deja existants pour les memes canalisations. Avec `--force-recompute`, il vide la table `segmentation` puis recalcule toute la segmentation proprement.
+
+Adaptation future possible :
+
+- ajouter une route API en lecture seule, par exemple `GET /api/segmentation`, pour renvoyer les segments au format GeoJSON ;
+- afficher ces segments dans `plan-travaux.html` ou sur la carte comme une couche dediee ;
+- utiliser `pipe_id_original` pour garder le lien avec la canalisation source ;
+- remplacer progressivement l'affichage des longues canalisations par l'affichage des segments dans le plan de travaux.
+
 ## Prochaines etapes (V2.2)
 
 - **Livrer la page "plan de travaux"** pour l'avant-dernier sprint.
