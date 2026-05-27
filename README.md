@@ -1,29 +1,35 @@
-# RenovTaCana · **version V2.1**
+# RenovTaCana · **version V2.2**
 
 Prototype hébergé en ligne : **https://k2vm-163.mde.epf.fr**
 
-Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond à la **V2.1** : consolider les fonctionnalités (carte, tableau d’adresses, tableau de bord, API) et livrer un **plan de travaux opérationnel**.
+Projet **RenovTaCana** (Eau d’Azur). Cette branche correspond a la **V2.2**, version qui sera delivree pour l'avant-dernier sprint.
+L'objectif principal est l'**edition d'un plan de travaux**, en s'appuyant sur le **score de priorite** calcule lors du sprint precedent.
 
 ---
 
-## État des fonctionnalités (V2.1)
+## Etat des fonctionnalites (V2.2)
 
 ### Fonctionnel
 
-- **Carte interactive** (heatmap / Leaflet) : affichage des canalisations, chantiers et couches géographiques.
+- **Carte interactive** (heatmap / Leaflet) : affichage des canalisations, chantiers et couches geographiques.
 - **Tableau d'adresses** (`index.html`) : parcours, recherche, filtres et export des adresses.
-- **Tableau de bord** (`dashboard.html`) : visualisation des indicateurs clés.
+- **Tableau de bord** (`dashboard.html`) : visualisation des indicateurs cles.
 - **API FastAPI** : endpoints complets (canalisations, chantiers, opérations, adresses, etc.).
 - **Mini-map** sur la page adresses.
-- **Calcul du score de priorité** : le script de calcul est opérationnel et applique les poids définis par les clients.
-- **Recherche / suggestions** : barre de recherche avec auto-complétion via l'API.
+- **Calcul du score de priorite** : le script de calcul est operationnel et applique les poids definis avec le client.
+- **Score de priorite pris en compte** dans l'edition du plan de travaux (base de la priorisation des interventions).
+- **Recherche / suggestions** : barre de recherche avec auto-completion via l'API.
 
-### En cours / à venir
+### En cours / a venir
 
-| Fonctionnalité | Statut | Cible |
+| Fonctionnalite | Statut | Cible |
 |---|---|---|
-| Affichage du score de priorité dans la web app (tâches) | Non implémenté | **V2.2** |
-| Optimisation du temps de chargement de la carte (données trop volumineuses) | En cours | **V2.2** |
+| Page "plan de travaux" | En cours | **V2.2** |
+| Decoupage des canalisations > 250 m en troncons de 250 m | En cours | **V2.2** |
+| Affichage des troncons de 250 m sur la carte | En cours | **V2.2** |
+| Prise en compte des chantiers dans le calcul du score de priorite | En cours | **V2.2** |
+| Historique et mise a jour de la base de donnees | En cours | **V2.2** |
+| Mise a jour des informations des chantiers (adresses manquantes), idem pour travaux | En cours | **V2.2** |
 
 ---
 
@@ -83,22 +89,24 @@ Sous **Windows** : exécuter **`demarrer-web-app.bat`** (double-clic, ou `.\dema
 
 Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn script.main:app --reload`. Puis ouvrir **`http://127.0.0.1:8000/`** dans le navigateur. La base d’URL API est gérée dans **`js/config.js`**.
 
-## Prochaines étapes (V2.2)
+## Prochaines etapes (V2.2)
 
-- **Afficher le score de priorité** dans la web app (pages tâches / adresses).
-- **Optimiser le temps de chargement de la carte** (allègement des données géographiques, chargement progressif ou simplification des géométries).
-- Compléter le document de suivi de projet, avec product backlog, suivi des sprints et jalonage.
+- **Livrer la page "plan de travaux"** pour l'avant-dernier sprint.
+- **Garantir l'utilisation du score de priorite** dans la priorisation des interventions.
+- **Finaliser l'integration donnees/metier** (chantiers, travaux, historique de base).
 
-## Association des tâches
+## Repartition des taches (V2.2)
 
 ```mermaid
 flowchart LR
-    T[Tâche Jalon 3<br/>Créer le script de calcul du score de priorité] --> A[Assigné à : Jules CINC]
-    U1[Tâche Jalon 3<br/>Raccourcir les délais de chargement<br/>reste à optimiser chantiers et opérations] --> U[Assigné à : Ulysse LONG]
-    U2[Tâche Jalon 3<br/>Optimiser affichage des adresses sur index.html] --> U
-    U3[Tâche Jalon 3<br/>Adresse des opérations même processus que chantiers] --> U
-    N1[Tâche Jalon 3<br/>Compléter le document de suivi de projet] --> N[Assigné à : Nicolas DEMARS]
-    O1[Tâche Jalon 3<br/>Ajouter un bouton map sur index.html pour la mini heatmap] --> O[Assigné à : Oscar HUNAUT]
+    N1[Decoupage des canalisations > 250 m<br/>en sections de 250 m] --> N[Nicolas Demars]
+    E1[Creation de la page<br/>plan de travaux] --> E[Etienne GIRARD]
+    J1[Prise en compte des chantiers<br/>dans le calcul du score de priorite] --> J[Jules]
+    O1[Affichage des troncons de 250 m<br/>sur la carte] --> O[Oscar]
+    U1[Historique de base de donnees] --> U[Ulysse]
+    U2[Mise a jour de la base de donnees] --> U
+    U3[Mise a jour des informations des chantiers<br/>adresses manquantes] --> U
+    U4[Idem pour travaux] --> U
 ```
 
 ---
