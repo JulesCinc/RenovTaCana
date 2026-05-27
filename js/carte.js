@@ -421,6 +421,7 @@ async function loadChantiers() {
                                 <span style="color:#888">Fin</span>
                                 <strong>${p.date_fin || "-"}</strong>
                             </div>
+                            
                         </div>`,
                         { className: "dark-popup" }
                     );

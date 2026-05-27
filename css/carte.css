@@ -245,64 +245,69 @@ body.theme-dark .map-widget {
 }
 
 .map-legend {
+    top: auto;
     bottom: 16px;
     right: 16px;
-    padding: 12px 11px;
-    min-width: 144px;
+    left: auto;
+    padding: 9px 9px;
+    min-width: 124px;
+    max-width: 132px;
+    height: auto;
 }
 
 .map-legend__title {
-    font-size: 0.63rem;
+    font-size: 0.58rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--c-text);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     text-align: center;
 }
 
 .map-legend__scale {
     display: flex;
     align-items: stretch;
-    gap: 7px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 7px;
 }
 
 .map-legend__gradient {
-    width: 11px;
-    height: 96px;
+    width: 9px;
+    height: 76px;
     border-radius: 3px;
     border: 1px solid var(--c-border-2);
     background: linear-gradient(to bottom, #ef4444 0%, #f97316 30%, #eab308 55%, #84cc16 75%, #00d4aa 100%);
 }
 
 .map-legend__labels {
-    height: 96px;
+    height: 76px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    font-size: 0.65rem;
+    font-size: 0.58rem;
     color: var(--c-text-muted);
 }
 
 .map-legend__items {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     border-top: 1px solid var(--c-border);
-    padding-top: 8px;
+    padding-top: 6px;
 }
 
 .map-legend__item {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 0.66rem;
+    gap: 4px;
+    font-size: 0.6rem;
     color: var(--c-text);
+    line-height: 1.2;
 }
 
 .dot {
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     flex-shrink: 0;
 }
