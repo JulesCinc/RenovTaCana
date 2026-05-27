@@ -337,6 +337,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (v) window.location.href = `index.html?adresse=${encodeURIComponent(v)}`;
     });
 
+    // Clic sur une canalisation de la mini-heatmap: recharge la page de resultats sans full reload.
+    window.addEventListener("rtc:mini-map-address-select", async (e) => {
+        const adresse = e?.detail?.adresse ? String(e.detail.adresse).trim() : "";
+        if (!adresse) return;
+        if (adresse === currentAdresse) return;
+        await applySelectedAddress(adresse);
+    });
+
     markSortHeader("criticite", "desc");
 });
 
@@ -379,6 +387,32 @@ function normalizeAdresseForApi(adresse) {
     if (!raw) return "";
     const beforeComma = raw.split(",")[0].trim();
     return beforeComma || raw;
+}
+
+async function applySelectedAddress(adresse) {
+    currentAdresse = adresse;
+    currentAdresseQuery = normalizeAdresseForApi(adresse);
+
+    const url = new URL(window.location.href);
+    url.searchParams.set("adresse", adresse);
+    url.searchParams.delete("zone");
+    window.history.replaceState({}, "", url.toString());
+
+    document.title = `RenovTaCana — ${currentAdresse}`;
+    setEl("adresse-titre", currentAdresse);
+    setEl("side-adresse", currentAdresse);
+    document.querySelectorAll(".search-bar__input").forEach(i => { i.value = currentAdresse; });
+
+    // Evite les incoherences de cache/memoire entre deux adresses.
+    CANAL_PAGE_MEMORY.clear();
+    lastCanalListSessionKey = "";
+    canalPrefetchGen++;
+
+    switchTab("canalisations");
+    await fetchPage(1);
+    await fetchStatsAdresse(currentAdresseQuery);
+    await fetchChantiers(currentAdresse);
+    await fetchOperations(currentAdresse);
 }
 
 // ── Fetch une page ────────────────────────────────────────

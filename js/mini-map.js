@@ -176,7 +176,9 @@
 
                 layer.on("click", function () {
                     if (!adr) return;
-                    window.location.href = `index.html?adresse=${encodeURIComponent(adr)}`;
+                    window.dispatchEvent(new CustomEvent("rtc:mini-map-address-select", {
+                        detail: { adresse: adr }
+                    }));
                 });
             },
         }).addTo(miniMap);
