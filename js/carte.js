@@ -326,20 +326,25 @@ function initSearch() {
 
     form.addEventListener("submit", function (e) {
         e.preventDefault();
-        const query = form.querySelector(".search-bar__input").value.trim().toLowerCase();
+        const rawQuery = form.querySelector(".search-bar__input").value.trim();
+        const query = rawQuery.toLowerCase();
         if (!query) return;
+
+        // Accepte "Adresse, Commune" en plus de "Adresse" seule.
+        const queryNoCity = query.split(",")[0].trim();
 
         const matches = allFeatures.filter(f =>
             f.properties.adr?.toLowerCase().includes(query)
+            || (queryNoCity && f.properties.adr?.toLowerCase().includes(queryNoCity))
         );
 
         if (matches.length > 0) {
             renderLayer(matches);
             document.getElementById("map-count").textContent =
-                `${matches.length} résultat${matches.length > 1 ? "s" : ""} pour "${query}"`;
+                `${matches.length} résultat${matches.length > 1 ? "s" : ""} pour "${rawQuery}"`;
             if (geoLayer) map.fitBounds(geoLayer.getBounds(), { padding: [40, 40] });
         } else {
-            window.location.href = `index.html?adresse=${encodeURIComponent(query)}`;
+            window.location.href = `index.html?adresse=${encodeURIComponent(rawQuery)}`;
         }
     });
 

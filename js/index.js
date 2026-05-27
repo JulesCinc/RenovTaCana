@@ -139,6 +139,7 @@ let totalResults = 0;
 let sortCol      = "criticite";
 let sortDir      = "desc";
 let currentAdresse = "";
+let currentAdresseQuery = "";
 const COPY_PAYLOADS = new Map();
 let copyPayloadSeq = 0;
 
@@ -266,6 +267,7 @@ const BOOLEAN_KEYS = new Set([
 document.addEventListener("DOMContentLoaded", async function () {
     const params   = new URLSearchParams(window.location.search);
     currentAdresse = params.get("adresse") || "";
+    currentAdresseQuery = normalizeAdresseForApi(currentAdresse);
     const zoneMode = params.get("zone") === "1";
 
     if (zoneMode) {
@@ -293,7 +295,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         await loadFiltres();
         await fetchPage(1);
-        await fetchStatsAdresse(currentAdresse);
+        await fetchStatsAdresse(currentAdresseQuery);
         await fetchChantiers(currentAdresse);
         await fetchOperations(currentAdresse);
     }
@@ -360,7 +362,7 @@ function buildQueryParams(page) {
         sort_dir: sortDir,
     });
 
-    if (currentAdresse) p.append("adresse",   currentAdresse);
+    if (currentAdresseQuery) p.append("adresse", currentAdresseQuery);
     if (commune)        p.append("commune",   commune);
     if (mat)            p.append("materiau",  mat);
     if (statut)         p.append("statut",    statut);
@@ -370,6 +372,13 @@ function buildQueryParams(page) {
     if (onlyPrioriteNull) p.append("only_unknown_priorite", "true");
 
     return p.toString();
+}
+
+function normalizeAdresseForApi(adresse) {
+    const raw = String(adresse || "").trim();
+    if (!raw) return "";
+    const beforeComma = raw.split(",")[0].trim();
+    return beforeComma || raw;
 }
 
 // ── Fetch une page ────────────────────────────────────────
