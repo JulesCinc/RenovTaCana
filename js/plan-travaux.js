@@ -127,8 +127,6 @@ function buildRow(item) {
         </td>
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
             title="${item.adresse}">${item.adresse}</td>
-        <td>${item.materiau}</td>
-        <td class="col-num">${item.diametre != null ? item.diametre + ' mm' : '—'}</td>
         <td class="col-num">${lengthCell}</td>
         <td class="col-num col-cost">${fmtCost(cost)}</td>
         <td class="col-actions"><div class="row-actions">${actions}</div></td>
