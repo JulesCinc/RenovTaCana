@@ -29,40 +29,53 @@ L'objectif principal est l'**edition d'un plan de travaux**, en s'appuyant sur l
 | Affichage des troncons de 250 m sur la carte | En cours | **V2.2** |
 | Prise en compte des chantiers dans le calcul du score de priorite | En cours | **V2.2** |
 | Historique et mise a jour de la base de donnees | En cours | **V2.2** |
-| Mise a jour des informations des chantiers (adresses manquantes), idem pour travaux | En cours | **V2.2** |
+| Mise a jour des informations des chantiers (adresses manquantes) | Fait | **V2.2** |
+| Mise a jour des informations des operations (adresses manquantes) | Fait | **V2.2** |
 
 ---
 
-## Arborescence 
+## Arborescence
 
 ```
 .
+├── .gitignore
 ├── script/
 │   ├── main.py                 ← Point d’entrée FastAPI (`uvicorn script.main:app`)
 │   ├── utils.py
-│   ├── router/
+│   ├── endpoints/
+│   │   ├── canalisations.py    ← `/api/canalisations`, `/api/canalisations/{facilityid}`, `/api/canalisations/zone`, `/api/adresses/suggestions`
+│   │   ├── chantiers.py        ← `/api/chantiers`, `/api/chantiers/adresse`
+│   │   ├── operations.py       ← `/api/operations`, `/api/operations/adresse`
+│   │   ├── stats.py            ← `/api/stats`, `/api/stats/adresse`
+│   │   ├── dashboard.py        ← `/api/dashboard`
+│   │   ├── filtres.py          ← `/api/filtres`
+│   │   ├── plan_travaux.py     ← `/api/plan-travaux`
+│   │   ├── geojson.py          ← `/api/geojson/chantiers`, `/api/geojson/canalisations`
+│   │   └── __init__.py
 │   └── database/
 │       ├── build-sqlite/
-│       │   └── build_sqlite_database.py  ← Génère `database/renovTaCana.db`
-│       └── row-data/                      ← Scripts d’exploration des données brutes
+│       │   └── build_sqlite_database.py  ← Genere `database/renovTaCana.db`
+│       └── row-data/                      ← Scripts d’exploration des donnees brutes
+├── database.py                 ← Connexion SQLite (`get_db`)
 ├── requirements.txt
 ├── README.md
 ├── demarrer-web-app.bat        ← Lancement Windows (voir « Lancer l’app »)
 │
-├── index.html                  ← Hub résultats / adresses (liens vers carte & dashboard)
+├── index.html                  ← Hub resultats / adresses (liens vers carte, dashboard, plan de travaux)
 ├── carte.html                  ← Carte interactive (heatmap / Leaflet)
 ├── dashboard.html              ← Tableau de bord
+├── plan-travaux.html           ← Page plan de travaux
 │
 ├── css/
 │   ├── style.css               ← Styles communs
-│   ├── adresses.css            ← index.html (parcours adresses)
+│   ├── adresses.css            ← index.html (parcours adresses, filtres chantiers/operations, modales)
 │   ├── carte.css               ← carte.html
 │   └── dashboard.css           ← dashboard.html
 │
 ├── js/
 │   ├── config.js               ← Base d’URL API / `__RTC_API_BASE__`
 │   ├── search.js               ← Barre de recherche / suggestions API
-│   ├── index.js                ← Logique page index (paramètres URL, export, etc.)
+│   ├── index.js                ← Logique page index (filtres, pagination, modales, mise a jour d'adresse)
 │   ├── carte.js
 │   ├── dashboard.js
 │   ├── mini-map.js
