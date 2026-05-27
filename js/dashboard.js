@@ -7,7 +7,9 @@ let planData = [];
 let planCommune = "";
 let planPage = 1;
 const PLAN_PAGE_SIZE = 50;
+const PLAN_STORAGE_KEY = "rtc_plan_travaux";
 const COMMUNE_LABELS = new Map();
+const selectedPlanRows = new Map();
 
 /** Cache localStorage plan de travaux (affichage immédiat même « périmé », refresh réseau en arrière-plan). */
 const DASH_CACHE_VER = 3;
@@ -109,6 +111,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     on("export-plan", "click", exportPlanCSV);
+    on("validate-work-plan", "click", validateSelectedWorkPlan);
 });
 
 // ── Dashboard principal ───────────────────────────────────
@@ -282,7 +285,7 @@ async function loadPlanTravaux(commune, offset = 0) {
         return;
     }
 
-    tbody.innerHTML = `<tr class="row-loading"><td colspan="10">Chargement…</td></tr>`;
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="11">Chargement…</td></tr>`;
 
     try {
         const res = await fetch(`${API}/api/plan-travaux?${qs}`);
@@ -295,14 +298,14 @@ async function loadPlanTravaux(commune, offset = 0) {
         await hydrateCommuneLabels(planData.map(r => r.commune));
         renderPlanTable(planData, offset);
     } catch (e) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">Erreur chargement</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="11">Erreur chargement</td></tr>`;
     }
 }
 
 function renderPlanTable(data, offset = 0) {
     const tbody = document.getElementById("plan-body");
     if (!data.length) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="10">Aucune donnée</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="11">Aucune donnée</td></tr>`;
         return;
     }
     tbody.innerHTML = data.map((r, i) => {
@@ -313,7 +316,13 @@ function renderPlanTable(data, offset = 0) {
         const mats = (r.materiaux || "").split(",").slice(0, 2).join(", ");
         const communeCode = normalizeCommuneCode(r.commune);
         const communeLabel = COMMUNE_LABELS.get(communeCode) || communeCode || "—";
+        const key = planRowKey(r);
+        const checked = selectedPlanRows.has(key) ? "checked" : "";
         return `<tr>
+            <td style="text-align:center;width:64px">
+                <input type="checkbox" class="plan-row-check" data-plan-key="${escapeAttr(key)}" ${checked}
+                    aria-label="Selectionner ${escapeAttr(r.adresse || "cette ligne")}">
+            </td>
             <td style="color:var(--c-text-dim);font-weight:600;width:50px">#${rang}</td>
             <td style="color:var(--c-text);width:180px">${r.adresse}</td>
             <td style="color:var(--c-text-muted);width:130px">${communeLabel}</td>
@@ -333,6 +342,118 @@ function renderPlanTable(data, offset = 0) {
             </td>
         </tr>`;
     }).join("");
+    bindPlanSelectionRows(data);
+    updateValidateWorkPlanButton();
+}
+
+function planRowKey(row) {
+    return `${row.adresse || ""}||${normalizeCommuneCode(row.commune)}`;
+}
+
+function bindPlanSelectionRows(data) {
+    const rowsByKey = new Map(data.map(row => [planRowKey(row), row]));
+    document.querySelectorAll(".plan-row-check").forEach(check => {
+        check.addEventListener("change", () => {
+            const row = rowsByKey.get(check.dataset.planKey);
+            if (!row) return;
+            if (check.checked) selectedPlanRows.set(check.dataset.planKey, row);
+            else selectedPlanRows.delete(check.dataset.planKey);
+            updateValidateWorkPlanButton();
+        });
+    });
+}
+
+function updateValidateWorkPlanButton() {
+    const btn = document.getElementById("validate-work-plan");
+    if (!btn) return;
+    btn.classList.toggle("is-visible", selectedPlanRows.size > 0);
+}
+
+function readWorkPlanItems() {
+    try {
+        const items = JSON.parse(localStorage.getItem(PLAN_STORAGE_KEY) || "[]");
+        return Array.isArray(items) ? items : [];
+    } catch (_) {
+        return [];
+    }
+}
+
+function writeWorkPlanItems(items) {
+    localStorage.setItem(PLAN_STORAGE_KEY, JSON.stringify(items));
+}
+
+function makeWorkPlanId() {
+    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+    return `dash-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function toWorkPlanItem(row) {
+    return {
+        _id: makeWorkPlanId(),
+        facilityid: row.facilityid || row.id || "-",
+        adresse: row.adresse || row.adr || "-",
+        materiau: row.materiau || row.mat || "-",
+        diametre: row.diametre ?? row.diam ?? null,
+        longueur: parseFloat(row.longueur ?? row.long) || 0,
+        criticite: row.criticite ?? row.crit ?? null,
+        inclus: true,
+    };
+}
+
+async function fetchCanalisationsForPlanRow(row) {
+    const params = new URLSearchParams({
+        adresse: row.adresse || "",
+        sort_col: "score_priorite",
+        sort_dir: "desc",
+        limit: String(Math.max(Number(row.nb_canalisations) || 100, 100)),
+        offset: "0",
+    });
+    const commune = normalizeCommuneCode(row.commune);
+    if (commune) params.set("commune", commune);
+
+    const res = await fetch(`${API}/api/canalisations?${params}`);
+    if (!res.ok) throw new Error(String(res.status));
+    const json = await res.json();
+    const rows = json.canalisations || [];
+    return rows.filter(c => {
+        const sameAdresse = String(c.adresse || "") === String(row.adresse || "");
+        const sameCommune = !commune || normalizeCommuneCode(c.commune) === commune;
+        return sameAdresse && sameCommune;
+    });
+}
+
+async function validateSelectedWorkPlan() {
+    if (!selectedPlanRows.size) return;
+    const btn = document.getElementById("validate-work-plan");
+    const originalText = btn?.textContent || "";
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Ajout en cours...";
+    }
+
+    try {
+        const selectedRows = [...selectedPlanRows.values()];
+        const batches = await Promise.all(selectedRows.map(fetchCanalisationsForPlanRow));
+        const current = readWorkPlanItems();
+        const knownIds = new Set(current.map(item => item.facilityid));
+        const additions = [];
+
+        batches.flat().forEach(row => {
+            const id = row.facilityid || row.id;
+            if (!id || knownIds.has(id)) return;
+            knownIds.add(id);
+            additions.push(toWorkPlanItem(row));
+        });
+
+        writeWorkPlanItems([...current, ...additions]);
+        window.location.href = "plan-travaux.html";
+    } catch (e) {
+        alert("Impossible de valider le plan de travaux pour le moment.");
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
 }
 
 // ── Communes pour le filtre ───────────────────────────────
@@ -474,3 +595,10 @@ async function exportPlanCSV() {
 function val(id)        { return document.getElementById(id)?.value || ""; }
 function setEl(id, txt) { const e = document.getElementById(id); if (e) e.textContent = txt; }
 function on(id, ev, fn) { document.getElementById(id)?.addEventListener(ev, fn); }
+function escapeAttr(v) {
+    return String(v ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
