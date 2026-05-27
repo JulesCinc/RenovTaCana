@@ -12,11 +12,16 @@ let baseTileLayer = null;
 let allFeatures = [];
 let activeFilter = "all";
 let selectMode = false;
+let lastRenderToken = 0;
 
 let currentClickPipe = null; // données de la canalisation cliquée
 
 let chantierLayer = null;
 let chantiersLoaded = false;
+const CANA_CACHE_DB = "rtc_map_cache";
+const CANA_CACHE_STORE = "geojson";
+const CANA_CACHE_KEY = "canalisations_v1";
+const CANA_CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24h
 
 // -- Init --------------------------------------------------
 document.addEventListener("DOMContentLoaded", async function () {
@@ -36,6 +41,7 @@ function initMap() {
         center: [43.705, 7.265],
         zoom: 13,
         zoomControl: false,
+        preferCanvas: true,
     });
 
     applyMapTheme();
@@ -73,7 +79,20 @@ function observeThemeChanges() {
 async function loadCanalisations() {
     try {
         document.getElementById("map-loading").querySelector("span").textContent =
-            "Chargement des 55 524 canalisations...";
+            "Chargement des canalisations...";
+        const cached = await readCanalisationsCache();
+        const now = Date.now();
+        const hasFreshCache = cached && (now - cached.savedAt) < CANA_CACHE_MAX_AGE_MS;
+
+        if (cached?.data?.features?.length) {
+            allFeatures = cached.data.features;
+            renderLayer(allFeatures);
+            document.getElementById("map-count").textContent =
+                `${allFeatures.length.toLocaleString("fr-FR")} canalisations`;
+            document.getElementById("map-loading").style.display = "none";
+            if (hasFreshCache) return;
+        }
+
         const res = await fetch(geoJsonCanalisationsUrl());
         const data = await res.json();
         allFeatures = data.features || [];
@@ -81,20 +100,71 @@ async function loadCanalisations() {
         document.getElementById("map-count").textContent =
             `${allFeatures.length.toLocaleString("fr-FR")} canalisations`;
         document.getElementById("map-loading").style.display = "none";
+        await writeCanalisationsCache(data);
     } catch (e) {
         document.getElementById("map-loading").innerHTML =
             `<span style="color:var(--c-danger)">Erreur chargement des donnees</span>`;
     }
 }
 
+function openCacheDb() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(CANA_CACHE_DB, 1);
+        req.onupgradeneeded = () => {
+            const db = req.result;
+            if (!db.objectStoreNames.contains(CANA_CACHE_STORE)) {
+                db.createObjectStore(CANA_CACHE_STORE);
+            }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+async function readCanalisationsCache() {
+    if (!("indexedDB" in window)) return null;
+    try {
+        const db = await openCacheDb();
+        const tx = db.transaction(CANA_CACHE_STORE, "readonly");
+        const store = tx.objectStore(CANA_CACHE_STORE);
+        const value = await new Promise((resolve, reject) => {
+            const req = store.get(CANA_CACHE_KEY);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => reject(req.error);
+        });
+        db.close();
+        return value;
+    } catch {
+        return null;
+    }
+}
+
+async function writeCanalisationsCache(data) {
+    if (!("indexedDB" in window)) return;
+    try {
+        const db = await openCacheDb();
+        const tx = db.transaction(CANA_CACHE_STORE, "readwrite");
+        tx.objectStore(CANA_CACHE_STORE).put({ savedAt: Date.now(), data }, CANA_CACHE_KEY);
+        await new Promise((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+            tx.onabort = () => reject(tx.error);
+        });
+        db.close();
+    } catch {
+        // Ignore cache write errors silently
+    }
+}
+
 function renderLayer(features) {
+    const renderToken = ++lastRenderToken;
     if (geoLayer) map.removeLayer(geoLayer);
-    geoLayer = L.geoJSON({ type: "FeatureCollection", features }, {
+    geoLayer = L.geoJSON(null, {
+        renderer: L.canvas(),
         style: f => getLineStyle(f.properties.crit),
         onEachFeature: function (feature, layer) {
             const p = feature.properties;
             layer.on("mouseover", e => { layer.setStyle({ weight: 5, opacity: 1 }); showTooltip(e, p); });
-            layer.on("mousemove", e => moveTooltip(e));
             layer.on("mouseout", () => { if (!selectMode) geoLayer.resetStyle(layer); hideTooltip(); });
             layer.on("click", (e) => {
                 if (selectMode) return;
@@ -105,6 +175,22 @@ function renderLayer(features) {
             });
         }
     }).addTo(map);
+
+    // Rendu progressif pour eviter de bloquer le thread UI sur gros volumes
+    const chunkSize = 1000;
+    let index = 0;
+
+    function addChunk() {
+        if (renderToken !== lastRenderToken) return;
+        const chunk = features.slice(index, index + chunkSize);
+        if (chunk.length) {
+            geoLayer.addData(chunk);
+            index += chunkSize;
+            requestAnimationFrame(addChunk);
+        }
+    }
+
+    requestAnimationFrame(addChunk);
 }
 
 function getLineStyle(crit) {
@@ -370,6 +456,7 @@ function showTooltip(e, p) {
 }
 
 function moveTooltip(e) {
+    if (!tooltip || tooltip.style.display === "none") return;
     const rect = document.getElementById("map").getBoundingClientRect();
     let x = e.originalEvent.clientX - rect.left + 14;
     let y = e.originalEvent.clientY - rect.top - 20;
@@ -395,10 +482,10 @@ function showPipePopup(e, p) {
     const rect = document.getElementById("map").getBoundingClientRect();
     let x = e.originalEvent.clientX - rect.left + 12;
     let y = e.originalEvent.clientY - rect.top - 12;
-    if (x + 200 > rect.width)  x -= 210;
-    if (y + 90  > rect.height) y -= 100;
+    if (x + 200 > rect.width) x -= 210;
+    if (y + 90 > rect.height) y -= 100;
     popup.style.left = x + "px";
-    popup.style.top  = y + "px";
+    popup.style.top = y + "px";
 }
 
 function hidePipePopup() {
@@ -408,6 +495,7 @@ function hidePipePopup() {
 
 function initPipePopup() {
     map.on("click", () => hidePipePopup());
+    map.on("mousemove", e => moveTooltip(e));
 
     document.getElementById("pp-plan")?.addEventListener("click", () => {
         if (currentClickPipe && window.ajouterAuPlan) {
