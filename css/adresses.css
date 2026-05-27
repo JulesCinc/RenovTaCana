@@ -3,13 +3,19 @@
    ========================================================= */
 
 /* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.address-page {
+    width: 100%;
+    overflow-x: hidden;
+}
+
 .address-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 24px;
+    grid-template-columns: minmax(0, 1fr) clamp(260px, 18vw, 320px);
+    gap: 16px;
     align-items: start;
     width: 100%;
-    max-width: 1720px;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .address-main-block {
@@ -17,6 +23,11 @@
     border: 1px solid var(--c-border);
     border-radius: var(--radius-md);
     overflow: hidden;
+    min-width: 0;
+}
+
+.tab-panel {
+    min-width: 0;
 }
 
 /* â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -84,6 +95,23 @@
     background: var(--c-surface-2);
     flex-wrap: wrap;
 }
+
+.tab-panel[data-tab="canalisations"] .filters-bar {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 12px 14px;
+    align-items: end;
+}
+
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-group:nth-child(1) { grid-column: 1 / 3; }
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-group:nth-child(2) { grid-column: 3 / 6; }
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-group:nth-child(3) { grid-column: 6 / 8; }
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-group:nth-child(4) { grid-column: 8 / 10; }
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-group:nth-child(5) { grid-column: 10 / 13; }
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-group:nth-child(6) { grid-column: 1 / 4; }
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-group:nth-child(7) { grid-column: 4 / 7; }
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-group:nth-child(8) { grid-column: 7 / 10; }
+.tab-panel[data-tab="canalisations"] .filters-bar > .filter-reset { grid-column: 10 / 12; justify-self: start; }
 
 .filters-bar--subtab {
     border-bottom: 1px solid var(--c-border);
@@ -216,18 +244,68 @@
 }
 
 /* â”€â”€ Tableau â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.table-scroll { overflow-x: auto; }
+.table-scroll {
+    overflow-x: hidden;
+    min-width: 0;
+}
 
 .address-table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: auto;
+    table-layout: fixed;
 }
 
+/* Tableau canalisations: on masque Materiaux (col 3) et Ø mm (col 4) */
+#main-table th:nth-child(3),
+#main-table td:nth-child(3),
+#main-table th:nth-child(4),
+#main-table td:nth-child(4) {
+    display: none;
+}
+
+.address-table th:nth-child(1),
+.address-table td:nth-child(1) { width: 14%; }
+.address-table th:nth-child(2),
+.address-table td:nth-child(2) { width: 18%; }
+.address-table th:nth-child(3),
+.address-table td:nth-child(3) { width: 9%; }
+.address-table th:nth-child(4),
+.address-table td:nth-child(4) { width: 8%; }
+.address-table th:nth-child(5),
+.address-table td:nth-child(5) { width: 7%; }
+.address-table th:nth-child(6),
+.address-table td:nth-child(6) { width: 7%; }
+.address-table th:nth-child(7),
+.address-table td:nth-child(7) { width: 7%; }
+.address-table th:nth-child(8),
+.address-table td:nth-child(8) { width: 10%; }
+.address-table th:nth-child(9),
+.address-table td:nth-child(9) { width: 88px; }
+.address-table th:nth-child(10),
+.address-table td:nth-child(10) { width: 86px; }
+
+/* Répartition dédiée après suppression des colonnes 3 et 4 dans #main-table */
+#main-table th:nth-child(1),
+#main-table td:nth-child(1) { width: 18%; }
+#main-table th:nth-child(2),
+#main-table td:nth-child(2) { width: 28%; }
+#main-table th:nth-child(5),
+#main-table td:nth-child(5) { width: 10%; }
+#main-table th:nth-child(6),
+#main-table td:nth-child(6) { width: 9%; }
+#main-table th:nth-child(7),
+#main-table td:nth-child(7) { width: 8%; }
+#main-table th:nth-child(8),
+#main-table td:nth-child(8) { width: 15%; }
+#main-table th:nth-child(9),
+#main-table td:nth-child(9) { width: 88px; }
+#main-table th:nth-child(10),
+#main-table td:nth-child(10) { width: 90px; }
+
 .address-table thead th {
-    padding: 9px 11px;
+    padding: 7px 8px;
     text-align: left;
-    font-size: 0.66rem;
+    font-size: 0.62rem;
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -237,6 +315,8 @@
     cursor: pointer;
     user-select: none;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     transition: color var(--t-fast), background var(--t-fast);
 }
 
@@ -280,11 +360,51 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
 }
 
 .address-table tbody td {
-    padding: 10px 11px;
-    font-size: 0.78rem;
+    padding: 8px 7px;
+    font-size: 0.72rem;
     color: var(--c-text-muted);
     vertical-align: middle;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.address-table td:nth-child(2) {
+    line-height: 1.3;
+}
+
+.address-table td:nth-child(3),
+.address-table td:nth-child(4),
+.address-table td:nth-child(5),
+.address-table td:nth-child(6),
+.address-table td:nth-child(7),
+.address-table td:nth-child(8),
+.address-table td:nth-child(9),
+.address-table td:nth-child(10) {
     white-space: nowrap;
+}
+
+.address-table th:nth-child(10),
+.address-table td:nth-child(10) {
+    text-align: center;
+}
+
+.address-table th:nth-child(3),
+.address-table th:nth-child(4),
+.address-table th:nth-child(5),
+.address-table th:nth-child(6),
+.address-table th:nth-child(7),
+.address-table th:nth-child(8),
+.address-table th:nth-child(9),
+.address-table th:nth-child(10) {
+    text-align: center;
+}
+
+.address-table th:nth-child(9),
+.address-table th:nth-child(10) {
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
 .cell-id {
@@ -301,7 +421,7 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     display: flex;
     align-items: center;
     gap: 8px;
-    min-width: 110px;
+    min-width: 92px;
 }
 .crit-cell__bar {
     flex: 1;
@@ -319,8 +439,8 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
 .crit-cell__fill--mid  { background: var(--c-warning); }
 .crit-cell__fill--high { background: var(--c-danger); }
 .crit-cell__value {
-    font-size: 0.78rem;
-    min-width: 36px;
+    font-size: 0.74rem;
+    min-width: 32px;
     text-align: right;
     color: var(--c-text);
     font-weight: 500;
@@ -526,6 +646,9 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     .address-layout { grid-template-columns: 1fr; }
     .address-side-card { position: static; }
     #mini-map { height: 300px; }
+    .tab-panel[data-tab="canalisations"] .filters-bar {
+        display: flex;
+    }
 }
 @media (max-width: 768px) {
     .address-page { padding: 16px; }
@@ -538,6 +661,8 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     display: inline-flex;
     gap: 4px;
     align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .row-action-btn--locate:hover {
@@ -547,8 +672,8 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
 }
 
 .row-action-btn {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -567,8 +692,8 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
 }
 
 .row-action-btn svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
 }
 
 .detail-modal {
