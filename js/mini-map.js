@@ -2,37 +2,65 @@
  * mini-map.js - Mini heatmap sur page index
  */
 (function () {
-    const MINI_GEO_CACHE_VER = 1;
-    const MINI_GEO_CACHE_TTL_MS = 10 * 60 * 1000;
+    const MINI_GEO_CACHE_VER = 2;
+    const MINI_GEO_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
     const MINI_GEO_CACHE_KEY = `rtc_mini_v${MINI_GEO_CACHE_VER}_geojson_canalisations`;
+    const MINI_GEO_DB = "rtc_mini_map_cache";
+    const MINI_GEO_STORE = "geojson";
 
-    function readMiniGeoCache() {
+    function openMiniGeoDb() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(MINI_GEO_DB, 1);
+            req.onupgradeneeded = () => {
+                const db = req.result;
+                if (!db.objectStoreNames.contains(MINI_GEO_STORE)) {
+                    db.createObjectStore(MINI_GEO_STORE);
+                }
+            };
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function readMiniGeoCache() {
+        if (!("indexedDB" in window)) return null;
         try {
-            const raw = localStorage.getItem(MINI_GEO_CACHE_KEY);
-            if (!raw) return null;
-            const o = JSON.parse(raw);
-            if (!o || typeof o.t !== "number" || !o.payload) return null;
-            if (Date.now() - o.t > MINI_GEO_CACHE_TTL_MS) return null;
-            if (!Array.isArray(o.payload.features)) return null;
-            return o;
+            const db = await openMiniGeoDb();
+            const tx = db.transaction(MINI_GEO_STORE, "readonly");
+            const store = tx.objectStore(MINI_GEO_STORE);
+            const value = await new Promise((resolve, reject) => {
+                const req = store.get(MINI_GEO_CACHE_KEY);
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => reject(req.error);
+            });
+            db.close();
+            if (!value || typeof value.t !== "number" || !value.payload) return null;
+            if (Date.now() - value.t > MINI_GEO_CACHE_TTL_MS) return null;
+            if (!Array.isArray(value.payload.features)) return null;
+            return value;
         } catch (_) {
             return null;
         }
     }
 
-    function writeMiniGeoCache(payload) {
+    async function writeMiniGeoCache(payload) {
+        if (!("indexedDB" in window)) return;
         try {
-            localStorage.setItem(MINI_GEO_CACHE_KEY, JSON.stringify({ t: Date.now(), payload }));
-        } catch (e) {
-            if (e.name === "QuotaExceededError" || e.code === 22) {
-                try {
-                    localStorage.removeItem(MINI_GEO_CACHE_KEY);
-                } catch (_) { /* ignore */ }
-            }
+            const db = await openMiniGeoDb();
+            const tx = db.transaction(MINI_GEO_STORE, "readwrite");
+            tx.objectStore(MINI_GEO_STORE).put({ t: Date.now(), payload }, MINI_GEO_CACHE_KEY);
+            await new Promise((resolve, reject) => {
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+                tx.onabort = () => reject(tx.error);
+            });
+            db.close();
+        } catch (_) {
+            // ignore cache write errors
         }
     }
 
-    /** Empreinte légère pour éviter un second `renderFeatures` (très coûteux) si l’API renvoie le même jeu. */
+    /** Empreinte legere pour eviter un second `renderFeatures` (tres couteux) si l'API renvoie le meme jeu. */
     function miniGeoFeaturesSig(features) {
         if (!features?.length) return "0";
         const n = features.length;
@@ -70,21 +98,23 @@
             zoom: 12,
             zoomControl: false,
             attributionControl: false,
-            // Laisse le scroll de la page prioritaire sur la mini-carte.
             scrollWheelZoom: false,
             preferCanvas: true,
         });
 
+        mapEl.addEventListener("mouseenter", () => miniMap.scrollWheelZoom.enable());
+        mapEl.addEventListener("mouseleave", () => miniMap.scrollWheelZoom.disable());
+
         applyMiniMapTheme();
         observeThemeChanges();
 
-        const cached = readMiniGeoCache();
+        const cached = await readMiniGeoCache();
         let showedCache = false;
         if (cached?.payload?.features?.length) {
             renderFeatures(cached.payload.features);
             showedCache = true;
-            // Laisser une frame se peindre avant le fetch (réseau + JSON hors fil principal court).
             await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+            return;
         }
 
         try {
@@ -92,22 +122,18 @@
             if (!res.ok) throw new Error(String(res.status));
             const data = await res.json();
             const features = data.features || [];
-            const cachedFeats = showedCache && cached?.payload?.features
-                ? cached.payload.features
-                : null;
+            const cachedFeats = showedCache && cached?.payload?.features ? cached.payload.features : null;
             const unchanged = cachedFeats
                 && miniGeoFeaturesSig(features) === miniGeoFeaturesSig(cachedFeats);
             if (!unchanged) {
-                writeMiniGeoCache({
+                await writeMiniGeoCache({
                     type: data.type || "FeatureCollection",
                     features,
                 });
                 renderFeatures(features);
             }
-        } catch (e) {
-            if (!showedCache) {
-                /* carte vide ou ancienne couche absente : rien à afficher */
-            }
+        } catch (_) {
+            // Pas de cache et erreur reseau: mini-carte vide.
         }
     }
 
@@ -127,10 +153,10 @@
             onEachFeature: function (feature, layer) {
                 const p = feature?.properties || {};
                 const adr = p.adr;
-                const mat = p.mat || "—";
-                const diam = p.diam != null ? `${p.diam} mm` : "—";
-                const longu = p.long != null ? `${p.long} m` : "—";
-                const crit = p.crit != null ? `${Number(p.crit).toFixed(1)}%` : "—";
+                const mat = p.mat || "-";
+                const diam = p.diam != null ? `${p.diam} mm` : "-";
+                const longu = p.long != null ? `${p.long} m` : "-";
+                const crit = p.crit != null ? `${Number(p.crit).toFixed(1)}%` : "-";
 
                 const tip = `
                     <div style="font-family:monospace;font-size:11px;line-height:1.35;min-width:190px">
@@ -154,8 +180,6 @@
                 });
             },
         }).addTo(miniMap);
-
-        // Keep a fixed Nice-area framing instead of auto-zooming on each load.
     }
 
     function applyMiniMapTheme() {
@@ -188,10 +212,6 @@
         return { color: "#00d4aa", weight: 1.2, opacity: 0.65 };
     }
 
-    /**
-     * Zoome la mini-carte sur la canalisation dont la propriété `id` vaut `facilityid`
-     * et la met en surbrillance. Retourne true si trouvé, false sinon.
-     */
     window.rtcMiniMapFocus = function (facilityid) {
         if (!miniLayer || !miniMap) return false;
 
