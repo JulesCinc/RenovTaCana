@@ -111,10 +111,25 @@ if defined REQMISS (
     exit /b 1
 )
 
-echo Ouverture du navigateur dans ~2 s sur http://127.0.0.1:8000/
-echo Serveur ^(Ctrl+C pour arreter^)
+set "PORT="
+for /L %%P in (8000,1,8010) do (
+    netstat -ano | findstr /R /C:":%%P .*LISTENING" >nul
+    if errorlevel 1 (
+        set "PORT=%%P"
+        goto :port_found
+    )
+)
+
+echo Aucun port libre trouve entre 8000 et 8010.
+echo Ferme un processus qui occupe ces ports, puis relance.
+pause
+exit /b 1
+
+:port_found
+echo Ouverture du navigateur dans ~2 s sur http://127.0.0.1:!PORT!/
+echo Serveur ^(Ctrl+C pour arreter^) sur le port !PORT!
 echo.
-start "" powershell -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 2; Start-Process 'http://127.0.0.1:8000/'"
-"!PY!" -m uvicorn script.main:app --reload --host 127.0.0.1 --port 8000
+start "" powershell -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 2; Start-Process 'http://127.0.0.1:!PORT!/'"
+"!PY!" -m uvicorn script.main:app --reload --host 127.0.0.1 --port !PORT!
 pause
 exit /b 0
