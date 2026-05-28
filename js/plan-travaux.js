@@ -14,6 +14,7 @@ const SAVED_NOM_KEY = 'rtc_plan_saved_nom';
 const SAVED_AT_KEY  = 'rtc_plan_saved_at_ms';
 const TARIF_KEY     = 'rtc_plan_tarif_ml';
 const NOTE_KEY      = 'rtc_plan_note';
+const SAVED_SNAPSHOT_KEY = 'rtc_plan_saved_snapshot';
 const DEFAULT_TARIF_ML = 1000;
 const PLAN_TITLE_DEFAULT = 'Plan de travaux';
 const PLAN_PAGE_SIZE = 10;
@@ -31,6 +32,8 @@ let savedPlanNom = '';
 let savedPlanAtMs = null;
 let tarifMl = DEFAULT_TARIF_ML;
 let planNote = '';
+/** Dernière version alignée sur la base (comparaison pour modifs non sauvegardées). */
+let lastSavedSnapshot = null;
 
 function planApiBase() {
     return `${window.__RTC_API_BASE__ || "http://127.0.0.1:8000"}/api/plans-travaux`;
@@ -60,6 +63,70 @@ function loadState() {
     } else {
         planUiMode = 'welcome';
     }
+    lastSavedSnapshot = localStorage.getItem(SAVED_SNAPSHOT_KEY);
+}
+
+function serializePlanForComparison() {
+    return JSON.stringify({
+        savedPlanId: savedPlanId ?? null,
+        nom: (savedPlanNom || '').trim(),
+        budget: parseFloat(budget) || 0,
+        tarifMl,
+        note: (planNote || '').trim(),
+        items: planItems.map((item, index) => ({
+            facilityid: item.facilityid,
+            adresse: item.adresse || '—',
+            materiau: item.materiau || '—',
+            diametre: item.diametre ?? null,
+            longueur: roundToTenth(parseFloat(item.longueur) || 0),
+            criticite: item.criticite ?? null,
+            inclus: !!item.inclus,
+            ordre: index + 1,
+        })),
+    });
+}
+
+function markPlanSavedSnapshot() {
+    lastSavedSnapshot = serializePlanForComparison();
+    localStorage.setItem(SAVED_SNAPSHOT_KEY, lastSavedSnapshot);
+}
+
+function clearPlanSavedSnapshot() {
+    lastSavedSnapshot = null;
+    localStorage.removeItem(SAVED_SNAPSHOT_KEY);
+}
+
+function isPlanDirty() {
+    if (!planItems.length) {
+        return savedPlanId != null && lastSavedSnapshot != null
+            && serializePlanForComparison() !== lastSavedSnapshot;
+    }
+    if (savedPlanId == null) return true;
+    if (lastSavedSnapshot == null) return true;
+    return serializePlanForComparison() !== lastSavedSnapshot;
+}
+
+function requestClosePlan() {
+    if (!isPlanDirty()) {
+        closeCurrentPlan();
+        showToast('Plan fermé', 'ok');
+        return;
+    }
+
+    const message = savedPlanId == null
+        ? 'Ce plan n’a pas encore été enregistré en base, ou des canalisations ont été ajoutées sans sauvegarde. Fermer quand même ? Les modifications locales seront perdues.'
+        : 'Attention : des modifications n’ont pas été sauvegardées. Voulez-vous vraiment fermer le plan sans enregistrer ?';
+
+    showPlanConfirm({
+        title: 'Modifications non sauvegardées',
+        message,
+        confirmLabel: 'Fermer sans sauvegarder',
+        danger: true,
+        onConfirm: () => {
+            closeCurrentPlan();
+            showToast('Plan fermé', 'ok');
+        },
+    });
 }
 
 function saveUiMode() {
@@ -433,6 +500,44 @@ function applyPlanFromDetail(detail) {
 
     planUiMode = 'active';
     saveState();
+    markPlanSavedSnapshot();
+}
+
+function buildComparisonStateFromDetail(detail) {
+    const loadedTarif = parseFloat(detail.tarif_ml);
+    const tarif = Number.isFinite(loadedTarif) && loadedTarif > 0 ? loadedTarif : DEFAULT_TARIF_ML;
+    const items = (detail.items || []).map((row, index) => ({
+        facilityid: row.facilityid,
+        adresse: row.adresse || '—',
+        materiau: row.materiau || '—',
+        diametre: row.diametre ?? null,
+        longueur: roundToTenth(parseFloat(row.longueur) || 0),
+        criticite: row.criticite ?? row.criticite_snapshot ?? null,
+        inclus: row.inclus !== false,
+        ordre: index + 1,
+    }));
+    return {
+        savedPlanId: detail.id ?? null,
+        nom: (detail.nom || '').trim(),
+        budget: parseFloat(detail.budget_enveloppe) || 0,
+        tarifMl: tarif,
+        note: detail.note != null ? String(detail.note).trim() : '',
+        items,
+    };
+}
+
+async function reconcilePlanSavedSnapshot() {
+    if (!savedPlanId || !planItems.length || lastSavedSnapshot) return;
+    try {
+        const res = await fetch(`${planApiBase()}/${savedPlanId}`);
+        if (!res.ok) return;
+        const detail = await res.json();
+        const apiSnapshot = JSON.stringify(buildComparisonStateFromDetail(detail));
+        if (serializePlanForComparison() === apiSnapshot) {
+            lastSavedSnapshot = apiSnapshot;
+            localStorage.setItem(SAVED_SNAPSHOT_KEY, lastSavedSnapshot);
+        }
+    } catch { /* API indisponible : on garde l'état prudent (dirty si pas de snapshot) */ }
 }
 
 async function duplicateSavedPlan(planId, planNom) {
@@ -473,6 +578,7 @@ async function deleteSavedPlan(planId, planNom) {
                     savedPlanId = null;
                     savedPlanNom = '';
                     savedPlanAtMs = null;
+                    clearPlanSavedSnapshot();
                     saveState();
                     updateSaveUI();
                 }
@@ -626,6 +732,7 @@ function startNewPlan() {
     savedPlanAtMs = null;
     tarifMl = DEFAULT_TARIF_ML;
     planNote = '';
+    clearPlanSavedSnapshot();
     saveState();
     render();
     updateSaveUI();
@@ -646,6 +753,7 @@ function closeCurrentPlan() {
     planNote = '';
     planUiMode = 'welcome';
     localStorage.removeItem(SESSION_KEY);
+    clearPlanSavedSnapshot();
     saveState();
     render();
     updateSaveUI();
@@ -856,20 +964,7 @@ function bindSidebarActions() {
 
     document.getElementById('btn-export-sidebar')?.addEventListener('click', exportCSV);
 
-    document.getElementById('btn-plan-close')?.addEventListener('click', () => {
-        showPlanConfirm({
-            title: 'Fermer le plan',
-            message: planItems.length
-                ? 'Les canalisations non archivées seront retirées du plan actif. Vous reviendrez à l\'écran d\'accueil.'
-                : 'Revenir à l\'écran d\'accueil et quitter ce plan ?',
-            confirmLabel: 'Fermer le plan',
-            danger: true,
-            onConfirm: () => {
-                closeCurrentPlan();
-                showToast('Plan fermé', 'ok');
-            },
-        });
-    });
+    document.getElementById('btn-plan-close')?.addEventListener('click', requestClosePlan);
 
     document.getElementById('btn-clear')?.addEventListener('click', () => {
         if (!planItems.length) return;
@@ -1576,6 +1671,7 @@ async function refreshPlanFromStorage() {
     loadState();
     if (!document.getElementById('plan-tbody')) return;
     await hydrateSavedPlanAt();
+    await reconcilePlanSavedSnapshot();
     render();
     updateSaveUI();
 }
@@ -1587,6 +1683,7 @@ async function initPlanTravaux() {
     initPlanTarifModal();
     initPlanNoteModal();
     await hydrateSavedPlanAt();
+    await reconcilePlanSavedSnapshot();
     render();
     bindEvents();
     bindSidebarActions();
