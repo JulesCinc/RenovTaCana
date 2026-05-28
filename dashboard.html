@@ -237,7 +237,16 @@
                 </div>
             </div>
             <div class="dash-card__body dash-card__body--notop">
-                <div class="table-scroll">
+                <div class="plan-scores-missing" id="plan-scores-missing" hidden>
+                    <p class="plan-scores-missing__text">
+                        Le calcul du score de priorité n'a pas encore été lancé.
+                        Lancez-le au moins une fois pour afficher les priorités par rue.
+                    </p>
+                    <a href="database.html" class="plan-scores-missing__btn">
+                        Calculer le score de priorité
+                    </a>
+                </div>
+                <div class="table-scroll" id="plan-table-wrap">
                     <table class="address-table" id="plan-table">
                         <thead>
                             <tr>

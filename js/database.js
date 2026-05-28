@@ -18,6 +18,9 @@ const errorBackdrop = document.getElementById("error-backdrop");
 const errorMessage = document.getElementById("error-message");
 const errorClose = document.getElementById("error-close");
 const loadingOverlay = document.getElementById("loading-overlay");
+const loadingOverlayText = document.getElementById("loading-overlay-text");
+const importTitle = document.getElementById("import-title");
+const computePriorityBtn = document.getElementById("btn-compute-priority");
 let pendingRollbackIndex = null;
 
 function escapeHtml(value) {
@@ -99,17 +102,28 @@ function closeRollbackModal() {
 }
 
 function openImportModal(payload, entityLabel) {
+    if (importTitle) importTitle.textContent = "Import terminé";
     const inserted = Number(payload.inserted || 0);
-    importMessage.textContent = `Confirmation: ${inserted} ${entityLabel} importes.`;
+    importMessage.textContent = `Confirmation : ${inserted} ${entityLabel} importés.`;
     if (inserted === 0) {
-        importMessage.textContent = `Confirmation: 0 ${entityLabel} importes (aucune nouvelle ligne).`;
+        importMessage.textContent = `Confirmation : 0 ${entityLabel} importés (aucune nouvelle ligne).`;
     }
+    importDetails.textContent = "";
+    importModal.setAttribute("aria-hidden", "false");
+}
+
+function openComputeModal(payload) {
+    if (importTitle) importTitle.textContent = "Calcul terminé";
+    const count = Number(payload.updated || payload.inserted || 0);
+    importMessage.textContent =
+        payload.message || `Confirmation : score de priorité calculé pour ${count} canalisations.`;
     importDetails.textContent = "";
     importModal.setAttribute("aria-hidden", "false");
 }
 
 function closeImportModal() {
     importModal.setAttribute("aria-hidden", "true");
+    if (importTitle) importTitle.textContent = "Import terminé";
 }
 
 function openErrorModal(message) {
@@ -121,10 +135,13 @@ function closeErrorModal() {
     errorModal.setAttribute("aria-hidden", "true");
 }
 
-function setLoading(isLoading) {
+function setLoading(isLoading, label = "Import en cours...") {
     document.body.classList.toggle("database-is-loading", isLoading);
     if (loadingOverlay) {
         loadingOverlay.setAttribute("aria-hidden", isLoading ? "false" : "true");
+    }
+    if (loadingOverlayText) {
+        loadingOverlayText.textContent = label;
     }
 }
 
@@ -363,9 +380,35 @@ async function loadOutdatedDatabases() {
     }
 }
 
+async function computePriorityScores() {
+    if (!computePriorityBtn) return;
+
+    computePriorityBtn.disabled = true;
+    setLoading(true, "Calcul en cours...");
+    try {
+        const response = await fetch("/api/database/compute-priority", { method: "POST" });
+        const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(payload.detail || `HTTP ${response.status}`);
+        }
+
+        openComputeModal(payload);
+        await loadOutdatedDatabases();
+    } catch (error) {
+        openErrorModal(`Calcul du score de priorité impossible : ${error.message}`);
+    } finally {
+        setLoading(false, "Import en cours...");
+        computePriorityBtn.disabled = false;
+    }
+}
+
 bindHistoryEvents();
 bindDropzones();
 loadOutdatedDatabases();
+
+if (computePriorityBtn) {
+    computePriorityBtn.addEventListener("click", computePriorityScores);
+}
 
 rollbackCancel.addEventListener("click", closeRollbackModal);
 rollbackBackdrop.addEventListener("click", closeRollbackModal);

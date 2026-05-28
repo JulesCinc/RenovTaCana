@@ -71,9 +71,16 @@
 
     <main class="database-page">
         <section class="database-intro">
-            <h1>Gestion de la base de donnees</h1>
-            <p>Mettez a jour la base de donnees en important les fichiers adequats</p>
-            <p class="database-intro__stats" id="active-db-stats">Chargement des donnees actives...</p>
+            <div class="database-intro__top">
+                <div class="database-intro__content">
+                    <h1>Gestion de la base de donnees</h1>
+                    <p>Mettez a jour la base de donnees en important les fichiers adequats</p>
+                    <p class="database-intro__stats" id="active-db-stats">Chargement des donnees actives...</p>
+                </div>
+                <button type="button" class="database-intro__calc-btn" id="btn-compute-priority">
+                    Calculer le score de priorité du parc de canalisations
+                </button>
+            </div>
         </section>
 
         <section class="dropzone-grid">
@@ -194,7 +201,7 @@
     <div class="loading-overlay" id="loading-overlay" aria-hidden="true">
         <div class="loading-overlay__box">
             <div class="loading-overlay__spinner"></div>
-            <p>Import en cours...</p>
+            <p id="loading-overlay-text">Import en cours...</p>
         </div>
     </div>
 

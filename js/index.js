@@ -555,8 +555,8 @@ function renderTable(data) {
             <td>${row.longueur != null ? row.longueur.toFixed(1) + " m" : "—"}</td>
             <td>${row.annee_pose || "—"}</td>
             <td>${row.nb_fuites != null ? row.nb_fuites : "—"}</td>
-            <td>${row.criticite != null ? critBar(row.criticite) : unknownValueIcon("Criticité inconnue")}</td>
-            <td>${row.score_priorite != null ? row.score_priorite : unknownValueIcon("Score de priorité inconnu")}</td>
+            <td>${criticitePill(row.criticite)}</td>
+            <td>${priorityScoreBar(row.score_priorite)}</td>
             <td><div class="row-actions">
                 <button class="row-action-btn" type="button" title="Voir le détail" data-action="view" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Voir le détail">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1024,13 +1024,35 @@ function setEl(id, txt)     { const e = document.getElementById(id); if (e) e.te
 function setInputVal(id, v) { const e = document.getElementById(id); if (e) e.value = v; }
 function on(id, ev, fn)     { document.getElementById(id)?.addEventListener(ev, fn); }
 
-function critBar(value) {
-    const cls = value >= 70 ? "high" : value >= 40 ? "mid" : "low";
-    return `<div class="crit-cell">
-        <div class="crit-cell__bar">
-            <div class="crit-cell__fill crit-cell__fill--${cls}" style="width:${Math.min(value,100)}%"></div>
-        </div>
-        <span class="crit-cell__value">${value.toFixed(1)}%</span>
+/** Arrondi identique au dashboard (ROUND(x, 1) côté SQL). */
+function roundCriticite(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return null;
+    return Math.round(n * 10) / 10;
+}
+
+function criticitePill(criticite) {
+    const critVal = roundCriticite(criticite);
+    if (critVal == null) return unknownValueIcon("Criticité inconnue");
+    const critCls =
+        critVal >= 70 ? "table-pill--danger" : critVal >= 40 ? "table-pill--warning" : "table-pill--success";
+    return `<span class="table-pill ${critCls}">${critVal.toFixed(1)}%</span>`;
+}
+
+/** Arrondi identique au dashboard (ROUND(x, 2) côté SQL). */
+function roundPriorityScore(score) {
+    const n = Number(score);
+    if (!Number.isFinite(n)) return null;
+    return Math.round(n * 100) / 100;
+}
+
+function priorityScoreBar(score) {
+    const scoreVal = roundPriorityScore(score);
+    if (scoreVal == null) return unknownValueIcon("Score de priorité inconnu");
+    const scorePct = Math.min(scoreVal, 100);
+    return `<div class="score-pill">
+        <div class="score-bar"><div class="score-bar__fill" style="width:${scorePct}%"></div></div>
+        <span class="score-pill__value">${scoreVal.toFixed(2)}</span>
     </div>`;
 }
 

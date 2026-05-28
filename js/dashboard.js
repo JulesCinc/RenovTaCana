@@ -12,10 +12,11 @@ const COMMUNE_LABELS = new Map();
 const selectedPlanRows = new Map();
 
 /** Cache localStorage plan de travaux (affichage immédiat même « périmé », refresh réseau en arrière-plan). */
-const DASH_CACHE_VER = 3;
+const DASH_CACHE_VER = 5;
 const DASH_CACHE_PREFIX = `rtc_dash_v${DASH_CACHE_VER}_`;
 
 let planTableOffset = 0;
+let planPriorityScoresComputed = true;
 
 function dashStableHash(str) {
     let h = 2166136261 >>> 0;
@@ -253,12 +254,34 @@ function renderAnnees(data) {
 }
 
 // ── Plan de travaux ───────────────────────────────────────
+function togglePlanScoresMissing(show) {
+    const panel = document.getElementById("plan-scores-missing");
+    const wrap = document.getElementById("plan-table-wrap");
+    if (panel) {
+        panel.classList.toggle("is-visible", show);
+        panel.hidden = !show;
+    }
+    if (wrap) {
+        wrap.classList.toggle("is-hidden", show);
+        wrap.hidden = show;
+    }
+}
+
+function applyPlanPayloadMeta(payload) {
+    planPriorityScoresComputed = payload?.priority_scores_computed === true;
+}
+
+function isPlanCacheUsable(payload) {
+    return Boolean(payload && payload.priority_scores_computed === true);
+}
+
 async function refreshPlanTravauxInBackground(cacheKey, qs, offset) {
     try {
         const res = await fetch(`${API}/api/plan-travaux?${qs}`);
         if (!res.ok) return;
         const json = await res.json();
         if (buildPlanTravauxQueryString(planCommune, offset) !== qs) return;
+        applyPlanPayloadMeta(json);
         writeDashCache(cacheKey, { qs, payload: json });
         planData = json.rues || [];
         await hydrateCommuneLabels(planData.map(r => r.commune));
@@ -275,7 +298,8 @@ async function loadPlanTravaux(commune, offset = 0) {
     const cacheKey = `${DASH_CACHE_PREFIX}plan_${dashStableHash(qs)}`;
     const cachedPayload = readDashPlanPayload(cacheKey);
 
-    if (cachedPayload) {
+    if (isPlanCacheUsable(cachedPayload)) {
+        applyPlanPayloadMeta(cachedPayload);
         planData = cachedPayload.rues || [];
         planTableOffset = offset;
         renderPlanTable(planData, offset);
@@ -291,6 +315,7 @@ async function loadPlanTravaux(commune, offset = 0) {
         const res = await fetch(`${API}/api/plan-travaux?${qs}`);
         if (!res.ok) throw new Error(String(res.status));
         const json = await res.json();
+        applyPlanPayloadMeta(json);
         writeDashCache(cacheKey, { qs, payload: json });
         planData = json.rues || [];
         planTableOffset = offset;
@@ -298,12 +323,21 @@ async function loadPlanTravaux(commune, offset = 0) {
         await hydrateCommuneLabels(planData.map(r => r.commune));
         renderPlanTable(planData, offset);
     } catch (e) {
+        togglePlanScoresMissing(false);
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="11">Erreur chargement</td></tr>`;
     }
 }
 
 function renderPlanTable(data, offset = 0) {
     const tbody = document.getElementById("plan-body");
+    if (!planPriorityScoresComputed) {
+        togglePlanScoresMissing(true);
+        tbody.innerHTML = "";
+        return;
+    }
+
+    togglePlanScoresMissing(false);
+
     if (!data.length) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="11">Aucune donnée</td></tr>`;
         return;

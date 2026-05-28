@@ -288,19 +288,43 @@
 #main-table th:nth-child(1),
 #main-table td:nth-child(1) { width: 18%; }
 #main-table th:nth-child(2),
-#main-table td:nth-child(2) { width: 28%; }
+#main-table td:nth-child(2) { width: 30%; }
 #main-table th:nth-child(5),
 #main-table td:nth-child(5) { width: 10%; }
 #main-table th:nth-child(6),
 #main-table td:nth-child(6) { width: 9%; }
 #main-table th:nth-child(7),
 #main-table td:nth-child(7) { width: 8%; }
+#main-table thead th,
+#main-table tbody td {
+    text-align: center;
+}
+
 #main-table th:nth-child(8),
-#main-table td:nth-child(8) { width: 15%; }
+#main-table td:nth-child(8) {
+    width: 76px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
 #main-table th:nth-child(9),
-#main-table td:nth-child(9) { width: 88px; }
+#main-table td:nth-child(9) {
+    width: 100px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
 #main-table th:nth-child(10),
 #main-table td:nth-child(10) { width: 90px; }
+
+#main-table td:nth-child(8) .table-pill,
+#main-table td:nth-child(9) .score-pill {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#main-table .score-pill__value {
+    text-align: center;
+    min-width: 0;
+}
 
 .address-table thead th {
     padding: 7px 8px;
@@ -385,22 +409,6 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     white-space: nowrap;
 }
 
-.address-table th:nth-child(10),
-.address-table td:nth-child(10) {
-    text-align: center;
-}
-
-.address-table th:nth-child(3),
-.address-table th:nth-child(4),
-.address-table th:nth-child(5),
-.address-table th:nth-child(6),
-.address-table th:nth-child(7),
-.address-table th:nth-child(8),
-.address-table th:nth-child(9),
-.address-table th:nth-child(10) {
-    text-align: center;
-}
-
 .address-table th:nth-child(9),
 .address-table th:nth-child(10) {
     padding-left: 6px;
@@ -441,6 +449,37 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
 .crit-cell__value {
     font-size: 0.74rem;
     min-width: 32px;
+    text-align: right;
+    color: var(--c-text);
+    font-weight: 500;
+}
+
+.score-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.score-bar {
+    flex: 1;
+    max-width: 60px;
+    height: 5px;
+    background: var(--c-border-2);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.score-bar__fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--c-cyan), #ef4444);
+}
+
+.score-pill__value {
+    min-width: 36px;
     text-align: right;
     color: var(--c-text);
     font-weight: 500;

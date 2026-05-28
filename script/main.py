@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from script.endpoints.canalisations import router as canalisations_router
 from script.endpoints.dashboard import router as dashboard_router
-from script.endpoints.plan_travaux import router as plan_travaux_router
+from script.endpoints.database.compute_priority import router as compute_priority_router
 from script.endpoints.stats import router as stats_router
 from script.endpoints.chantiers import router as chantiers_router
 from script.endpoints.operations import router as operations_router
@@ -33,7 +33,7 @@ app.add_middleware(
 
 app.include_router(canalisations_router)
 app.include_router(dashboard_router)
-app.include_router(plan_travaux_router)
+app.include_router(compute_priority_router)
 app.include_router(stats_router)
 app.include_router(chantiers_router)
 app.include_router(operations_router)

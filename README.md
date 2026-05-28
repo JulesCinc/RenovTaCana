@@ -50,7 +50,9 @@ L'objectif principal est l'**edition d'un plan de travaux**, en s'appuyant sur l
 │   │   ├── stats.py            ← `/api/stats`, `/api/stats/adresse`
 │   │   ├── dashboard.py        ← `/api/dashboard`
 │   │   ├── filtres.py          ← `/api/filtres`
-│   │   ├── plan_travaux.py     ← `/api/plan-travaux`
+│   │   ├── dashboard.py        ← `/api/dashboard`, `/api/plan-travaux` (lecture score_priorite)
+│   │   ├── database/
+│   │   │   └── compute_priority.py ← `POST /api/database/compute-priority`
 │   │   ├── geojson.py          ← `/api/geojson/chantiers`, `/api/geojson/canalisations`
 │   │   ├── database/
 │   │   │   ├── database_versions.py   ← `/api/database/outdated`

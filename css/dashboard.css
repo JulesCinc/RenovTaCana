@@ -100,6 +100,53 @@
 }
 .dash-card__body--notop { padding: 0; }
 
+.plan-scores-missing {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 40px 24px;
+    text-align: center;
+}
+
+.plan-scores-missing.is-visible {
+    display: flex;
+}
+
+#plan-table-wrap.is-hidden {
+    display: none !important;
+}
+
+.plan-scores-missing__text {
+    max-width: 520px;
+    color: var(--c-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.plan-scores-missing__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid color-mix(in oklab, #f59e0b 55%, #d97706);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 45%, #ea580c 100%);
+    color: #1a1208;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+    transition: filter var(--t-mid), box-shadow var(--t-mid), transform var(--t-mid);
+}
+
+.plan-scores-missing__btn:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.45);
+    transform: translateY(-1px);
+}
+
 /* ── Barres criticité ────────────────────────────────────── */
 .crit-bars { display: flex; flex-direction: column; gap: 12px; }
 

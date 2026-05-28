@@ -13,6 +13,39 @@
     padding: 20px;
 }
 
+.database-intro__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.database-intro__calc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    white-space: nowrap;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 1px solid color-mix(in oklab, #f59e0b 55%, #d97706);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 45%, #ea580c 100%);
+    color: #1a1208;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 10px 16px;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+    transition: filter var(--t-mid), box-shadow var(--t-mid), transform var(--t-mid);
+}
+
+.database-intro__calc-btn:hover {
+    border-color: #fbbf24;
+    color: #1a1208;
+    filter: brightness(1.06);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.45);
+    transform: translateY(-1px);
+}
+
 .database-intro h1 {
     font-size: 1.2rem;
     margin-bottom: 8px;
