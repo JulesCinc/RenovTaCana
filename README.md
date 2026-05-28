@@ -150,6 +150,45 @@ Adaptation future possible :
 - utiliser `pipe_id_original` pour garder le lien avec la canalisation source ;
 - remplacer progressivement l'affichage des longues canalisations par l'affichage des segments dans le plan de travaux.
 
+## Conversion des géométries EPSG:2154 → EPSG:4326
+
+Un script permet de convertir des géométries WKT stockées en Lambert‑93 (EPSG:2154) vers WGS84 (EPSG:4326). Ceci est utile pour l'affichage sur Leaflet qui attend des coordonnées en format [longitude, latitude].
+
+Script : `script/database/row-data/convert_epsg2154_to_epsg4326.py` ([voir le fichier](script/database/row-data/convert_epsg2154_to_epsg4326.py)).
+
+Usage exemple :
+
+```bash
+python script/database/row-data/convert_epsg2154_to_epsg4326.py \
+    --db database/renovTaCana.db \
+    --table segmentation \
+    --source-column geometry \
+    --output-column geometry_4326
+```
+
+Options principales :
+- `--sqlite-path, --db` : chemin vers la base SQLite (défaut : `database/renovTaCana.db`).
+- `--table` : nom de la table (défaut : `segmentation`).
+- `--id-column` : colonne id (défaut : `id`).
+- `--source-column` : colonne source contenant le WKT (défaut : `geometry`).
+- `--output-column` : colonne cible pour le WKT converti (défaut : `geometry_4326`).
+- `--force-recompute` : force le recalcul même si la colonne de sortie est déjà remplie.
+- `--dry-run` : n'écrit pas en base, exécute une simulation et affiche un résumé.
+- `--batch-size` : taille des lots d'update (par défaut 1000).
+- `--rounding-precision` : précision d'arrondi pour les coordonnées (défaut 8).
+
+Comportement :
+- Le script crée la colonne de sortie si elle est absente.
+- Il utilise `pyproj` et `shapely` pour projeter et convertir les WKT.
+- En cas d'erreurs sur certaines lignes, le traitement continue et des exemples d'erreurs sont collectés.
+
+Pré-requis :
+- Installer `pyproj` et `shapely` (voir `requirements.txt`).
+
+Conseils :
+- Lancer d'abord avec `--dry-run` pour vérifier le nombre d'enregistrements à traiter.
+- La colonne `geometry_4326` contient le WKT en EPSG:4326 ; convertir en GeoJSON pour l'utiliser dans Leaflet.
+
 ## Prochaines etapes (V2.2)
 
 - **Livrer la page "plan de travaux"** pour l'avant-dernier sprint.
