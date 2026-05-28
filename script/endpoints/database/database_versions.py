@@ -4,6 +4,7 @@ import sqlite3
 import re
 
 from fastapi import APIRouter
+from database import _resolve_db_path
 
 
 router = APIRouter(prefix="/api", tags=["Database"])
@@ -35,27 +36,26 @@ def _archive_datetime_from_name(filename: str) -> datetime | None:
 
 @router.get("/database/outdated")
 def list_outdated_databases():
-    project_root = _project_root()
-    active_db = project_root / "database" / "renovTaCana.db"
+    active_db = Path(_resolve_db_path())
     outdated_dir = _project_root() / "database" / "outdated"
-
-    if not outdated_dir.exists():
-        return {
-            "items": [],
-            "count": 0,
-            "active_counts": {"canalisations": 0, "chantiers": 0, "operations": 0},
-        }
 
     active_counts = {"canalisations": 0, "chantiers": 0, "operations": 0}
     if active_db.exists():
         try:
-            active_conn = sqlite3.connect(active_db)
+            active_conn = sqlite3.connect(active_db.as_posix())
             active_counts["canalisations"] = _safe_count(active_conn, "canalisations")
             active_counts["chantiers"] = _safe_count(active_conn, "chantiers")
             active_counts["operations"] = _safe_count(active_conn, "operations")
             active_conn.close()
         except sqlite3.Error:
             pass
+
+    if not outdated_dir.exists():
+        return {
+            "items": [],
+            "count": 0,
+            "active_counts": active_counts,
+        }
 
     items = []
     for db_file in outdated_dir.glob("*.db"):
