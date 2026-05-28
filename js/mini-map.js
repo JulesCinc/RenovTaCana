@@ -215,13 +215,13 @@
     }
 
     window.rtcMiniMapFocus = function (facilityid) {
-        if (!miniLayer || !miniMap) return false;
+        if (!miniLayer || !miniMap) return { ok: false, adresse: "" };
 
         let found = null;
         miniLayer.eachLayer(function (layer) {
             if (layer.feature?.properties?.id === facilityid) found = layer;
         });
-        if (!found) return false;
+        if (!found) return { ok: false, adresse: "" };
 
         resetHighlight();
         highlightedLayer = found;
@@ -231,7 +231,8 @@
             miniMap.fitBounds(found.getBounds(), { padding: [40, 40], maxZoom: 17, animate: true });
         } catch (_) {}
 
-        return true;
+        const adresse = String(found.feature?.properties?.adr || "").trim();
+        return { ok: true, adresse };
     };
 
     function escapeHtml(str) {

@@ -367,7 +367,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     window.addEventListener("rtc:mini-map-address-select", async (e) => {
         const adresse = e?.detail?.adresse ? String(e.detail.adresse).trim() : "";
         if (!adresse) return;
-        if (adresse === currentAdresse) return;
+        if (adresse === currentAdresse) {
+            await updateSidebarStatsForAdresse(adresse);
+            return;
+        }
         await applySelectedAddress(adresse);
     });
 
@@ -564,7 +567,7 @@ function renderTable(data) {
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-                <button class="row-action-btn row-action-btn--locate" type="button" title="Localiser sur la mini-carte" data-action="locate" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Localiser sur la mini-carte">
+                <button class="row-action-btn row-action-btn--locate" type="button" title="Localiser sur la mini-carte" data-action="locate" data-facilityid="${escapeHtml(row.facilityid || "")}" data-adresse="${escapeHtml(row.adresse || "")}" aria-label="Localiser sur la mini-carte">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
@@ -741,6 +744,13 @@ async function loadFiltres() {
             console.warn("Filtres non chargés", e);
         }
     }
+}
+
+async function updateSidebarStatsForAdresse(adresse) {
+    const trimmed = String(adresse || "").trim();
+    if (!trimmed) return;
+    setEl("side-adresse", trimmed);
+    await fetchStatsAdresse(normalizeAdresseForApi(trimmed));
 }
 
 // ── Stats adresse ─────────────────────────────────────────
@@ -1094,7 +1104,8 @@ function initDetailModal() {
         const locateBtn = e.target.closest("button[data-action='locate'][data-facilityid]");
         if (locateBtn) {
             const id = locateBtn.dataset.facilityid;
-            if (id) focusCanalOnMiniMap(id);
+            const adresse = locateBtn.dataset.adresse || "";
+            if (id) void focusCanalOnMiniMap(id, adresse);
             return;
         }
         const btn = e.target.closest("button[data-action='view'][data-facilityid]");
@@ -1159,10 +1170,12 @@ async function openDetailModal(facilityid) {
     }
 }
 
-function focusCanalOnMiniMap(facilityid) {
-    window.rtcMiniMapFocus?.(facilityid);
+async function focusCanalOnMiniMap(facilityid, adresseHint) {
+    const focusResult = window.rtcMiniMapFocus?.(facilityid);
     document.querySelector(".address-side-card")
         ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const adresse = String(adresseHint || focusResult?.adresse || "").trim();
+    if (adresse) await updateSidebarStatsForAdresse(adresse);
 }
 
 function closeDetailModal() {
