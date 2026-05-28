@@ -446,7 +446,9 @@ function showTooltip(e, p) {
     document.getElementById("tt-adr").textContent = p.adr || "-";
     document.getElementById("tt-mat").textContent = p.mat || "-";
     document.getElementById("tt-diam").textContent = p.diam ? `${p.diam} mm` : "-";
-    document.getElementById("tt-long").textContent = p.long ? `${p.long} m` : "-";
+    document.getElementById("tt-long").textContent = p.long != null
+        ? `${Number(p.long).toFixed(1)} m`
+        : "-";
     const crit = p.crit;
     if (crit != null) {
         document.getElementById("tt-crit-val").textContent = `${crit.toFixed(1)}%`;
