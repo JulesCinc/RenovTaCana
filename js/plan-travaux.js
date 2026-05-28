@@ -858,6 +858,14 @@ function buildRow(item, index, displayOrder) {
         ? `<div class="row-order">${btnUp}${btnDown}</div>`
         : '';
     const actions = `
+        <button type="button" class="row-btn row-btn--map" data-id="${item._id}" title="Afficher sur la mini-carte" aria-label="Afficher sur la mini-carte">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                <line x1="8" y1="2" x2="8" y2="18"/>
+                <line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+        </button>
         <button type="button" class="row-btn row-btn--delete" data-id="${item._id}" title="Supprimer du plan">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -1023,6 +1031,14 @@ function bindEvents() {
         const down = e.target.closest('.row-btn--down');
         if (down) {
             moveItem(down.dataset.id, 1);
+            return;
+        }
+        const mapBtn = e.target.closest('.row-btn--map');
+        if (mapBtn) {
+            const item = byId(mapBtn.dataset.id);
+            if (item && typeof window.openPlanCanalMapModal === "function") {
+                window.openPlanCanalMapModal(item);
+            }
             return;
         }
         const d = e.target.closest('.row-btn--delete');

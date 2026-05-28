@@ -445,6 +445,12 @@
 }
 .row-btn svg { width: 13px; height: 13px; }
 
+.row-btn--map:hover {
+    border-color: var(--c-cyan);
+    color: var(--c-cyan);
+    background: var(--c-cyan-dim);
+}
+
 .row-btn--delete:hover {
     border-color: var(--c-danger);
     color: var(--c-danger);
@@ -969,8 +975,70 @@
 body.plan-confirm-open,
 body.plan-name-open,
 body.plan-tarif-open,
-body.plan-note-open {
+body.plan-note-open,
+body.plan-canal-map-open {
     overflow: hidden;
+}
+
+.plan-confirm__dialog--map {
+    width: min(92vw, 720px);
+    max-width: 720px;
+}
+
+.plan-canal-map-modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.plan-canal-map-modal__subtitle {
+    margin: 4px 0 0;
+    font-size: 0.78rem;
+    color: var(--c-text-dim);
+    font-family: var(--font-mono);
+}
+
+.plan-canal-map-modal__close {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--c-text-dim);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.plan-canal-map-modal__close:hover {
+    color: var(--c-text);
+    border-color: var(--c-border-2);
+}
+
+.plan-canal-map-modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.plan-canal-mini-map {
+    width: 100%;
+    height: min(52vh, 420px);
+    min-height: 280px;
+    border: 1px solid var(--c-border-2);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--c-bg);
+}
+
+.plan-canal-map-modal__status {
+    margin: 0;
+    font-size: 0.74rem;
+    color: var(--c-text-dim);
+    font-family: var(--font-mono);
+    min-height: 1.2em;
 }
 
 .plan-name-label {

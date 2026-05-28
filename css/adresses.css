@@ -700,6 +700,12 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     width: 100%;
 }
 
+.row-action-btn--map:hover {
+    border-color: var(--c-cyan);
+    color: var(--c-cyan);
+    background: var(--c-cyan-dim);
+}
+
 .row-action-btn--locate:hover {
     border-color: var(--c-blue, #38bdf8);
     color: var(--c-blue, #38bdf8);

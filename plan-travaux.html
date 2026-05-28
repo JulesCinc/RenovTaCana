@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/plan-travaux.css">
 </head>
@@ -342,6 +343,25 @@
         </div>
     </div>
 
+    <div class="plan-confirm plan-canal-map-modal" id="plan-canal-map-modal" aria-hidden="true">
+        <div class="plan-confirm__backdrop" id="plan-canal-map-backdrop"></div>
+        <div class="plan-confirm__dialog plan-confirm__dialog--map" role="dialog" aria-modal="true"
+            aria-labelledby="plan-canal-map-title">
+            <header class="plan-confirm__header plan-canal-map-modal__header">
+                <div>
+                    <h3 class="plan-confirm__title" id="plan-canal-map-title">Canalisation</h3>
+                    <p class="plan-canal-map-modal__subtitle" id="plan-canal-map-subtitle"></p>
+                </div>
+                <button type="button" class="plan-canal-map-modal__close" id="plan-canal-map-close"
+                    aria-label="Fermer">×</button>
+            </header>
+            <div class="plan-confirm__body plan-canal-map-modal__body">
+                <div id="plan-canal-mini-map" class="plan-canal-mini-map"></div>
+                <p class="plan-canal-map-modal__status" id="plan-canal-map-status"></p>
+            </div>
+        </div>
+    </div>
+
     <div class="plan-confirm plan-name-modal" id="plan-tarif-modal" aria-hidden="true">
         <div class="plan-confirm__backdrop" id="plan-tarif-backdrop"></div>
         <div class="plan-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="plan-tarif-title">
@@ -397,9 +417,11 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="js/config.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/plan-nav-badge.js"></script>
+    <script src="js/plan-canal-map-modal.js"></script>
     <script src="js/plan-travaux.js"></script>
 
 </body>

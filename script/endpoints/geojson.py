@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 import math
 import re
 import time
@@ -293,6 +293,24 @@ def get_geojson_chantiers():
     return {"type": "FeatureCollection", "features": features}
 
 
+def _canalisation_feature_from_row(row) -> dict | None:
+    geom = wkt_to_geojson_geometry(row["geometry"])
+    if geom is None:
+        return None
+    return {
+        "type": "Feature",
+        "geometry": geom,
+        "properties": {
+            "id": row["FACILITYID"],
+            "adr": row["ADRESSE"],
+            "mat": row["MATERIAL"],
+            "diam": row["DIAMETER"],
+            "long": row["longueur"],
+            "crit": row["criticite"],
+        },
+    }
+
+
 @router.get("/geojson/canalisations")
 def get_geojson_canalisations():
     """
@@ -311,30 +329,36 @@ def get_geojson_canalisations():
 
     features = []
     for row in cur.fetchall():
-        geom = wkt_to_geojson_geometry(row["geometry"])
-        if geom is None:
-            continue
-
-        # Utilise la criticite depuis la table canalisations (JOIN), sinon None
-        crit = row["criticite"]
-
-        features.append(
-            {
-                "type": "Feature",
-                "geometry": geom,
-                "properties": {
-                    "id": row["FACILITYID"],
-                    "adr": row["ADRESSE"],
-                    "mat": row["MATERIAL"],
-                    "diam": row["DIAMETER"],
-                    "long": row["longueur"],
-                    "crit": crit,
-                },
-            }
-        )
+        feature = _canalisation_feature_from_row(row)
+        if feature:
+            features.append(feature)
 
     conn.close()
     return {"type": "FeatureCollection", "features": features}
+
+
+@router.get("/geojson/canalisations/{facilityid}")
+def get_geojson_canalisation(facilityid: str):
+    """GeoJSON d'une seule canalisation (tracé conduite + criticité)."""
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT c.FACILITYID, c.ADRESSE, c.MATERIAL, c.DIAMETER, c.longueur, c.geometry, can.criticite
+        FROM conduites c
+        LEFT JOIN canalisations can ON c.FACILITYID = can.facilityid
+        WHERE c.FACILITYID = ? AND c.geometry IS NOT NULL AND TRIM(c.geometry) != ''
+        """,
+        (facilityid,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    if not row:
+        raise HTTPException(status_code=404, detail="Canalisation ou géométrie introuvable")
+    feature = _canalisation_feature_from_row(row)
+    if not feature:
+        raise HTTPException(status_code=404, detail="Géométrie indisponible pour cette canalisation")
+    return {"type": "FeatureCollection", "features": [feature]}
 
 
 def wkt_to_geojson_geometry(wkt):
