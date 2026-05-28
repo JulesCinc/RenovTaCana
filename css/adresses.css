@@ -536,11 +536,8 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
     background: var(--c-surface);
     border: 1px solid var(--c-border);
     border-radius: var(--radius-md);
-    overflow-x: hidden;
-    overflow-y: auto;
-    position: sticky;
-    top: calc(var(--header-h) + 16px);
-    max-height: calc(100vh - var(--header-h) - 24px);
+    overflow: hidden;
+    align-self: start;
 }
 
 .address-side-card__header {
@@ -683,7 +680,6 @@ th.sort-desc .sort-icon::after { font-size: 0.75rem; }
 /* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 1200px) {
     .address-layout { grid-template-columns: 1fr; }
-    .address-side-card { position: static; }
     #mini-map { height: 300px; }
     .tab-panel[data-tab="canalisations"] .filters-bar {
         display: flex;
