@@ -368,3 +368,89 @@ def update_plan_travaux(plan_id: int, body: PlanTravauxSaveIn):
     detail.items = _fetch_plan_lignes(cur, plan_id)
     conn.close()
     return detail
+
+
+def _duplicate_plan_nom(original: str) -> str:
+    base = (original or "Plan sans nom").strip()
+    suffix = " (copie)"
+    max_len = 200
+    if len(base) + len(suffix) <= max_len:
+        return base + suffix
+    return base[: max_len - len(suffix)] + suffix
+
+
+@router.post(
+    "/plans-travaux/{plan_id}/duplicate",
+    response_model=PlanTravauxDetailResponse,
+    status_code=201,
+)
+def duplicate_plan_travaux(plan_id: int):
+    """Duplique un plan sauvegarde (en-tete + lignes)."""
+    conn = get_db()
+    cur = conn.cursor()
+    _require_plans_schema(cur)
+    cur.execute("PRAGMA foreign_keys = ON")
+
+    row = _fetch_plan_header(cur, plan_id)
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Plan introuvable")
+
+    created = _now_iso()
+    nom = _duplicate_plan_nom(row["nom"])
+    cur.execute(
+        """
+        INSERT INTO plans_travaux (
+            nom, budget_enveloppe, created_at, updated_at, tarif_ml, note
+        ) VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            nom,
+            float(row["budget_enveloppe"] or 0),
+            created,
+            created,
+            float(row["tarif_ml"] or 1000),
+            row["note"],
+        ),
+    )
+    new_plan_id = int(cur.lastrowid)
+    cur.execute(
+        """
+        INSERT INTO plans_travaux_lignes (
+            plan_id, ordre, facilityid, parent_facilityid, segment_label,
+            adresse, materiau, diametre, longueur, criticite_snapshot, inclus, cout_estime_ml
+        )
+        SELECT
+            ?, ordre, facilityid, parent_facilityid, segment_label,
+            adresse, materiau, diametre, longueur, criticite_snapshot, inclus, cout_estime_ml
+        FROM plans_travaux_lignes
+        WHERE plan_id = ?
+        ORDER BY ordre ASC, id ASC
+        """,
+        (new_plan_id, plan_id),
+    )
+    conn.commit()
+
+    new_row = _fetch_plan_header(cur, new_plan_id)
+    detail = _plan_to_detail(new_row)
+    detail.items = _fetch_plan_lignes(cur, new_plan_id)
+    conn.close()
+    return detail
+
+
+@router.delete("/plans-travaux/{plan_id}", status_code=204)
+def delete_plan_travaux(plan_id: int):
+    """Supprime un plan et ses lignes (CASCADE)."""
+    conn = get_db()
+    cur = conn.cursor()
+    _require_plans_schema(cur)
+    cur.execute("PRAGMA foreign_keys = ON")
+
+    row = _fetch_plan_header(cur, plan_id)
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Plan introuvable")
+
+    cur.execute("DELETE FROM plans_travaux WHERE id = ?", (plan_id,))
+    conn.commit()
+    conn.close()

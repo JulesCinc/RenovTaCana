@@ -361,13 +361,29 @@ async function renderSavedPlansList() {
 
             meta.append(name, sub1, sub2);
 
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'plan-btn plan-btn--primary plan-btn--sm';
-            btn.textContent = 'Ouvrir';
-            btn.addEventListener('click', () => loadPlanFromDatabase(plan.id));
+            const actions = document.createElement('div');
+            actions.className = 'plan-open__actions';
 
-            li.append(meta, btn);
+            const btnOpen = document.createElement('button');
+            btnOpen.type = 'button';
+            btnOpen.className = 'plan-btn plan-btn--primary plan-btn--sm';
+            btnOpen.textContent = 'Ouvrir';
+            btnOpen.addEventListener('click', () => loadPlanFromDatabase(plan.id));
+
+            const btnDup = document.createElement('button');
+            btnDup.type = 'button';
+            btnDup.className = 'plan-btn plan-btn--outline plan-btn--sm';
+            btnDup.textContent = 'Dupliquer';
+            btnDup.addEventListener('click', () => duplicateSavedPlan(plan.id, plan.nom));
+
+            const btnDel = document.createElement('button');
+            btnDel.type = 'button';
+            btnDel.className = 'plan-btn plan-btn--ghost plan-btn--sm plan-btn--danger-text';
+            btnDel.textContent = 'Supprimer';
+            btnDel.addEventListener('click', () => deleteSavedPlan(plan.id, plan.nom));
+
+            actions.append(btnOpen, btnDup, btnDel);
+            li.append(meta, actions);
             list.appendChild(li);
         });
     } catch {
@@ -417,6 +433,56 @@ function applyPlanFromDetail(detail) {
 
     planUiMode = 'active';
     saveState();
+}
+
+async function duplicateSavedPlan(planId, planNom) {
+    const label = (planNom || 'ce plan').trim();
+    showPlanConfirm({
+        title: 'Dupliquer le plan',
+        message: `Créer une copie de « ${label} » ? La copie sera enregistrée avec le suffixe « (copie) ».`,
+        confirmLabel: 'Dupliquer',
+        onConfirm: async () => {
+            try {
+                const res = await fetch(`${planApiBase()}/${planId}/duplicate`, { method: 'POST' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                await renderSavedPlansList();
+                showToast('Plan dupliqué', 'ok');
+            } catch {
+                showToast('Duplication impossible — vérifiez que l’API est démarrée', 'warn');
+            }
+        },
+    });
+}
+
+async function deleteSavedPlan(planId, planNom) {
+    const label = (planNom || 'ce plan').trim();
+    showPlanConfirm({
+        title: 'Supprimer le plan',
+        message: `Supprimer définitivement « ${label} » et toutes ses lignes ? Cette action est irréversible.`,
+        confirmLabel: 'Supprimer',
+        danger: true,
+        onConfirm: async () => {
+            try {
+                const res = await fetch(`${planApiBase()}/${planId}`, { method: 'DELETE' });
+                if (res.status === 404) {
+                    showToast('Plan introuvable', 'warn');
+                } else if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                if (savedPlanId === planId) {
+                    savedPlanId = null;
+                    savedPlanNom = '';
+                    savedPlanAtMs = null;
+                    saveState();
+                    updateSaveUI();
+                }
+                await renderSavedPlansList();
+                showToast('Plan supprimé', 'ok');
+            } catch {
+                showToast('Suppression impossible — vérifiez que l’API est démarrée', 'warn');
+            }
+        },
+    });
 }
 
 async function loadPlanFromDatabase(planId) {

@@ -537,7 +537,7 @@
     flex-direction: column;
     gap: 16px;
     padding: 32px 28px 48px;
-    max-width: 560px;
+    max-width: 720px;
     margin: 0 auto;
 }
 
@@ -576,7 +576,7 @@
 
 .plan-open__item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
     padding: 14px 16px;
@@ -584,6 +584,26 @@
     border: 1px solid var(--c-border);
     border-radius: var(--radius-md);
     transition: border-color var(--t-mid), background var(--t-mid);
+}
+
+.plan-open__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    max-width: 100%;
+}
+
+.plan-btn--danger-text {
+    color: var(--c-danger);
+    border-color: transparent;
+}
+
+.plan-btn--danger-text:hover {
+    color: var(--c-danger);
+    border-color: color-mix(in oklab, var(--c-danger) 35%, var(--c-border));
+    background: color-mix(in oklab, var(--c-danger) 10%, var(--c-surface));
 }
 
 .plan-open__item:hover {
