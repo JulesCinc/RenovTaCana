@@ -4,10 +4,15 @@
    Inclure sur plan-travaux.html ET carte.html.
    ========================================================= */
 
-const PLAN_KEY   = 'rtc_plan_travaux';
-const BUDGET_KEY = 'rtc_plan_budget';
-const FIGE_KEY   = 'rtc_plan_fige';
-const COST_PER_M = 1000; // € par mètre linéaire
+const PLAN_KEY      = 'rtc_plan_travaux';
+const BUDGET_KEY    = 'rtc_plan_budget';
+const FIGE_KEY      = 'rtc_plan_fige';
+const SESSION_KEY   = 'rtc_plan_ui_mode';
+const ARCHIVES_KEY  = 'rtc_plan_archives';
+const COST_PER_M    = 1000; // € par mètre linéaire
+
+/** welcome | new | open — ignoré dès qu'il y a des lignes dans le plan */
+let planUiMode = 'welcome';
 
 let planItems = [];
 let budget    = 0;
@@ -18,12 +23,72 @@ function loadState() {
     try { planItems = JSON.parse(localStorage.getItem(PLAN_KEY) || '[]'); } catch { planItems = []; }
     budget = parseFloat(localStorage.getItem(BUDGET_KEY)) || 0;
     isFige = localStorage.getItem(FIGE_KEY) === '1';
+    const savedMode = localStorage.getItem(SESSION_KEY);
+    if (planItems.length > 0) {
+        planUiMode = 'active';
+    } else if (savedMode === 'new') {
+        planUiMode = 'new';
+    } else if (savedMode === 'open') {
+        planUiMode = 'open';
+    } else {
+        planUiMode = 'welcome';
+    }
+}
+
+function saveUiMode() {
+    if (planItems.length > 0) {
+        localStorage.setItem(SESSION_KEY, 'active');
+        return;
+    }
+    if (planUiMode === 'open') return;
+    localStorage.setItem(SESSION_KEY, planUiMode);
+}
+
+function readArchives() {
+    try {
+        const raw = JSON.parse(localStorage.getItem(ARCHIVES_KEY) || '[]');
+        return Array.isArray(raw) ? raw : [];
+    } catch {
+        return [];
+    }
+}
+
+function writeArchives(archives) {
+    localStorage.setItem(ARCHIVES_KEY, JSON.stringify(archives.slice(0, 20)));
+}
+
+function archiveCurrentPlan() {
+    if (!planItems.length) return;
+    const archives = readArchives();
+    const stamp = new Date();
+    archives.unshift({
+        id: crypto.randomUUID(),
+        name: `Plan du ${stamp.toLocaleDateString('fr-FR')} ${stamp.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`,
+        savedAt: stamp.getTime(),
+        items: JSON.parse(JSON.stringify(planItems)),
+        budget,
+        isFige: true,
+    });
+    writeArchives(archives);
+}
+
+function loadArchive(id) {
+    const archive = readArchives().find(a => a.id === id);
+    if (!archive) return false;
+    planItems = JSON.parse(JSON.stringify(archive.items || []));
+    budget = parseFloat(archive.budget) || 0;
+    isFige = Boolean(archive.isFige);
+    planUiMode = 'active';
+    saveState();
+    saveUiMode();
+    return true;
 }
 
 function saveState() {
     localStorage.setItem(PLAN_KEY, JSON.stringify(planItems));
     localStorage.setItem(BUDGET_KEY, String(budget));
     localStorage.setItem(FIGE_KEY, isFige ? '1' : '0');
+    saveUiMode();
 }
 
 // ── API publique — appelée depuis carte.js ────────────────
@@ -63,16 +128,82 @@ function ajouterAuPlan(data) {
 
 window.ajouterAuPlan = ajouterAuPlan;
 
+/**
+ * Ajoute plusieurs canalisations (ex. sélection carte). Retourne { added, skipped }.
+ */
+function ajouterPlusieursAuPlan(items, options = {}) {
+    const silent = options.silent !== false;
+    const list = Array.isArray(items) ? items : [];
+    if (!list.length) return { added: 0, skipped: 0 };
+
+    if (isFige) {
+        if (!silent) showToast('Plan figé — dégeler avant d\'ajouter.', 'warn');
+        return { added: 0, skipped: list.length };
+    }
+
+    let added = 0;
+    let skipped = 0;
+    list.forEach(data => {
+        const facilityid = data.facilityid || data.id || '';
+        if (!facilityid || planItems.some(i => i.facilityid === facilityid)) {
+            skipped += 1;
+            return;
+        }
+        const longueur = parseFloat(data.longueur ?? data.long) || 0;
+        planItems.push({
+            _id: crypto.randomUUID(),
+            facilityid,
+            adresse: data.adresse || data.adr || '—',
+            materiau: data.materiau || data.mat || '—',
+            diametre: data.diametre ?? data.diam ?? null,
+            longueur,
+            criticite: data.criticite ?? data.crit ?? null,
+            inclus: true,
+        });
+        added += 1;
+    });
+
+    if (added) saveState();
+    if (!silent && added) {
+        showToast(
+            `${added} canalisation${added > 1 ? 's' : ''} ajoutée${added > 1 ? 's' : ''} au plan`,
+            'ok'
+        );
+    }
+    if (document.getElementById('plan-tbody')) render();
+    return { added, skipped };
+}
+
+window.ajouterPlusieursAuPlan = ajouterPlusieursAuPlan;
+
 // ── Rendu du tableau ──────────────────────────────────────
 function render() {
     const tbody = document.getElementById('plan-tbody');
-    const empty = document.getElementById('plan-empty');
-    const table = document.getElementById('plan-table');
     if (!tbody) return;
 
+    const welcome = document.getElementById('plan-welcome');
+    const empty = document.getElementById('plan-empty');
+    const openPanel = document.getElementById('plan-open');
+    const table = document.getElementById('plan-table');
     const hasPipes = planItems.length > 0;
-    table.style.display = hasPipes ? '' : 'none';
-    empty.style.display = hasPipes ? 'none' : 'flex';
+
+    if (hasPipes) planUiMode = 'active';
+
+    const showWelcome = !hasPipes && planUiMode === 'welcome';
+    const showNew = !hasPipes && planUiMode === 'new';
+    const showOpen = !hasPipes && planUiMode === 'open';
+
+    if (welcome) welcome.classList.toggle('is-visible', showWelcome);
+    if (empty) {
+        empty.hidden = !showNew;
+        empty.classList.toggle('is-visible', showNew);
+    }
+    if (openPanel) {
+        openPanel.hidden = !showOpen;
+        openPanel.classList.toggle('is-visible', showOpen);
+        if (showOpen) renderSavedPlansList();
+    }
+    if (table) table.style.display = hasPipes ? '' : 'none';
 
     tbody.innerHTML = '';
     planItems.forEach(item => tbody.appendChild(buildRow(item)));
@@ -80,6 +211,100 @@ function render() {
     updateSummary();
     updateCount();
     syncCheckAll();
+    updatePageChrome();
+    saveUiMode();
+}
+
+function renderSavedPlansList() {
+    const list = document.getElementById('plan-open-list');
+    const emptyMsg = document.getElementById('plan-open-empty');
+    if (!list) return;
+
+    const archives = readArchives();
+    list.innerHTML = '';
+
+    if (!archives.length) {
+        if (emptyMsg) emptyMsg.hidden = false;
+        return;
+    }
+    if (emptyMsg) emptyMsg.hidden = true;
+
+    archives.forEach(archive => {
+        const li = document.createElement('li');
+        li.className = 'plan-open__item';
+        const count = (archive.items || []).length;
+        const date = new Date(archive.savedAt || 0);
+        const dateLabel = Number.isFinite(date.getTime())
+            ? date.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })
+            : '—';
+
+        li.innerHTML = `
+            <div class="plan-open__meta">
+                <span class="plan-open__name">${escapeHtml(archive.name || 'Plan sans nom')}</span>
+                <span class="plan-open__sub">${count} canalisation${count !== 1 ? 's' : ''} · ${dateLabel}</span>
+            </div>
+            <button type="button" class="plan-btn plan-btn--primary plan-btn--sm">Ouvrir</button>
+        `;
+        li.querySelector('button')?.addEventListener('click', () => {
+            if (!loadArchive(archive.id)) {
+                showToast('Plan introuvable', 'warn');
+                renderSavedPlansList();
+                return;
+            }
+            const budgetEl = document.getElementById('budget-input');
+            if (budgetEl) budgetEl.value = budget;
+            render();
+            updateFigeUI();
+            showToast('Plan chargé', 'ok');
+        });
+        list.appendChild(li);
+    });
+}
+
+function updatePageChrome() {
+    const hideChrome = planItems.length === 0 && (planUiMode === 'welcome' || planUiMode === 'open');
+    document.querySelector('.plan-header-actions')?.classList.toggle('is-hidden', hideChrome);
+    document.querySelector('.plan-sidebar')?.classList.toggle('is-hidden', hideChrome);
+}
+
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function startNewPlan() {
+    planUiMode = 'new';
+    planItems = [];
+    budget = 0;
+    isFige = false;
+    saveState();
+    render();
+    updateFigeUI();
+    const budgetEl = document.getElementById('budget-input');
+    if (budgetEl) budgetEl.value = 0;
+}
+
+/** Quitte le plan en cours : vide le cache actif et revient à l'écran d'accueil. */
+function closeCurrentPlan() {
+    planItems = [];
+    budget = 0;
+    isFige = false;
+    planUiMode = 'welcome';
+    localStorage.removeItem(SESSION_KEY);
+    saveState();
+    render();
+    updateFigeUI();
+    const budgetEl = document.getElementById('budget-input');
+    if (budgetEl) budgetEl.value = 0;
+}
+
+function showOpenSavedPlans() {
+    planUiMode = 'open';
+    saveUiMode();
+    render();
 }
 
 function buildRow(item) {
@@ -161,7 +386,13 @@ function updateSummary() {
 
 function updateCount() {
     const el = document.getElementById('plan-count');
-    if (el) el.textContent = `${planItems.length} canalisation${planItems.length !== 1 ? 's' : ''}`;
+    if (!el) return;
+    const welcomeVisible = document.getElementById('plan-welcome')?.classList.contains('is-visible');
+    const hideBadge = Boolean(welcomeVisible);
+    el.classList.toggle('is-hidden', hideBadge);
+    el.toggleAttribute('hidden', hideBadge);
+    if (hideBadge) return;
+    el.textContent = `${planItems.length} canalisation${planItems.length !== 1 ? 's' : ''}`;
 }
 
 function syncCheckAll() {
@@ -216,15 +447,43 @@ function bindEvents() {
     }
 
     document.getElementById('btn-figer')?.addEventListener('click', toggleFige);
-    document.getElementById('btn-export')?.addEventListener('click', exportCSV);
     document.getElementById('btn-export-sidebar')?.addEventListener('click', exportCSV);
+
+    document.getElementById('btn-plan-close')?.addEventListener('click', () => {
+        showPlanConfirm({
+            title: 'Fermer le plan',
+            message: planItems.length
+                ? 'Les canalisations non archivées seront retirées du plan actif. Vous reviendrez à l\'écran d\'accueil.'
+                : 'Revenir à l\'écran d\'accueil et quitter ce plan ?',
+            confirmLabel: 'Fermer le plan',
+            danger: true,
+            onConfirm: () => {
+                closeCurrentPlan();
+                showToast('Plan fermé', 'ok');
+            },
+        });
+    });
 
     document.getElementById('btn-clear')?.addEventListener('click', () => {
         if (!planItems.length) return;
-        if (confirm('Vider entièrement le plan de travaux ? Cette action est irréversible.')) {
-            planItems = []; isFige = false;
-            saveState(); render(); updateFigeUI();
-        }
+        showPlanConfirm({
+            title: 'Vider le plan',
+            message: 'Toutes les canalisations seront retirées du plan en cours. Cette action est irréversible.',
+            confirmLabel: 'Vider le plan',
+            danger: true,
+            onConfirm: () => {
+                closeCurrentPlan();
+                showToast('Plan vidé', 'ok');
+            },
+        });
+    });
+
+    document.getElementById('btn-plan-new')?.addEventListener('click', startNewPlan);
+    document.getElementById('btn-plan-open')?.addEventListener('click', showOpenSavedPlans);
+    document.getElementById('btn-plan-open-back')?.addEventListener('click', () => {
+        planUiMode = 'welcome';
+        saveUiMode();
+        render();
     });
 }
 
@@ -252,9 +511,16 @@ function deleteItem(id) {
 
 // ── Figer / dégeler ───────────────────────────────────────
 function toggleFige() {
+    const wasFige = isFige;
     isFige = !isFige;
-    saveState(); updateFigeUI(); render();
-    showToast(isFige ? 'Plan figé — lecture seule' : 'Plan dégelé', isFige ? 'ok' : 'warn');
+    if (isFige && !wasFige) archiveCurrentPlan();
+    saveState();
+    updateFigeUI();
+    render();
+    showToast(
+        isFige ? 'Plan figé et sauvegardé — lecture seule' : 'Plan dégelé',
+        isFige ? 'ok' : 'warn'
+    );
 }
 
 function updateFigeUI() {
@@ -296,6 +562,64 @@ function exportCSV() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast('Export CSV téléchargé', 'ok');
+}
+
+// ── Modal de confirmation ─────────────────────────────────
+let planConfirmOnOk = null;
+
+function closePlanConfirm() {
+    const modal = document.getElementById('plan-confirm');
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('plan-confirm-open');
+    planConfirmOnOk = null;
+}
+
+function showPlanConfirm({ title, message, confirmLabel = 'Confirmer', cancelLabel = 'Annuler', danger = false, onConfirm }) {
+    const modal = document.getElementById('plan-confirm');
+    if (!modal) {
+        if (window.confirm(message)) onConfirm?.();
+        return;
+    }
+
+    const titleEl = document.getElementById('plan-confirm-title');
+    const messageEl = document.getElementById('plan-confirm-message');
+    const okBtn = document.getElementById('plan-confirm-ok');
+    const cancelBtn = document.getElementById('plan-confirm-cancel');
+
+    if (titleEl) titleEl.textContent = title;
+    if (messageEl) messageEl.textContent = message;
+    if (okBtn) {
+        okBtn.textContent = confirmLabel;
+        okBtn.classList.toggle('plan-btn--danger', danger);
+        okBtn.classList.toggle('plan-btn--primary', !danger);
+    }
+    if (cancelBtn) cancelBtn.textContent = cancelLabel;
+
+    planConfirmOnOk = onConfirm;
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('plan-confirm-open');
+    cancelBtn?.focus();
+}
+
+function initPlanConfirm() {
+    const modal = document.getElementById('plan-confirm');
+    if (!modal) return;
+
+    document.getElementById('plan-confirm-backdrop')?.addEventListener('click', closePlanConfirm);
+    document.getElementById('plan-confirm-cancel')?.addEventListener('click', closePlanConfirm);
+    document.getElementById('plan-confirm-ok')?.addEventListener('click', () => {
+        const fn = planConfirmOnOk;
+        closePlanConfirm();
+        fn?.();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+            e.preventDefault();
+            closePlanConfirm();
+        }
+    });
 }
 
 // ── Toast ─────────────────────────────────────────────────
@@ -351,6 +675,7 @@ function critColor(c) {
 // ── Init ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     loadState();
+    initPlanConfirm();
     render();       // no-op si les éléments DOM n'existent pas (ex. carte.html)
     bindEvents();   // no-op si les éléments DOM n'existent pas
     updateFigeUI();

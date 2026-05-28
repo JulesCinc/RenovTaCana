@@ -63,6 +63,11 @@
     color: var(--c-cyan);
 }
 
+.plan-badge.is-hidden,
+.plan-badge[hidden] {
+    display: none !important;
+}
+
 .plan-header-actions {
     display: flex;
     gap: 8px;
@@ -298,6 +303,156 @@
 }
 
 /* ── Empty state ─────────────────────────────────────────── */
+.plan-header-actions.is-hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.plan-sidebar.is-hidden {
+    display: none;
+}
+
+.plan-welcome {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 64px 32px 80px;
+    text-align: center;
+}
+
+.plan-welcome__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--c-text);
+    letter-spacing: -0.02em;
+}
+
+.plan-welcome__lead {
+    margin: 0;
+    max-width: 420px;
+    font-size: 0.88rem;
+    color: var(--c-text-muted);
+    line-height: 1.55;
+}
+
+.plan-welcome.is-visible {
+    display: flex;
+}
+
+.plan-welcome__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: min(100%, 400px);
+}
+
+.plan-btn--welcome {
+    justify-content: center;
+    padding: 12px 18px;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-size: 0.85rem;
+}
+
+.plan-btn--sm {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    text-transform: none;
+}
+
+.plan-open {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    padding: 32px 28px 48px;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+.plan-open.is-visible {
+    display: flex;
+}
+
+.plan-open[hidden] {
+    display: none !important;
+}
+
+.plan-open__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.plan-open__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--c-text);
+}
+
+.plan-open__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.plan-open__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--t-mid), background var(--t-mid);
+}
+
+.plan-open__item:hover {
+    border-color: var(--c-cyan);
+    background: var(--c-cyan-dim);
+}
+
+.plan-open__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+
+.plan-open__name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--c-text);
+}
+
+.plan-open__sub {
+    font-size: 0.75rem;
+    color: var(--c-text-dim);
+    font-family: var(--font-mono);
+}
+
+.plan-open__empty {
+    margin: 0;
+    padding: 24px 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+    line-height: 1.6;
+}
+
 .plan-empty {
     display: none;
     flex-direction: column;
@@ -306,6 +461,14 @@
     gap: 12px;
     padding: 72px 32px;
     text-align: center;
+}
+
+.plan-empty.is-visible {
+    display: flex;
+}
+
+.plan-empty[hidden] {
+    display: none !important;
 }
 
 .plan-empty svg {
@@ -517,6 +680,82 @@
     color: var(--c-text-dim);
     line-height: 1.65;
     margin: 0;
+}
+
+/* ── Modal de confirmation ───────────────────────────────── */
+.plan-confirm {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: none;
+}
+
+.plan-confirm[aria-hidden="false"] {
+    display: block;
+}
+
+.plan-confirm__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 10, 16, 0.55);
+    backdrop-filter: blur(3px);
+}
+
+.plan-confirm__dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(440px, calc(100vw - 32px));
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    background: var(--c-surface);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+}
+
+.plan-confirm__header {
+    padding: 16px 18px 0;
+}
+
+.plan-confirm__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--c-text);
+}
+
+.plan-confirm__body {
+    padding: 12px 18px 18px;
+}
+
+.plan-confirm__message {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--c-text-muted);
+}
+
+.plan-confirm__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 18px 16px;
+}
+
+.plan-confirm__actions .plan-btn--danger {
+    border-color: var(--c-danger);
+    background: color-mix(in oklab, var(--c-danger) 12%, var(--c-surface));
+    color: var(--c-danger);
+}
+
+.plan-confirm__actions .plan-btn--danger:hover {
+    background: var(--c-danger);
+    color: #fff;
+}
+
+body.plan-confirm-open {
+    overflow: hidden;
 }
 
 /* ── Toast (global, réutilisable sur toutes les pages) ────── */
