@@ -78,7 +78,6 @@
 .dash-card--full {
     grid-column: 1 / -1;
     overflow: hidden;
-    order: -1;
 }
 
 .dash-card__header {
@@ -366,7 +365,7 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
     .kpi-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 900px) {

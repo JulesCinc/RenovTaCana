@@ -12,7 +12,7 @@ const COMMUNE_LABELS = new Map();
 const selectedPlanRows = new Map();
 
 /** Cache localStorage plan de travaux (affichage immédiat même « périmé », refresh réseau en arrière-plan). */
-const DASH_CACHE_VER = 5;
+const DASH_CACHE_VER = 6;
 const DASH_CACHE_PREFIX = `rtc_dash_v${DASH_CACHE_VER}_`;
 
 let planTableOffset = 0;
@@ -118,11 +118,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 // ── Dashboard principal ───────────────────────────────────
 function applyDashboardPayload(data) {
     setEl("kpi-total",     data.total_canalisations.toLocaleString("fr-FR"));
-    setEl("kpi-km",        `${data.km_total} km`);
     setEl("kpi-critiques", data.critiques.toLocaleString("fr-FR"));
     setEl("kpi-attention", data.attention.toLocaleString("fr-FR"));
     setEl("kpi-chantiers", data.nb_chantiers.toLocaleString("fr-FR"));
-    setEl("kpi-fuites",    data.total_fuites.toLocaleString("fr-FR"));
+    setEl("kpi-chantiers-missing", Number(data.chantiers_missing_adresse || 0).toLocaleString("fr-FR"));
+    setEl("kpi-operations-missing", Number(data.operations_missing_adresse || 0).toLocaleString("fr-FR"));
     setEl("kpi-crit-moy",  `${data.criticite_moyenne}%`);
 
     const total = data.total_canalisations;

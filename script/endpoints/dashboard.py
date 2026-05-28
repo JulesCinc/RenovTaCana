@@ -118,6 +118,20 @@ def get_dashboard():
         for r in cur.fetchall()
     ]
 
+    cur.execute("PRAGMA table_info(chantiers)")
+    chantiers_cols = {row[1] for row in cur.fetchall()}
+    chantiers_missing_adresse = 0
+    if "adresse" in chantiers_cols:
+        cur.execute(
+            "SELECT COUNT(*) FROM chantiers WHERE (adresse IS NULL OR TRIM(adresse) = '')"
+        )
+        chantiers_missing_adresse = cur.fetchone()[0]
+
+    cur.execute(
+        "SELECT COUNT(*) FROM operations WHERE (localisation IS NULL OR TRIM(localisation) = '')"
+    )
+    operations_missing_adresse = cur.fetchone()[0]
+
     conn.close()
 
     return {
@@ -136,6 +150,8 @@ def get_dashboard():
         "annees": annees,
         "top_rues": top_rues,
         "chantiers_etat": chantiers_etat,
+        "chantiers_missing_adresse": chantiers_missing_adresse,
+        "operations_missing_adresse": operations_missing_adresse,
     }
 
 
