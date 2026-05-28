@@ -158,6 +158,7 @@ def get_dashboard():
 @router.get("/plan-travaux")
 def get_plan_travaux(
     commune: str = Query(default=""),
+    adresse: str = Query(default=""),
     limit: int = Query(default=50),
     offset: int = Query(default=0),
 ):
@@ -171,6 +172,10 @@ def get_plan_travaux(
     if commune:
         filters.append("LOWER(commune) LIKE LOWER(?)")
         params.append(f"%{commune}%")
+
+    if adresse:
+        filters.append("LOWER(adresse) LIKE LOWER(?)")
+        params.append(f"%{adresse}%")
 
     where = " AND ".join(filters)
 

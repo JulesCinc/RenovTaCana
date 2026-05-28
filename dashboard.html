@@ -150,12 +150,36 @@
 
         <!-- ── Plan de travaux ───────────────────────────── -->
         <section class="dash-card dash-card--full">
-            <div class="dash-card__header">
-                <span>Top priorités par canalisation</span>
+            <div class="dash-card__header dash-card__header--plan">
+                <span class="plan-header-title">Top priorités par canalisation</span>
                 <div class="plan-filters">
+                    <form class="search-bar search-bar--address plan-search-bar" id="plan-search-form">
+                        <button type="submit" class="search-bar__icon-button" aria-label="Rechercher">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                        </button>
+                        <input type="text" name="adresse" class="search-bar__input" id="plan-search-input"
+                            placeholder="Rechercher une adresse" autocomplete="off">
+                        <button type="button"
+                            class="search-bar__icon-button search-bar__icon-button--small search-bar__clear-button"
+                            aria-label="Effacer la recherche">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </form>
                     <select class="filter-select filter-select--sm" id="plan-commune">
                         <option value="">Toutes communes</option>
                     </select>
+                    <button type="button" class="plan-select-all-btn" id="plan-select-all" disabled
+                        title="Sélectionne ou désélectionne les 20 canalisations de la page affichée">
+                        Tout sélectionner
+                    </button>
                     <button class="header-export" id="export-plan">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
@@ -178,23 +202,24 @@
                     </a>
                 </div>
                 <div class="table-scroll" id="plan-table-wrap">
-                    <table class="address-table" id="plan-table">
+                    <table class="address-table" id="plan-table" aria-busy="false">
                         <thead>
                             <tr>
-                                <th class="plan-select-col">Choix</th>
-                                <th>Rang</th>
-                                <th>Adresse</th>
-                                <th>Commune</th>
-                                <th>Score priorité</th>
-                                <th>Criticité</th>
-                                <th>Fuites</th>
-                                <th>Longueur</th>
-                                <th>Action</th>
+                                <th class="plan-col-rang">Rang</th>
+                                <th class="plan-col-adresse">Adresse</th>
+                                <th class="plan-col-commune">Commune</th>
+                                <th class="plan-col-score">Score priorité</th>
+                                <th class="plan-col-crit">Criticité</th>
+                                <th class="plan-col-fuites">Fuites</th>
+                                <th class="plan-col-longueur">Longueur</th>
+                                <th class="plan-col-action">Action</th>
                             </tr>
                         </thead>
                         <tbody id="plan-body"></tbody>
                     </table>
                 </div>
+                <nav class="plan-pagination pagination" id="plan-pagination"
+                    aria-label="Pagination des priorités par canalisation" hidden></nav>
             </div>
         </section>
 
@@ -274,7 +299,7 @@
     </main>
 
     <button class="validate-work-plan" id="validate-work-plan" type="button">
-        valider le plan de travaux
+        Sélectionner pour le plan de travaux
     </button>
 
     <script src="js/config.js"></script>
