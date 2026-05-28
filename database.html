@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenovTaCana — Base de donnees</title>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/database.css">
+</head>
+
+<body>
+    <header class="site-header site-header--address">
+        <div class="site-header__left">
+            <img src="assets/images/logo_entreprise.png" alt="Logo" class="site-header__logo">
+            <a href="index.html" class="header-home" title="Accueil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+            <a href="carte.html" class="header-home" title="Carte interactive">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                </svg>
+            </a>
+            <a href="dashboard.html" class="header-home" title="Dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </a>
+            <a href="plan-travaux.html" class="header-home" title="Plan de travaux">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <line x1="8" y1="8" x2="13" y2="8"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                    <line x1="8" y1="16" x2="11" y2="16"></line>
+                </svg>
+            </a>
+            <a href="database.html" class="header-home header-home--active" title="Base de donnees">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+                    <path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path>
+                    <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path>
+                </svg>
+            </a>
+        </div>
+        <div class="site-header__right">
+            <div class="header-badge">
+                <span class="header-badge__dot"></span>
+                Base de donnees
+            </div>
+            <button class="theme-toggle" type="button" aria-label="Mode sombre">Mode sombre</button>
+            <h2 class="site-header__title">Renov<span>Ta</span>Cana</h2>
+        </div>
+    </header>
+
+    <main class="database-page">
+        <section class="database-intro">
+            <h1>Gestion de la base de donnees</h1>
+            <p>Mettez a jour la base de donnees en important les fichiers adequats</p>
+            <p class="database-intro__stats" id="active-db-stats">Chargement des donnees actives...</p>
+        </section>
+
+        <section class="dropzone-grid">
+            <article class="drop-card" data-required-name="chantiers.xlsx">
+                <div class="drop-card__head">
+                    <h2>chantiers.xlsx</h2>
+                    <span class="drop-card__status">En attente</span>
+                </div>
+                <label class="dropzone">
+                    <input type="file" accept=".xlsx,.xls,.csv">
+                    <span class="dropzone__title">Deposer ou cliquer pour choisir un fichier</span>
+                    <span class="dropzone__hint">Template attendu: chantiers.xlsx</span>
+                </label>
+            </article>
+
+            <article class="drop-card" data-required-name="operations.xlsx">
+                <div class="drop-card__head">
+                    <h2>operations.xlsx</h2>
+                    <span class="drop-card__status">En attente</span>
+                </div>
+                <label class="dropzone">
+                    <input type="file" accept=".xlsx,.xls,.csv">
+                    <span class="dropzone__title">Deposer ou cliquer pour choisir un fichier</span>
+                    <span class="dropzone__hint">Template attendu: operations.xlsx</span>
+                </label>
+            </article>
+
+            <article class="drop-card" data-required-name="pipe_ranking.xlsx">
+                <div class="drop-card__head">
+                    <h2>pipe_ranking.xlsx</h2>
+                    <span class="drop-card__status">En attente</span>
+                </div>
+                <label class="dropzone">
+                    <input type="file" accept=".xlsx,.xls,.csv">
+                    <span class="dropzone__title">Deposer ou cliquer pour choisir un fichier</span>
+                    <span class="dropzone__hint">Template attendu: pipe_ranking.xlsx</span>
+                </label>
+            </article>
+        </section>
+
+        <section class="db-history">
+            <div class="db-history__header">
+                <h2>Historique des versions de la base</h2>
+                <div class="db-history__paths">
+                    <span>Active: <code>database/renovTaCana.db</code></span>
+                    <span>Archive: <code>database/outdated/</code></span>
+                </div>
+            </div>
+
+            <div class="db-table-wrap">
+                <table class="db-table">
+                    <thead>
+                        <tr>
+                            <th>Version</th>
+                            <th>Fichier</th>
+                            <th>Date</th>
+                            <th>Changements</th>
+                            <th>Infos</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="db-history-body"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div class="rollback-modal" id="rollback-modal" aria-hidden="true">
+        <div class="rollback-modal__backdrop" id="rollback-backdrop"></div>
+        <div class="rollback-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="rollback-title">
+            <div class="rollback-modal__header">
+                <h3 id="rollback-title">Confirmation de rollback</h3>
+            </div>
+            <div class="rollback-modal__body">
+                <p id="rollback-message"></p>
+                <p class="rollback-modal__warning">
+                    Cette action est irreversible et supprimera les archives posterieures a cette date.
+                </p>
+            </div>
+            <div class="rollback-modal__actions">
+                <button class="db-btn" id="rollback-cancel" type="button">Annuler</button>
+                <button class="db-btn db-btn--rollback" id="rollback-confirm" type="button">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="import-modal" id="import-modal" aria-hidden="true">
+        <div class="import-modal__backdrop" id="import-backdrop"></div>
+        <div class="import-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="import-title">
+            <div class="import-modal__header">
+                <h3 id="import-title">Import terminé</h3>
+            </div>
+            <div class="import-modal__body">
+                <p id="import-message"></p>
+                <p id="import-details"></p>
+            </div>
+            <div class="import-modal__actions">
+                <button class="db-btn" id="import-close" type="button">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="error-modal" id="error-modal" aria-hidden="true">
+        <div class="error-modal__backdrop" id="error-backdrop"></div>
+        <div class="error-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="error-title">
+            <div class="error-modal__header">
+                <h3 id="error-title">Erreur</h3>
+            </div>
+            <div class="error-modal__body">
+                <p id="error-message"></p>
+            </div>
+            <div class="error-modal__actions">
+                <button class="db-btn" id="error-close" type="button">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loading-overlay" aria-hidden="true">
+        <div class="loading-overlay__box">
+            <div class="loading-overlay__spinner"></div>
+            <p>Import en cours...</p>
+        </div>
+    </div>
+
+    <div class="database-toast" id="database-toast"></div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/database.js"></script>
+</body>
+
+</html>

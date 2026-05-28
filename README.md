@@ -14,6 +14,7 @@ L'objectif principal est l'**edition d'un plan de travaux**, en s'appuyant sur l
 - **Carte interactive** (heatmap / Leaflet) : affichage des canalisations, chantiers et couches geographiques.
 - **Tableau d'adresses** (`index.html`) : parcours, recherche, filtres et export des adresses.
 - **Tableau de bord** (`dashboard.html`) : visualisation des indicateurs cles.
+- **Page base de donnees** (`database.html`) : import des fichiers source (xlsx/csv), historique des versions, rollback.
 - **API FastAPI** : endpoints complets (canalisations, chantiers, opérations, adresses, etc.).
 - **Mini-map** sur la page adresses.
 - **Calcul du score de priorite** : le script de calcul est operationnel et applique les poids definis avec le client.
@@ -28,7 +29,7 @@ L'objectif principal est l'**edition d'un plan de travaux**, en s'appuyant sur l
 | Decoupage des canalisations > 250 m en troncons de 250 m | En cours | **V2.2** |
 | Affichage des troncons de 250 m sur la carte | En cours | **V2.2** |
 | Prise en compte des chantiers dans le calcul du score de priorite | En cours | **V2.2** |
-| Historique et mise a jour de la base de donnees | En cours | **V2.2** |
+| Historique et mise a jour de la base de donnees | Fait | **V2.2** |
 | Mise a jour des informations des chantiers (adresses manquantes) | Fait | **V2.2** |
 | Mise a jour des informations des operations (adresses manquantes) | Fait | **V2.2** |
 
@@ -51,6 +52,12 @@ L'objectif principal est l'**edition d'un plan de travaux**, en s'appuyant sur l
 │   │   ├── filtres.py          ← `/api/filtres`
 │   │   ├── plan_travaux.py     ← `/api/plan-travaux`
 │   │   ├── geojson.py          ← `/api/geojson/chantiers`, `/api/geojson/canalisations`
+│   │   ├── database/
+│   │   │   ├── database_versions.py   ← `/api/database/outdated`
+│   │   │   ├── rollback.py            ← `/api/database/rollback`
+│   │   │   ├── import_chantiers.py    ← `/api/database/import/chantiers`
+│   │   │   ├── import_operations.py   ← `/api/database/import/operations`
+│   │   │   └── import_pipe_ranking.py ← `/api/database/import/pipe-ranking`
 │   │   └── __init__.py
 │   └── database/
 │       ├── build-sqlite/
@@ -65,12 +72,15 @@ L'objectif principal est l'**edition d'un plan de travaux**, en s'appuyant sur l
 ├── carte.html                  ← Carte interactive (heatmap / Leaflet)
 ├── dashboard.html              ← Tableau de bord
 ├── plan-travaux.html           ← Page plan de travaux
+├── database.html               ← Gestion des imports et de l’historique de la base
 │
 ├── css/
 │   ├── style.css               ← Styles communs
 │   ├── adresses.css            ← index.html (parcours adresses, filtres chantiers/operations, modales)
 │   ├── carte.css               ← carte.html
-│   └── dashboard.css           ← dashboard.html
+│   ├── dashboard.css           ← dashboard.html
+│   ├── plan-travaux.css        ← plan-travaux.html
+│   └── database.css            ← database.html
 │
 ├── js/
 │   ├── config.js               ← Base d’URL API / `__RTC_API_BASE__`
@@ -78,7 +88,9 @@ L'objectif principal est l'**edition d'un plan de travaux**, en s'appuyant sur l
 │   ├── index.js                ← Logique page index (filtres, pagination, modales, mise a jour d'adresse)
 │   ├── carte.js
 │   ├── dashboard.js
+│   ├── plan-travaux.js
 │   ├── mini-map.js
+│   ├── database.js
 │   └── theme.js
 │
 ├── assets/
@@ -104,9 +116,9 @@ Autres OS ou lancement manuel : à la racine du dépôt, `python -m uvicorn scri
 
 ## Segmentation des canalisations
 
-Un nouveau script de preparation de donnees a ete ajoute :
+Un script de preparation de donnees est utilise :
 
-`script/database/segment_pipes.py`
+`script/database/row-data/segment_pipes.py`
 
 Il sert a decouper les canalisations trop longues en troncons de **250 m maximum** et a enregistrer le resultat dans la base SQLite, dans une table dediee :
 
@@ -117,7 +129,7 @@ La segmentation est faite sur la geometrie reelle du tuyau, pas seulement sur un
 Commande de regeneration complete :
 
 ```bash
-python script/database/segment_pipes.py --db database/renovTaCana.db --force-recompute
+python script/database/row-data/segment_pipes.py --db database/renovTaCana.db --force-recompute
 ```
 
 La table `segmentation` contient notamment :

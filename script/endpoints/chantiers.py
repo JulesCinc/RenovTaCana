@@ -23,6 +23,9 @@ def get_chantiers(
 ):
     conn = get_db()
     cur = conn.cursor()
+    cur.execute("PRAGMA table_info(chantiers)")
+    col_names = {r[1] for r in cur.fetchall()}
+    has_adresse = "adresse" in col_names
 
     filters = ["1=1"]
     params = []
@@ -36,22 +39,26 @@ def get_chantiers(
         params.append(etat)
 
     if search:
-        filters.append("(CAST(num_op AS TEXT) LIKE ? OR LOWER(COALESCE(adresse,'')) LIKE LOWER(?))")
-        params.extend([f"%{search}%", f"%{search}%"])
+        if has_adresse:
+            filters.append("(CAST(num_op AS TEXT) LIKE ? OR LOWER(COALESCE(adresse,'')) LIKE LOWER(?))")
+            params.extend([f"%{search}%", f"%{search}%"])
+        else:
+            filters.append("CAST(num_op AS TEXT) LIKE ?")
+            params.append(f"%{search}%")
 
-    if only_missing_adresse:
+    if only_missing_adresse and has_adresse:
         filters.append("(adresse IS NULL OR TRIM(adresse) = '')")
 
     where = " AND ".join(filters)
 
-    cur.execute("PRAGMA table_info(chantiers)")
-    col_names = {r[1] for r in cur.fetchall()}
     select_cols = "num_op, etat, date_debut, date_fin, commune, libelle"
-    if "adresse" in col_names:
+    if has_adresse:
         select_cols += ", adresse"
 
-    cur.execute("SELECT COUNT(*) FROM chantiers WHERE (adresse IS NULL OR TRIM(adresse) = '')")
-    missing_count = cur.fetchone()[0]
+    missing_count = 0
+    if has_adresse:
+        cur.execute("SELECT COUNT(*) FROM chantiers WHERE (adresse IS NULL OR TRIM(adresse) = '')")
+        missing_count = cur.fetchone()[0]
 
     cur.execute(f"SELECT COUNT(*) FROM chantiers WHERE {where}", params)
     total = cur.fetchone()[0]
