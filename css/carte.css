@@ -56,32 +56,6 @@ body.page-carte {
     height: 28px;
 }
 
-.site-header--map .header-home--plan {
-    position: relative;
-}
-
-.header-home__badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 4px;
-    border-radius: 999px;
-    background: var(--c-cyan);
-    color: var(--c-bg);
-    font-family: var(--font-mono);
-    font-size: 0.58rem;
-    font-weight: 700;
-    line-height: 16px;
-    text-align: center;
-}
-
-.header-home__badge:empty,
-.header-home__badge[hidden] {
-    display: none;
-}
-
 /* Recherche — prend l'espace disponible */
 .search-bar--map {
     flex: 1 1 280px;

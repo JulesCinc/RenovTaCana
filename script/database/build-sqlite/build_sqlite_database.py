@@ -216,8 +216,6 @@ def ensure_plans_travaux_schema(cur):
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nom TEXT NOT NULL,
             budget_enveloppe REAL NOT NULL DEFAULT 0,
-            statut TEXT NOT NULL DEFAULT 'fige',
-            est_fige INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL,
             updated_at TEXT,
             note TEXT,
@@ -253,6 +251,19 @@ def ensure_plans_travaux_schema(cur):
         "CREATE INDEX IF NOT EXISTS idx_plan_lignes_facilityid "
         "ON plans_travaux_lignes(facilityid)"
     )
+    migrate_plans_travaux_obsolete_columns(cur)
+
+
+def _table_has_column(cur, table_name: str, column_name: str) -> bool:
+    cur.execute(f"PRAGMA table_info({table_name})")
+    return any(row[1] == column_name for row in cur.fetchall())
+
+
+def migrate_plans_travaux_obsolete_columns(cur) -> None:
+    """Retire est_fige et statut (jamais exploites par l'UI actuelle)."""
+    for column in ("est_fige", "statut"):
+        if _table_has_column(cur, "plans_travaux", column):
+            cur.execute(f"ALTER TABLE plans_travaux DROP COLUMN {column}")
 
 
 def _archived_table_exists(db_path, table_name):
@@ -285,11 +296,11 @@ def restore_plans_travaux_from_archive(cur, archived_db_path):
         cur.execute(
             """
             INSERT INTO plans_travaux (
-                id, nom, budget_enveloppe, statut, est_fige,
+                id, nom, budget_enveloppe,
                 created_at, updated_at, note, tarif_ml
             )
             SELECT
-                id, nom, budget_enveloppe, statut, est_fige,
+                id, nom, budget_enveloppe,
                 created_at, updated_at, note, tarif_ml
             FROM rtc_old.plans_travaux
             """

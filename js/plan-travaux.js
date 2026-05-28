@@ -9,20 +9,47 @@ const BUDGET_KEY    = 'rtc_plan_budget';
 const FIGE_KEY      = 'rtc_plan_fige';
 const SESSION_KEY   = 'rtc_plan_ui_mode';
 const ARCHIVES_KEY  = 'rtc_plan_archives';
-const COST_PER_M    = 1000; // € par mètre linéaire
+const SAVED_ID_KEY  = 'rtc_plan_saved_id';
+const SAVED_NOM_KEY = 'rtc_plan_saved_nom';
+const SAVED_AT_KEY  = 'rtc_plan_saved_at_ms';
+const TARIF_KEY     = 'rtc_plan_tarif_ml';
+const NOTE_KEY      = 'rtc_plan_note';
+const DEFAULT_TARIF_ML = 1000;
+const PLAN_TITLE_DEFAULT = 'Plan de travaux';
+const PLAN_PAGE_SIZE = 10;
 
 /** welcome | new | open — ignoré dès qu'il y a des lignes dans le plan */
 let planUiMode = 'welcome';
+let planCurrentPage = 1;
 
 let planItems = [];
 let budget    = 0;
 let isFige    = false;
+/** ID en base du plan ouvert (null = jamais enregistré sous ce brouillon). */
+let savedPlanId = null;
+let savedPlanNom = '';
+let savedPlanAtMs = null;
+let tarifMl = DEFAULT_TARIF_ML;
+let planNote = '';
+
+function planApiBase() {
+    return `${window.__RTC_API_BASE__ || "http://127.0.0.1:8000"}/api/plans-travaux`;
+}
 
 // ── Persistence ───────────────────────────────────────────
 function loadState() {
     try { planItems = JSON.parse(localStorage.getItem(PLAN_KEY) || '[]'); } catch { planItems = []; }
     budget = parseFloat(localStorage.getItem(BUDGET_KEY)) || 0;
-    isFige = localStorage.getItem(FIGE_KEY) === '1';
+    isFige = false;
+    const rawSavedId = localStorage.getItem(SAVED_ID_KEY);
+    savedPlanId = rawSavedId ? parseInt(rawSavedId, 10) : null;
+    if (!Number.isFinite(savedPlanId)) savedPlanId = null;
+    savedPlanNom = localStorage.getItem(SAVED_NOM_KEY) || '';
+    const rawSavedAt = parseInt(localStorage.getItem(SAVED_AT_KEY) || '', 10);
+    savedPlanAtMs = Number.isFinite(rawSavedAt) && rawSavedAt > 0 ? rawSavedAt : null;
+    const rawTarif = parseFloat(localStorage.getItem(TARIF_KEY));
+    tarifMl = Number.isFinite(rawTarif) && rawTarif > 0 ? rawTarif : DEFAULT_TARIF_ML;
+    planNote = localStorage.getItem(NOTE_KEY) || '';
     const savedMode = localStorage.getItem(SESSION_KEY);
     if (planItems.length > 0) {
         planUiMode = 'active';
@@ -87,8 +114,28 @@ function loadArchive(id) {
 function saveState() {
     localStorage.setItem(PLAN_KEY, JSON.stringify(planItems));
     localStorage.setItem(BUDGET_KEY, String(budget));
-    localStorage.setItem(FIGE_KEY, isFige ? '1' : '0');
+    localStorage.setItem(TARIF_KEY, String(tarifMl));
+    if ((planNote || '').trim()) {
+        localStorage.setItem(NOTE_KEY, planNote);
+    } else {
+        localStorage.removeItem(NOTE_KEY);
+    }
+    localStorage.removeItem(FIGE_KEY);
+    if (savedPlanId != null) {
+        localStorage.setItem(SAVED_ID_KEY, String(savedPlanId));
+        localStorage.setItem(SAVED_NOM_KEY, savedPlanNom);
+        if (savedPlanAtMs != null) {
+            localStorage.setItem(SAVED_AT_KEY, String(savedPlanAtMs));
+        } else {
+            localStorage.removeItem(SAVED_AT_KEY);
+        }
+    } else {
+        localStorage.removeItem(SAVED_ID_KEY);
+        localStorage.removeItem(SAVED_NOM_KEY);
+        localStorage.removeItem(SAVED_AT_KEY);
+    }
     saveUiMode();
+    if (typeof window.updatePlanNavCount === 'function') window.updatePlanNavCount();
 }
 
 // ── API publique — appelée depuis carte.js ────────────────
@@ -99,12 +146,8 @@ function saveState() {
  */
 function ajouterAuPlan(data) {
     const facilityid = data.facilityid || data.id || '—';
-    const longueur   = parseFloat(data.longueur ?? data.long) || 0;
+    const longueur   = roundToTenth(parseFloat(data.longueur ?? data.long) || 0);
 
-    if (isFige) {
-        showToast('Plan figé — dégeler avant d\'ajouter.', 'warn');
-        return;
-    }
     if (planItems.some(i => i.facilityid === facilityid)) {
         showToast(`${facilityid} déjà dans le plan`, 'warn');
         return;
@@ -136,11 +179,6 @@ function ajouterPlusieursAuPlan(items, options = {}) {
     const list = Array.isArray(items) ? items : [];
     if (!list.length) return { added: 0, skipped: 0 };
 
-    if (isFige) {
-        if (!silent) showToast('Plan figé — dégeler avant d\'ajouter.', 'warn');
-        return { added: 0, skipped: list.length };
-    }
-
     let added = 0;
     let skipped = 0;
     list.forEach(data => {
@@ -149,7 +187,7 @@ function ajouterPlusieursAuPlan(items, options = {}) {
             skipped += 1;
             return;
         }
-        const longueur = parseFloat(data.longueur ?? data.long) || 0;
+        const longueur = roundToTenth(parseFloat(data.longueur ?? data.long) || 0);
         planItems.push({
             _id: crypto.randomUUID(),
             facilityid,
@@ -184,7 +222,7 @@ function render() {
     const welcome = document.getElementById('plan-welcome');
     const empty = document.getElementById('plan-empty');
     const openPanel = document.getElementById('plan-open');
-    const table = document.getElementById('plan-table');
+    const addToolbar = document.getElementById('plan-add-toolbar');
     const hasPipes = planItems.length > 0;
 
     if (hasPipes) planUiMode = 'active';
@@ -203,62 +241,298 @@ function render() {
         openPanel.classList.toggle('is-visible', showOpen);
         if (showOpen) renderSavedPlansList();
     }
-    if (table) table.style.display = hasPipes ? '' : 'none';
+    const carousel = document.getElementById('plan-table-carousel');
+    if (carousel) {
+        carousel.hidden = !hasPipes;
+        carousel.classList.toggle('is-visible', hasPipes);
+    }
+    const showAddToolbar = !showWelcome && !showOpen;
+    if (addToolbar) {
+        addToolbar.hidden = !showAddToolbar;
+        addToolbar.classList.toggle('is-visible', showAddToolbar);
+    }
+
+    const totalPages = Math.max(1, Math.ceil(planItems.length / PLAN_PAGE_SIZE));
+    if (planCurrentPage > totalPages) planCurrentPage = totalPages;
+    if (planCurrentPage < 1) planCurrentPage = 1;
+
+    const pageStart = (planCurrentPage - 1) * PLAN_PAGE_SIZE;
+    const pageEnd = pageStart + PLAN_PAGE_SIZE;
 
     tbody.innerHTML = '';
-    planItems.forEach(item => tbody.appendChild(buildRow(item)));
+    let ordreInclus = 0;
+    for (let i = 0; i < pageStart; i++) {
+        if (planItems[i].inclus) ordreInclus++;
+    }
+    for (let index = pageStart; index < pageEnd && index < planItems.length; index++) {
+        const item = planItems[index];
+        const displayOrder = item.inclus ? ++ordreInclus : null;
+        tbody.appendChild(buildRow(item, index, displayOrder));
+    }
 
+    updatePlanPagination(hasPipes, showWelcome, showOpen);
     updateSummary();
     updateCount();
     syncCheckAll();
     updatePageChrome();
     saveUiMode();
+    updateSaveUI();
 }
 
-function renderSavedPlansList() {
+function formatPlanListBudgetStatus(plan) {
+    const budget = parseFloat(plan.budget_enveloppe) || 0;
+    const cout = parseFloat(plan.cout_total) || 0;
+    if (budget <= 0) {
+        return {
+            text: 'Budget non défini',
+            className: 'plan-open__budget--na',
+        };
+    }
+    if (plan.budget_depasse === true) {
+        return {
+            text: `Dépassement budget · ${fmtCost(cout)} / ${fmtCost(budget)}`,
+            className: 'plan-open__budget--over',
+        };
+    }
+    return {
+        text: `Dans le budget · ${fmtCost(cout)} / ${fmtCost(budget)}`,
+        className: 'plan-open__budget--ok',
+    };
+}
+
+async function renderSavedPlansList() {
     const list = document.getElementById('plan-open-list');
     const emptyMsg = document.getElementById('plan-open-empty');
     if (!list) return;
 
-    const archives = readArchives();
-    list.innerHTML = '';
-
-    if (!archives.length) {
-        if (emptyMsg) emptyMsg.hidden = false;
-        return;
-    }
+    list.innerHTML = '<li class="plan-open__loading">Chargement…</li>';
     if (emptyMsg) emptyMsg.hidden = true;
 
-    archives.forEach(archive => {
-        const li = document.createElement('li');
-        li.className = 'plan-open__item';
-        const count = (archive.items || []).length;
-        const date = new Date(archive.savedAt || 0);
-        const dateLabel = Number.isFinite(date.getTime())
-            ? date.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })
-            : '—';
+    try {
+        const res = await fetch(planApiBase());
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const plans = data.plans || [];
+        list.innerHTML = '';
 
-        li.innerHTML = `
-            <div class="plan-open__meta">
-                <span class="plan-open__name">${escapeHtml(archive.name || 'Plan sans nom')}</span>
-                <span class="plan-open__sub">${count} canalisation${count !== 1 ? 's' : ''} · ${dateLabel}</span>
-            </div>
-            <button type="button" class="plan-btn plan-btn--primary plan-btn--sm">Ouvrir</button>
-        `;
-        li.querySelector('button')?.addEventListener('click', () => {
-            if (!loadArchive(archive.id)) {
-                showToast('Plan introuvable', 'warn');
-                renderSavedPlansList();
-                return;
+        if (!plans.length) {
+            if (emptyMsg) {
+                emptyMsg.hidden = false;
+                emptyMsg.textContent = 'Aucun plan sauvegardé pour le moment. Enregistrez un plan avec le bouton « Sauvegarder ».';
             }
-            const budgetEl = document.getElementById('budget-input');
-            if (budgetEl) budgetEl.value = budget;
-            render();
-            updateFigeUI();
-            showToast('Plan chargé', 'ok');
+            return;
+        }
+        if (emptyMsg) {
+            emptyMsg.hidden = true;
+            emptyMsg.textContent = 'Aucun plan sauvegardé pour le moment. Enregistrez un plan avec le bouton « Sauvegarder ».';
+        }
+
+        plans.forEach(plan => {
+            const li = document.createElement('li');
+            li.className = 'plan-open__item';
+            const count = plan.ligne_count ?? 0;
+            const date = new Date(plan.saved_at_ms || plan.created_at || 0);
+            const dateLabel = Number.isFinite(date.getTime())
+                ? date.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })
+                : '—';
+            const tarifLabel = formatTarifLabel(plan.tarif_ml);
+            const budgetInfo = formatPlanListBudgetStatus(plan);
+
+            const meta = document.createElement('div');
+            meta.className = 'plan-open__meta';
+
+            const name = document.createElement('span');
+            name.className = 'plan-open__name';
+            name.textContent = plan.nom || 'Plan sans nom';
+
+            const sub1 = document.createElement('span');
+            sub1.className = 'plan-open__sub';
+            sub1.textContent = `${count} canalisation${count !== 1 ? 's' : ''} · ${dateLabel}`;
+
+            const sub2 = document.createElement('span');
+            sub2.className = 'plan-open__sub plan-open__sub--detail';
+            if (tarifLabel) {
+                sub2.append(document.createTextNode(`${tarifLabel} · `));
+            }
+            const budgetBadge = document.createElement('span');
+            budgetBadge.className = `plan-open__budget ${budgetInfo.className}`;
+            budgetBadge.textContent = budgetInfo.text;
+            sub2.append(budgetBadge);
+
+            meta.append(name, sub1, sub2);
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'plan-btn plan-btn--primary plan-btn--sm';
+            btn.textContent = 'Ouvrir';
+            btn.addEventListener('click', () => loadPlanFromDatabase(plan.id));
+
+            li.append(meta, btn);
+            list.appendChild(li);
         });
-        list.appendChild(li);
-    });
+    } catch {
+        list.innerHTML = '';
+        if (emptyMsg) {
+            emptyMsg.hidden = false;
+            emptyMsg.textContent = 'Impossible de charger les plans sauvegardés. Vérifiez que l’API est démarrée.';
+        }
+    }
+}
+
+function parsePlanTimestamp(value) {
+    if (value == null || value === '') return null;
+    const n = typeof value === 'number' ? value : Number(value);
+    if (Number.isFinite(n) && n > 0) return n;
+    const parsed = Date.parse(String(value).trim());
+    return Number.isFinite(parsed) ? parsed : null;
+}
+
+function resolveSavedAtMs(detail) {
+    if (!detail) return null;
+    return parsePlanTimestamp(detail.saved_at_ms)
+        ?? parsePlanTimestamp(detail.updated_at)
+        ?? parsePlanTimestamp(detail.created_at);
+}
+
+function applyPlanFromDetail(detail) {
+    savedPlanId = detail.id;
+    savedPlanNom = detail.nom || '';
+    savedPlanAtMs = resolveSavedAtMs(detail);
+    planNote = detail.note != null ? String(detail.note) : '';
+    budget = parseFloat(detail.budget_enveloppe) || 0;
+    const loadedTarif = parseFloat(detail.tarif_ml);
+    tarifMl = Number.isFinite(loadedTarif) && loadedTarif > 0 ? loadedTarif : DEFAULT_TARIF_ML;
+    isFige = false;
+
+    planItems = (detail.items || []).map(row => ({
+        _id: crypto.randomUUID(),
+        facilityid: row.facilityid,
+        adresse: row.adresse || '—',
+        materiau: row.materiau || '—',
+        diametre: row.diametre,
+        longueur: roundToTenth(parseFloat(row.longueur) || 0),
+        criticite: row.criticite ?? row.criticite_snapshot ?? null,
+        inclus: row.inclus !== false,
+    }));
+
+    planUiMode = 'active';
+    saveState();
+}
+
+async function loadPlanFromDatabase(planId) {
+    try {
+        const res = await fetch(`${planApiBase()}/${planId}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const detail = await res.json();
+        applyPlanFromDetail(detail);
+        const budgetEl = document.getElementById('budget-input');
+        if (budgetEl) budgetEl.value = budget;
+        render();
+        updateSaveUI();
+        showToast('Plan chargé', 'ok');
+    } catch {
+        showToast('Plan introuvable ou API indisponible', 'warn');
+        renderSavedPlansList();
+    }
+}
+
+function buildPlanSavePayload(nom) {
+    return {
+        nom: (nom || savedPlanNom || '').trim(),
+        budget_enveloppe: budget,
+        tarif_ml: tarifMl,
+        note: (planNote || '').trim() || null,
+        items: planItems.map((item, index) => ({
+            facilityid: item.facilityid,
+            adresse: item.adresse,
+            materiau: item.materiau,
+            diametre: item.diametre,
+            longueur: item.longueur,
+            criticite: item.criticite,
+            inclus: !!item.inclus,
+            ordre: index + 1,
+        })),
+    };
+}
+
+async function persistPlanToDatabase(nom, options = {}) {
+    const { toastOnSuccess = true } = options;
+    const isUpdate = savedPlanId != null;
+    let payload = buildPlanSavePayload(nom);
+
+    if (!payload.nom) {
+        if (isUpdate) {
+            try {
+                const res = await fetch(`${planApiBase()}/${savedPlanId}`);
+                if (res.ok) {
+                    const detail = await res.json();
+                    payload = { ...payload, nom: (detail.nom || savedPlanNom || 'Plan sans nom').trim() };
+                    savedPlanNom = payload.nom;
+                }
+            } catch { /* fallback ci-dessous */ }
+        }
+        if (!payload.nom) {
+            showToast('Le nom du plan est obligatoire', 'warn');
+            return false;
+        }
+    }
+
+    const url = isUpdate ? `${planApiBase()}/${savedPlanId}` : planApiBase();
+    const method = isUpdate ? 'PUT' : 'POST';
+
+    let res;
+    try {
+        res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+    } catch {
+        showToast('Impossible de joindre l’API — démarrez le serveur (port 8000)', 'warn');
+        return false;
+    }
+
+    if (!res.ok) {
+        let detail = '';
+        try {
+            const err = await res.json();
+            detail = err.detail ? ` — ${typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail)}` : '';
+        } catch { /* ignore */ }
+        showToast(`Enregistrement impossible${detail}`, 'warn');
+        return false;
+    }
+
+    const data = await res.json();
+    applyPlanFromDetail(data);
+    if (savedPlanAtMs == null) savedPlanAtMs = Date.now();
+    saveState();
+    const budgetEl = document.getElementById('budget-input');
+    if (budgetEl) budgetEl.value = budget;
+    render();
+    updateSaveUI();
+    if (toastOnSuccess) {
+        showToast(
+            isUpdate ? 'Plan mis à jour' : 'Plan enregistré',
+            'ok'
+        );
+    }
+    return true;
+}
+
+async function persistPlanNoteAfterEdit() {
+    saveState();
+    updateNoteButtonUI();
+
+    if (savedPlanId == null) {
+        showToast((planNote || '').trim() ? 'Note enregistrée' : 'Note supprimée', 'ok');
+        return true;
+    }
+
+    const ok = await persistPlanToDatabase(savedPlanNom, { toastOnSuccess: false });
+    if (ok) {
+        showToast((planNote || '').trim() ? 'Note enregistrée' : 'Note supprimée', 'ok');
+    }
+    return ok;
 }
 
 function updatePageChrome() {
@@ -278,11 +552,17 @@ function escapeHtml(str) {
 function startNewPlan() {
     planUiMode = 'new';
     planItems = [];
+    planCurrentPage = 1;
     budget = 0;
     isFige = false;
+    savedPlanId = null;
+    savedPlanNom = '';
+    savedPlanAtMs = null;
+    tarifMl = DEFAULT_TARIF_ML;
+    planNote = '';
     saveState();
     render();
-    updateFigeUI();
+    updateSaveUI();
     const budgetEl = document.getElementById('budget-input');
     if (budgetEl) budgetEl.value = 0;
 }
@@ -290,13 +570,19 @@ function startNewPlan() {
 /** Quitte le plan en cours : vide le cache actif et revient à l'écran d'accueil. */
 function closeCurrentPlan() {
     planItems = [];
+    planCurrentPage = 1;
     budget = 0;
     isFige = false;
+    savedPlanId = null;
+    savedPlanNom = '';
+    savedPlanAtMs = null;
+    tarifMl = DEFAULT_TARIF_ML;
+    planNote = '';
     planUiMode = 'welcome';
     localStorage.removeItem(SESSION_KEY);
     saveState();
     render();
-    updateFigeUI();
+    updateSaveUI();
     const budgetEl = document.getElementById('budget-input');
     if (budgetEl) budgetEl.value = 0;
 }
@@ -307,42 +593,113 @@ function showOpenSavedPlans() {
     render();
 }
 
-function buildRow(item) {
+function getPlanPageSlice() {
+    const start = (planCurrentPage - 1) * PLAN_PAGE_SIZE;
+    return { start, end: start + PLAN_PAGE_SIZE };
+}
+
+function goToPlanPage(page) {
+    const totalPages = Math.max(1, Math.ceil(planItems.length / PLAN_PAGE_SIZE));
+    planCurrentPage = Math.min(Math.max(1, page), totalPages);
+    render();
+}
+
+function updatePlanPagination(hasPipes, showWelcome, showOpen) {
+    const el = document.getElementById('plan-pagination');
+    const prev = document.getElementById('plan-page-prev');
+    const next = document.getElementById('plan-page-next');
+    const info = document.getElementById('plan-page-info');
+    if (!el) return;
+
+    const show = hasPipes && !showWelcome && !showOpen;
+    el.hidden = !show;
+    el.classList.toggle('is-visible', show);
+    if (!show) return;
+
+    const total = planItems.length;
+    const totalPages = Math.max(1, Math.ceil(total / PLAN_PAGE_SIZE));
+    const from = (planCurrentPage - 1) * PLAN_PAGE_SIZE + 1;
+    const to = Math.min(planCurrentPage * PLAN_PAGE_SIZE, total);
+
+    if (info) {
+        info.textContent = totalPages <= 1
+            ? `${total} canalisation${total !== 1 ? 's' : ''}`
+            : `Page ${planCurrentPage} / ${totalPages} · ${from}–${to} sur ${total}`;
+    }
+    if (prev) prev.disabled = planCurrentPage <= 1;
+    if (next) next.disabled = planCurrentPage >= totalPages;
+}
+
+function getIncludedRowIndices() {
+    return planItems.reduce((acc, row, i) => {
+        if (row.inclus) acc.push(i);
+        return acc;
+    }, []);
+}
+
+function buildRow(item, index, displayOrder) {
     const tr   = document.createElement('tr');
-    const cost = Math.round(item.longueur * COST_PER_M);
+    const cost = Math.round(item.longueur * tarifMl);
 
     if (!item.inclus) tr.classList.add('row--excluded');
-    if (isFige)       tr.classList.add('row--fige');
 
-    const lengthCell = isFige
-        ? `<span style="font-family:var(--font-mono)">${fmt(item.longueur)} m</span>`
-        : `<div class="length-cell">
+    const lenStr = formatLengthInputValue(item.longueur);
+    const lengthCell = `<div class="length-cell">
                <input type="number" class="length-input" data-id="${item._id}"
-                   value="${item.longueur}" min="0" step="0.1">
+                   value="${lenStr}" min="0" step="0.1" style="width:${lengthInputWidthCh(lenStr)}">
                <span class="length-unit">m</span>
            </div>`;
 
-    const actions = isFige ? '' : `
-        <button class="row-btn row-btn--split" data-id="${item._id}" title="Séparer en 2 tronçons">
+    const orderLabel = displayOrder != null ? `#${displayOrder}` : '—';
+    let isFirst;
+    let isLast;
+    if (item.inclus) {
+        const includedIndices = getIncludedRowIndices();
+        const posInIncluded = includedIndices.indexOf(index);
+        isFirst = posInIncluded <= 0;
+        isLast = posInIncluded < 0 || posInIncluded >= includedIndices.length - 1;
+    } else {
+        isFirst = index <= 0;
+        isLast = index >= planItems.length - 1;
+    }
+    if (planItems.length <= 1) {
+        isFirst = true;
+        isLast = true;
+    }
+    const btnUp = isFirst ? '' : `
+        <button type="button" class="row-btn row-btn--move row-btn--up" data-id="${item._id}" title="Monter">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 3v5m-5 13l5-13 5 13"/>
+                <polyline points="18 15 12 9 6 15"/>
             </svg>
-        </button>
-        <button class="row-btn row-btn--delete" data-id="${item._id}" title="Supprimer du plan">
+        </button>`;
+    const btnDown = isLast ? '' : `
+        <button type="button" class="row-btn row-btn--move row-btn--down" data-id="${item._id}" title="Descendre">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </button>`;
+    const orderBtns = (btnUp || btnDown)
+        ? `<div class="row-order">${btnUp}${btnDown}</div>`
+        : '';
+    const actions = `
+        <button type="button" class="row-btn row-btn--delete" data-id="${item._id}" title="Supprimer du plan">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"/>
                 <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
                 <path d="M9 6V4h6v2"/>
             </svg>
-        </button>`;
+        </button>
+        ${orderBtns}`;
 
     tr.innerHTML = `
         <td class="col-check">
             <input type="checkbox" class="row-check" data-id="${item._id}"
-                ${item.inclus ? 'checked' : ''} ${isFige ? 'disabled' : ''}>
+                ${item.inclus ? 'checked' : ''}>
         </td>
+        <td class="col-order${displayOrder == null ? ' col-order--excluded' : ''}">${orderLabel}</td>
         <td>
             <div class="cell-id">
                 <span class="crit-dot" style="background:${critColor(item.criticite)}"
@@ -363,7 +720,7 @@ function buildRow(item) {
 function updateSummary() {
     const inc    = planItems.filter(i => i.inclus);
     const totalL = inc.reduce((s, i) => s + i.longueur, 0);
-    const totalC = Math.round(totalL * COST_PER_M);
+    const totalC = Math.round(totalL * tarifMl);
 
     setText('sum-count',  inc.length);
     setText('sum-length', fmt(totalL) + ' m');
@@ -398,55 +755,39 @@ function updateCount() {
 function syncCheckAll() {
     const all = document.getElementById('check-all');
     if (!all) return;
-    const n = planItems.filter(i => i.inclus).length;
-    all.indeterminate = n > 0 && n < planItems.length;
-    all.checked       = n === planItems.length && planItems.length > 0;
+    const { start, end } = getPlanPageSlice();
+    const pageItems = planItems.slice(start, end);
+    const n = pageItems.filter(i => i.inclus).length;
+    all.indeterminate = n > 0 && n < pageItems.length;
+    all.checked       = n === pageItems.length && pageItems.length > 0;
 }
 
 // ── Événements (actifs seulement sur plan-travaux.html) ───
-function bindEvents() {
-    const tbody = document.getElementById('plan-tbody');
-    if (!tbody) return;
+function bindPlanPagination() {
+    if (document.body.dataset.planPaginationBound === '1') return;
+    const prev = document.getElementById('plan-page-prev');
+    const next = document.getElementById('plan-page-next');
+    if (!prev && !next) return;
+    document.body.dataset.planPaginationBound = '1';
 
-    tbody.addEventListener('change', e => {
-        if (e.target.classList.contains('row-check')) {
-            const item = byId(e.target.dataset.id);
-            if (item) { item.inclus = e.target.checked; saveState(); render(); }
-        }
-        if (e.target.classList.contains('length-input')) {
-            const item = byId(e.target.dataset.id);
-            if (item) {
-                item.longueur = parseFloat(e.target.value) || 0;
-                saveState();
-                updateSummary();
-                const costCell = e.target.closest('tr')?.querySelector('.col-cost');
-                if (costCell) costCell.textContent = fmtCost(Math.round(item.longueur * COST_PER_M));
-            }
-        }
+    prev?.addEventListener('click', () => goToPlanPage(planCurrentPage - 1));
+    next?.addEventListener('click', () => goToPlanPage(planCurrentPage + 1));
+}
+
+function bindSidebarActions() {
+    if (!document.getElementById('btn-save-plan')) return;
+    if (document.body.dataset.planSidebarBound === '1') return;
+    document.body.dataset.planSidebarBound = '1';
+
+    document.getElementById('btn-save-plan')?.addEventListener('click', e => {
+        e.preventDefault();
+        onSavePlanClick();
     });
 
-    tbody.addEventListener('click', e => {
-        const s = e.target.closest('.row-btn--split');
-        if (s) { splitItem(s.dataset.id); return; }
-        const d = e.target.closest('.row-btn--delete');
-        if (d) { deleteItem(d.dataset.id); }
-    });
+    document.getElementById('plan-title-edit')?.addEventListener('click', onEditPlanNameClick);
+    document.getElementById('plan-tarif-edit')?.addEventListener('click', onEditPlanTarifClick);
+    document.getElementById('btn-plan-note')?.addEventListener('click', onEditPlanNoteClick);
 
-    document.getElementById('check-all')?.addEventListener('change', e => {
-        planItems.forEach(i => i.inclus = e.target.checked);
-        saveState(); render();
-    });
-
-    const budgetEl = document.getElementById('budget-input');
-    if (budgetEl) {
-        budgetEl.value = budget;
-        budgetEl.addEventListener('input', () => {
-            budget = parseFloat(budgetEl.value) || 0;
-            saveState(); updateSummary();
-        });
-    }
-
-    document.getElementById('btn-figer')?.addEventListener('click', toggleFige);
     document.getElementById('btn-export-sidebar')?.addEventListener('click', exportCSV);
 
     document.getElementById('btn-plan-close')?.addEventListener('click', () => {
@@ -487,21 +828,88 @@ function bindEvents() {
     });
 }
 
+function bindEvents() {
+    bindSidebarActions();
+
+    const tbody = document.getElementById('plan-tbody');
+    if (!tbody) return;
+
+    tbody.addEventListener('change', e => {
+        if (e.target.classList.contains('row-check')) {
+            const item = byId(e.target.dataset.id);
+            if (item) { item.inclus = e.target.checked; saveState(); render(); }
+        }
+        if (e.target.classList.contains('length-input')) {
+            const item = byId(e.target.dataset.id);
+            if (item) {
+                item.longueur = roundToTenth(parseFloat(e.target.value) || 0);
+                e.target.value = formatLengthInputValue(item.longueur);
+                e.target.style.width = lengthInputWidthCh(e.target.value);
+                saveState();
+                updateSummary();
+                const costCell = e.target.closest('tr')?.querySelector('.col-cost');
+                if (costCell) costCell.textContent = fmtCost(Math.round(item.longueur * tarifMl));
+            }
+        }
+    });
+
+    tbody.addEventListener('click', e => {
+        const up = e.target.closest('.row-btn--up');
+        if (up) {
+            moveItem(up.dataset.id, -1);
+            return;
+        }
+        const down = e.target.closest('.row-btn--down');
+        if (down) {
+            moveItem(down.dataset.id, 1);
+            return;
+        }
+        const d = e.target.closest('.row-btn--delete');
+        if (d) { deleteItem(d.dataset.id); }
+    });
+
+    document.getElementById('check-all')?.addEventListener('change', e => {
+        const { start, end } = getPlanPageSlice();
+        planItems.forEach((item, i) => {
+            if (i >= start && i < end) item.inclus = e.target.checked;
+        });
+        saveState(); render();
+    });
+
+    bindPlanPagination();
+
+    const budgetEl = document.getElementById('budget-input');
+    if (budgetEl) {
+        budgetEl.value = budget;
+        budgetEl.addEventListener('input', () => {
+            budget = parseFloat(budgetEl.value) || 0;
+            saveState(); updateSummary();
+        });
+    }
+
+}
+
 // ── Actions sur les lignes ────────────────────────────────
-function splitItem(id) {
+function moveItem(id, delta) {
     const idx = planItems.findIndex(i => i._id === id);
     if (idx === -1) return;
 
-    const orig = planItems[idx];
-    const half = Math.round((orig.longueur / 2) * 10) / 10;
-    const base = orig.facilityid.replace(/ \(\d\/2\)$/, '');
+    let targetIdx;
+    if (planItems[idx].inclus) {
+        const includedIndices = getIncludedRowIndices();
+        const posInIncluded = includedIndices.indexOf(idx);
+        if (posInIncluded === -1) return;
+        const targetPos = posInIncluded + delta;
+        if (targetPos < 0 || targetPos >= includedIndices.length) return;
+        targetIdx = includedIndices[targetPos];
+    } else {
+        targetIdx = idx + delta;
+        if (targetIdx < 0 || targetIdx >= planItems.length) return;
+    }
 
-    planItems.splice(idx, 1,
-        { ...orig, _id: crypto.randomUUID(), longueur: half,                     facilityid: base + ' (1/2)' },
-        { ...orig, _id: crypto.randomUUID(), longueur: orig.longueur - half,     facilityid: base + ' (2/2)' }
-    );
-    saveState(); render();
-    showToast('Canalisation séparée en 2 tronçons', 'ok');
+    [planItems[idx], planItems[targetIdx]] = [planItems[targetIdx], planItems[idx]];
+    saveState();
+    render();
 }
 
 function deleteItem(id) {
@@ -509,28 +917,423 @@ function deleteItem(id) {
     saveState(); render();
 }
 
-// ── Figer / dégeler ───────────────────────────────────────
-function toggleFige() {
-    const wasFige = isFige;
-    isFige = !isFige;
-    if (isFige && !wasFige) archiveCurrentPlan();
-    saveState();
-    updateFigeUI();
-    render();
-    showToast(
-        isFige ? 'Plan figé et sauvegardé — lecture seule' : 'Plan dégelé',
-        isFige ? 'ok' : 'warn'
-    );
+// ── Sauvegarde en base ────────────────────────────────────
+async function onSavePlanClick() {
+    if (!planItems.length) {
+        showToast('Ajoutez au moins une canalisation avant d\'enregistrer', 'warn');
+        return;
+    }
+    if (savedPlanId != null) {
+        await persistPlanToDatabase(savedPlanNom);
+        return;
+    }
+    openPlanNameModal(async nom => {
+        await persistPlanToDatabase(nom);
+    });
 }
 
-function updateFigeUI() {
-    const btn   = document.getElementById('btn-figer');
-    const badge = document.getElementById('fige-badge');
-    if (btn) {
-        const lockSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
-        btn.innerHTML = lockSvg + (isFige ? ' Dégeler le plan' : ' Figer le plan de travaux');
+function updateNoteButtonUI() {
+    const btn = document.getElementById('btn-plan-note');
+    const dot = document.getElementById('btn-plan-note-dot');
+    const label = document.getElementById('btn-plan-note-label');
+    if (!btn) return;
+
+    const onPlanScreen = planUiMode !== 'welcome' && planUiMode !== 'open' && planItems.length > 0;
+    btn.hidden = !onPlanScreen;
+
+    const hasNote = Boolean((planNote || '').trim());
+    if (label) label.textContent = hasNote ? 'Voir la note' : 'Note';
+    btn.title = hasNote ? 'Modifier la note du plan' : 'Ajouter une note au plan';
+    btn.setAttribute('aria-label', btn.title);
+    if (dot) dot.hidden = !hasNote;
+}
+
+function onEditPlanNoteClick() {
+    const current = planNote || '';
+    const hasNote = Boolean(current.trim());
+
+    openPlanNoteModal(async text => {
+        const next = text.trim();
+        if (next === current.trim()) return;
+        planNote = text;
+        await persistPlanNoteAfterEdit();
+    }, {
+        initialValue: current,
+        title: hasNote ? 'Note du plan' : 'Ajouter une note',
+        message: '',
+    });
+}
+
+function onEditPlanTarifClick() {
+    openPlanTarifModal(value => {
+        const next = Math.round(parseFloat(value) || 0);
+        if (!Number.isFinite(next) || next <= 0) {
+            showToast('Indiquez un tarif strictement positif', 'warn');
+            return;
+        }
+        if (next === tarifMl) return;
+        tarifMl = next;
+        saveState();
+        render();
+        showToast('Tarif modifié — cliquez sur Sauvegarder pour enregistrer en base', 'ok');
+    }, {
+        initialValue: tarifMl,
+        message: 'Le nouveau tarif sera enregistré en base lorsque vous cliquerez sur Sauvegarder.',
+    });
+}
+
+function onEditPlanNameClick() {
+    const current = (savedPlanNom || '').trim();
+    if (!current) return;
+
+    openPlanNameModal(nom => {
+        if (nom === current) return;
+        savedPlanNom = nom;
+        saveState();
+        updateSaveUI();
+        showToast('Nom modifié — cliquez sur Sauvegarder pour enregistrer en base', 'ok');
+    }, {
+        initialValue: current,
+        title: 'Renommer le plan',
+        message: 'Le nouveau nom sera enregistré en base lorsque vous cliquerez sur Sauvegarder.',
+        submitLabel: 'Valider',
+    });
+}
+
+function updatePlanTitle() {
+    const titleEl = document.getElementById('plan-title');
+    const editBtn = document.getElementById('plan-title-edit');
+    const nom = (savedPlanNom || '').trim();
+    const label = nom || PLAN_TITLE_DEFAULT;
+    if (titleEl) titleEl.textContent = label;
+    document.title = nom
+        ? `RenovTaCana — ${nom}`
+        : 'RenovTaCana — Plan de travaux';
+
+    const onPlanScreen = planUiMode !== 'welcome' && planUiMode !== 'open' && planItems.length > 0;
+    const showEdit = Boolean(nom) && onPlanScreen;
+    if (editBtn) {
+        editBtn.hidden = !showEdit;
     }
-    if (badge) badge.style.display = isFige ? 'flex' : 'none';
+}
+
+function formatSavedAtLabel(ms) {
+    if (!Number.isFinite(ms) || ms <= 0) return null;
+    const date = new Date(ms);
+    if (!Number.isFinite(date.getTime())) return null;
+    return date.toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+function formatSavedBadgeText() {
+    const when = formatSavedAtLabel(savedPlanAtMs);
+    return when ? `Plan enregistré — ${when}` : '';
+}
+
+let hydrateSavedAtPromise = null;
+
+async function hydrateSavedPlanAt() {
+    if (!savedPlanId || savedPlanAtMs != null) return;
+    if (hydrateSavedAtPromise) {
+        await hydrateSavedAtPromise;
+        return;
+    }
+    hydrateSavedAtPromise = (async () => {
+        try {
+            const res = await fetch(`${planApiBase()}/${savedPlanId}`);
+            if (!res.ok) return;
+            const detail = await res.json();
+            const ms = resolveSavedAtMs(detail);
+            if (ms) {
+                savedPlanAtMs = ms;
+                saveState();
+            }
+        } catch { /* API indisponible */ }
+    })();
+    try {
+        await hydrateSavedAtPromise;
+    } finally {
+        hydrateSavedAtPromise = null;
+    }
+}
+
+function formatTarifLabel(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n) || n <= 0) return '—';
+    const amount = new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0,
+    }).format(n);
+    return `${amount} / ml`;
+}
+
+function updateTarifUI() {
+    const display = document.getElementById('plan-tarif-display');
+    const editBtn = document.getElementById('plan-tarif-edit');
+    if (display) display.textContent = formatTarifLabel(tarifMl);
+
+    const onPlanScreen = planUiMode !== 'welcome' && planUiMode !== 'open' && planItems.length > 0;
+    if (editBtn) editBtn.hidden = !onPlanScreen;
+}
+
+function updateSaveUI() {
+    updatePlanTitle();
+    updateTarifUI();
+    updateNoteButtonUI();
+    const btn = document.getElementById('btn-save-plan');
+    const badge = document.getElementById('plan-saved-badge');
+    const badgeText = document.getElementById('plan-saved-badge-text');
+    const saveSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`;
+    if (btn) {
+        btn.innerHTML = saveSvg + ' Sauvegarder';
+        btn.disabled = false;
+        btn.removeAttribute('disabled');
+    }
+    if (badge) {
+        badge.hidden = !savedPlanId;
+        badge.style.display = savedPlanId ? 'flex' : 'none';
+    }
+    if (badgeText && savedPlanId) {
+        const label = formatSavedBadgeText();
+        badgeText.textContent = label;
+        if (!label) {
+            hydrateSavedPlanAt().then(() => {
+                if (savedPlanId) badgeText.textContent = formatSavedBadgeText();
+            });
+        }
+    } else if (badgeText) {
+        badgeText.textContent = '';
+    }
+}
+
+let planNameModalOnSubmit = null;
+
+function closePlanNameModal() {
+    const modal = document.getElementById('plan-name-modal');
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    modal.classList.remove('is-open');
+    document.body.classList.remove('plan-name-open');
+    planNameModalOnSubmit = null;
+}
+
+function openPlanNameModal(onSubmit, options = {}) {
+    const {
+        initialValue = '',
+        title = 'Nom du plan',
+        message = 'Donnez un nom à ce plan de travaux pour l\'enregistrer en base.',
+        submitLabel = 'Enregistrer',
+    } = options;
+
+    const modal = document.getElementById('plan-name-modal');
+    const input = document.getElementById('plan-name-input');
+    if (!modal || !input) {
+        const nom = window.prompt('Nom du plan de travaux :', initialValue);
+        if (nom?.trim()) onSubmit?.(nom.trim());
+        return;
+    }
+
+    const titleEl = document.getElementById('plan-name-title');
+    const messageEl = document.getElementById('plan-name-message');
+    const submitBtn = document.getElementById('plan-name-submit');
+    if (titleEl) titleEl.textContent = title;
+    if (messageEl) messageEl.textContent = message;
+    if (submitBtn) submitBtn.textContent = submitLabel;
+
+    planNameModalOnSubmit = onSubmit;
+    input.value = initialValue;
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('is-open');
+    document.body.classList.add('plan-name-open');
+    input.focus();
+    input.select();
+}
+
+let planNoteModalOnSubmit = null;
+
+function closePlanNoteModal() {
+    const modal = document.getElementById('plan-note-modal');
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    modal.classList.remove('is-open');
+    document.body.classList.remove('plan-note-open');
+    planNoteModalOnSubmit = null;
+}
+
+function openPlanNoteModal(onSubmit, options = {}) {
+    const {
+        initialValue = '',
+        title = 'Note du plan',
+        message = '',
+    } = options;
+
+    const modal = document.getElementById('plan-note-modal');
+    const input = document.getElementById('plan-note-input');
+    if (!modal || !input) {
+        const raw = window.prompt('Note du plan :', initialValue);
+        if (raw != null) onSubmit?.(raw);
+        return;
+    }
+
+    const titleEl = document.getElementById('plan-note-title');
+    const messageEl = document.getElementById('plan-note-message');
+    if (titleEl) titleEl.textContent = title;
+    if (messageEl) {
+        messageEl.textContent = message;
+        messageEl.hidden = !message;
+    }
+
+    planNoteModalOnSubmit = onSubmit;
+    input.value = initialValue;
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('is-open');
+    document.body.classList.add('plan-note-open');
+    input.focus();
+}
+
+function initPlanNoteModal() {
+    const modal = document.getElementById('plan-note-modal');
+    if (!modal) return;
+
+    document.getElementById('plan-note-backdrop')?.addEventListener('click', closePlanNoteModal);
+    document.getElementById('plan-note-cancel')?.addEventListener('click', closePlanNoteModal);
+
+    const submit = async () => {
+        const input = document.getElementById('plan-note-input');
+        const fn = planNoteModalOnSubmit;
+        closePlanNoteModal();
+        await fn?.(input?.value ?? '');
+    };
+
+    document.getElementById('plan-note-submit')?.addEventListener('click', submit);
+    document.getElementById('plan-note-input')?.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            closePlanNoteModal();
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+            closePlanNoteModal();
+        }
+    });
+}
+
+let planTarifModalOnSubmit = null;
+
+function closePlanTarifModal() {
+    const modal = document.getElementById('plan-tarif-modal');
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    modal.classList.remove('is-open');
+    document.body.classList.remove('plan-tarif-open');
+    planTarifModalOnSubmit = null;
+}
+
+function openPlanTarifModal(onSubmit, options = {}) {
+    const {
+        initialValue = DEFAULT_TARIF_ML,
+        message = 'Indiquez le tarif en euros par mètre linéaire pour estimer les coûts du plan.',
+    } = options;
+
+    const modal = document.getElementById('plan-tarif-modal');
+    const input = document.getElementById('plan-tarif-input');
+    if (!modal || !input) {
+        const raw = window.prompt('Tarif (€ / ml) :', String(initialValue));
+        const value = parseFloat(raw);
+        if (Number.isFinite(value) && value > 0) onSubmit?.(value);
+        return;
+    }
+
+    const messageEl = document.getElementById('plan-tarif-message');
+    if (messageEl) messageEl.textContent = message;
+
+    planTarifModalOnSubmit = onSubmit;
+    input.value = String(initialValue);
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('is-open');
+    document.body.classList.add('plan-tarif-open');
+    input.focus();
+    input.select();
+}
+
+function initPlanTarifModal() {
+    const modal = document.getElementById('plan-tarif-modal');
+    if (!modal) return;
+
+    document.getElementById('plan-tarif-backdrop')?.addEventListener('click', closePlanTarifModal);
+    document.getElementById('plan-tarif-cancel')?.addEventListener('click', closePlanTarifModal);
+
+    const submit = async () => {
+        const input = document.getElementById('plan-tarif-input');
+        const value = parseFloat(input?.value);
+        if (!Number.isFinite(value) || value <= 0) {
+            showToast('Indiquez un tarif strictement positif', 'warn');
+            input?.focus();
+            return;
+        }
+        const fn = planTarifModalOnSubmit;
+        closePlanTarifModal();
+        await fn?.(value);
+    };
+
+    document.getElementById('plan-tarif-submit')?.addEventListener('click', submit);
+    document.getElementById('plan-tarif-input')?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submit();
+        }
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            closePlanTarifModal();
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+            closePlanTarifModal();
+        }
+    });
+}
+
+function initPlanNameModal() {
+    const modal = document.getElementById('plan-name-modal');
+    if (!modal) return;
+
+    document.getElementById('plan-name-backdrop')?.addEventListener('click', closePlanNameModal);
+    document.getElementById('plan-name-cancel')?.addEventListener('click', closePlanNameModal);
+
+    const submit = async () => {
+        const input = document.getElementById('plan-name-input');
+        const nom = input?.value?.trim() || '';
+        if (!nom) {
+            showToast('Indiquez un nom pour le plan', 'warn');
+            input?.focus();
+            return;
+        }
+        const fn = planNameModalOnSubmit;
+        closePlanNameModal();
+        await fn?.(nom);
+    };
+
+    document.getElementById('plan-name-submit')?.addEventListener('click', submit);
+    document.getElementById('plan-name-input')?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submit();
+        }
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            closePlanNameModal();
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+            closePlanNameModal();
+        }
+    });
 }
 
 // ── Export CSV ────────────────────────────────────────────
@@ -548,7 +1351,7 @@ function exportCSV() {
         i.materiau,
         i.diametre ?? '',
         i.longueur,
-        Math.round(i.longueur * COST_PER_M),
+        Math.round(i.longueur * tarifMl),
     ].join(sep)).join('\n');
 
     const blob = new Blob(['﻿' + hdr + '\n' + body], { type: 'text/csv;charset=utf-8;' });
@@ -663,6 +1466,9 @@ const byId    = id => planItems.find(i => i._id === id);
 const setText = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
 const fmt     = n  => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(n);
 const fmtCost = n  => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+const roundToTenth = n => Math.round((Number(n) || 0) * 10) / 10;
+const formatLengthInputValue = n => roundToTenth(n).toFixed(1);
+const lengthInputWidthCh = str => `${Math.max(String(str).length, 3)}ch`;
 
 function critColor(c) {
     if (c == null) return 'var(--c-neutral, #64748b)';
@@ -673,10 +1479,40 @@ function critColor(c) {
 }
 
 // ── Init ──────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+async function refreshPlanFromStorage() {
+    loadState();
+    if (!document.getElementById('plan-tbody')) return;
+    await hydrateSavedPlanAt();
+    render();
+    updateSaveUI();
+}
+
+async function initPlanTravaux() {
     loadState();
     initPlanConfirm();
-    render();       // no-op si les éléments DOM n'existent pas (ex. carte.html)
-    bindEvents();   // no-op si les éléments DOM n'existent pas
-    updateFigeUI();
+    initPlanNameModal();
+    initPlanTarifModal();
+    initPlanNoteModal();
+    await hydrateSavedPlanAt();
+    render();
+    bindEvents();
+    bindSidebarActions();
+    updateSaveUI();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { initPlanTravaux(); });
+} else {
+    initPlanTravaux();
+}
+
+window.addEventListener('pageshow', e => {
+    if (e.persisted) refreshPlanFromStorage();
+});
+
+window.addEventListener('storage', e => {
+    if (e.key === PLAN_KEY || e.key === BUDGET_KEY || e.key === TARIF_KEY || e.key === NOTE_KEY
+        || e.key === SAVED_ID_KEY || e.key === SAVED_NOM_KEY || e.key === SAVED_AT_KEY) {
+        refreshPlanFromStorage();
+    }
 });

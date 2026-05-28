@@ -820,20 +820,6 @@ function initPlanSelection() {
     document.getElementById("carte-plan-submit")?.addEventListener("click", commitSelectionToPlan);
 }
 
-function updatePlanNavCount() {
-    const el = document.getElementById("plan-nav-count");
-    if (!el) return;
-    try {
-        const items = JSON.parse(localStorage.getItem("rtc_plan_travaux") || "[]");
-        const n = items.length;
-        el.textContent = n > 0 ? String(n) : "";
-        el.hidden = n === 0;
-    } catch {
-        el.textContent = "";
-        el.hidden = true;
-    }
-}
-
 function initCarteHelp() {
     const modal = document.getElementById("carte-help");
     const openBtn = document.getElementById("carte-help-open");

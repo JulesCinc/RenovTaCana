@@ -20,7 +20,7 @@ Tables metier **referentiel** creees par le build :
 
 Tables **applicatives** (saisie utilisateur — plans de travaux figes) :
 
-- `plans_travaux` — en-tete du plan (nom, budget, statut, dates)
+- `plans_travaux` — en-tete du plan (nom, budget, dates)
 - `plans_travaux_lignes` — une ligne par canalisation (ou troncon) dans un plan
 
 Ces tables sont **creees** par `build_sqlite_database.py` (`ensure_plans_travaux_schema`) en fin de build. Lors d'un rebuild, les plans existants sont **repristines** depuis la base archivee (`database/outdated/`) si les tables etaient deja presentes.
@@ -29,7 +29,7 @@ Ces tables sont **creees** par `build_sqlite_database.py` (`ensure_plans_travaux
 
 ## Diagrammes MCD (Mermaid)
 
-Les blocs ci-dessous ne montrent que les **cles** (PK / FK) pour que les **traits de relation** restent visibles. Le detail des colonnes est dans les sections DDL plus bas.
+Les diagrammes ci-dessous listent **toutes les colonnes** de chaque table (types SQLite du build). Source : `script/database/build-sqlite/build_sqlite_database.py`. Les colonnes `operations.id1_source` et `operations.projet_titre` sont ajoutees par import Excel si absentes du build initial (`ALTER TABLE`).
 
 ### Referentiel reseau (build)
 
@@ -37,25 +37,148 @@ Les blocs ci-dessous ne montrent que les **cles** (PK / FK) pour que les **trait
 erDiagram
     CONDUITES {
         TEXT FACILITYID PK
+        INTEGER abandoned
+        REAL longueur
+        TEXT COMMUNE
+        TEXT INSEE
+        TEXT UDI
+        TEXT NUM_OP
+        INTEGER OBJECTID
+        REAL DIAMETER
+        REAL DIAMEXT
+        TEXT PRECISIOND
+        TEXT MATERIAL
+        TEXT PRECISIONM
+        TEXT INSTALLDAT
+        TEXT PRECISIONI
+        TEXT PERIODE_PO
+        TEXT WATERTYPE
+        TEXT DOMAINE
+        TEXT FONCTION
+        TEXT SENSIBILIT
+        TEXT PRESSION
+        TEXT OSSATURE
+        TEXT CONTRAT
+        TEXT ADRESSE
+        REAL COTE_TN
+        REAL PROFONDEUR
+        TEXT JOINT
+        TEXT EMPLACEMEN
+        TEXT LITDEPOSE
+        TEXT TYPE_SOL
+        TEXT ETAT_SOL
+        TEXT TRAFIC
+        TEXT ENVIR_ELEC
+        INTEGER NB_BRANCHE
+        TEXT FABRICANT
+        TEXT TECHNIQUE_
+        TEXT PROTECT_IN
+        TEXT PROTECT_EX
+        TEXT PROTECT_CA
+        TEXT DEPOT
+        TEXT CORROSION
+        REAL VALEUR_NEU
+        TEXT TRANSMISS
+        TEXT LASTUPDATE
+        TEXT LASTEDITOR
+        TEXT ENABLED
+        TEXT ACTIVEFLAG
+        TEXT OWNEDBY
+        TEXT MAINTBY
+        REAL LONGSYS
+        TEXT COMMENTA
+        TEXT MAJ
+        TEXT ETAGPRESSI
+        TEXT IDADRESS
+        TEXT SECTORISAT
+        TEXT PRECISLOCA
+        TEXT CLASSE_DIC
+        TEXT NOMCANAUX
+        TEXT SAISIE
+        TEXT SYMBOLOGIE
+        TEXT TYPE_POSE
+        TEXT DN
+        TEXT PROTECATHO
+        TEXT REGULATEUR
+        TEXT AGENCE
+        TEXT COMMENTA_D
+        TEXT PROSP_RENO
+        TEXT MAJREFGEOM
+        TEXT DATEMAJGEO
+        TEXT CONVENTION
+        TEXT DATEMAJH
+        REAL SHAPE_Leng
+        TEXT dense
+        REAL ValoPat
+        TEXT Vetuste
+        INTEGER nbFuites
+        INTEGER nbAbo
+        REAL sumConso
+        REAL PRESSIONAV
+        REAL DEM_EAU_LS
+        TEXT CATEGORIE_
+        TEXT Traffic
+        TEXT PrioMerlin
+        REAL TXcasse
+        TEXT Altimetrie
+        REAL Prediction
+        REAL Predicti_1
+        TEXT ABANDATE
+        TEXT HS_CAUSE
+        TEXT CAUSECOM
+        TEXT FACILITYKE
+        TEXT LINETYPE
+        REAL lat
+        REAL lon
+        TEXT geometry
     }
     CANALISATIONS {
         TEXT facilityid PK
+        TEXT adresse
         TEXT commune
         INTEGER commune_insee
+        TEXT materiau
+        REAL diametre
+        REAL longueur
+        INTEGER annee_pose
+        INTEGER nb_fuites
+        REAL vetuste
+        INTEGER categorie
+        TEXT anciennete
+        TEXT densite
+        REAL criticite
+        REAL score_priorite
     }
     COMMUNES {
         TEXT code_insee PK
         TEXT nom_standard
+        TEXT codes_postaux
     }
     CHANTIERS {
         INTEGER id PK
         TEXT num_op
+        TEXT etat
+        TEXT date_debut
+        TEXT date_fin
         TEXT commune
+        TEXT libelle
+        TEXT adresse
+        INTEGER page
+        REAL latitude
+        REAL longitude
     }
     OPERATIONS {
         INTEGER id PK
         INTEGER id_projet
+        TEXT titre
         TEXT commune
+        TEXT localisation
+        TEXT type_op
+        TEXT demandeur
+        TEXT annee
+        TEXT cpi
+        TEXT id1_source
+        TEXT projet_titre
     }
 
     CONDUITES ||--|| CANALISATIONS : "enrichit"
@@ -71,16 +194,43 @@ erDiagram
     PLANS_TRAVAUX {
         INTEGER id PK
         TEXT nom
-        TEXT statut
+        REAL budget_enveloppe
+        TEXT created_at
+        TEXT updated_at
+        TEXT note
+        REAL tarif_ml
     }
     PLANS_TRAVAUX_LIGNES {
         INTEGER id PK
         INTEGER plan_id FK
+        INTEGER ordre
         TEXT facilityid
         TEXT parent_facilityid
+        TEXT segment_label
+        TEXT adresse
+        TEXT materiau
+        REAL diametre
+        REAL longueur
+        REAL criticite_snapshot
+        INTEGER inclus
+        REAL cout_estime_ml
     }
     CANALISATIONS {
         TEXT facilityid PK
+        TEXT adresse
+        TEXT commune
+        INTEGER commune_insee
+        TEXT materiau
+        REAL diametre
+        REAL longueur
+        INTEGER annee_pose
+        INTEGER nb_fuites
+        REAL vetuste
+        INTEGER categorie
+        TEXT anciennete
+        TEXT densite
+        REAL criticite
+        REAL score_priorite
     }
 
     PLANS_TRAVAUX ||--o{ PLANS_TRAVAUX_LIGNES : "contient"
@@ -132,8 +282,7 @@ L'endpoint `GET /api/geojson/chantiers` lit `latitude` / `longitude` lorsque ces
 - Correspondance front actuel (`js/plan-travaux.js`) : un objet archive `rtc_plan_archives[]` = une ligne `plans_travaux` ; chaque entree de `items[]` = une ligne `plans_travaux_lignes`.
 - **Snapshot** : adresse, materiau, diametre, longueur et criticite sont figes au moment de la sauvegarde ; ils ne sont pas recalcules depuis `canalisations` a l'ouverture.
 - **Troncons separes** : apres l'action « Separer » en UI, `facilityid` peut etre synthetique (`CAN-007 (1/2)`). `parent_facilityid` et `segment_label` conservent le lien avec la canalisation d'origine.
-- **Statuts** (`statut`) : `fige` (plan sauvegarde, lecture seule — cas principal en BDD) ; `brouillon` et `archive` reserves pour evolutions futures. `est_fige` = 1 lorsque `statut = 'fige'` (aligne l'UI actuelle).
-- **Plan en cours** (panier non fige) : reste en `localStorage` (`rtc_plan_travaux`) tant que l'API n'est pas branchee ; seuls les plans **figes** sont persistes en BDD en premiere version.
+- **Plan en cours** (non sauvegarde) : reste en `localStorage` (`rtc_plan_travaux`) ; la BDD ne contient que des plans deja enregistres via l'API.
 - Index prevus : `idx_plan_lignes_plan_id` sur `(plan_id, ordre)` ; `idx_plan_lignes_facilityid` sur `(facilityid)`.
 - Cle etrangere SQL recommandee : `plans_travaux_lignes.plan_id` → `plans_travaux.id` **ON DELETE CASCADE** (supprimer un plan supprime ses lignes).
 
@@ -141,9 +290,9 @@ L'endpoint `GET /api/geojson/chantiers` lit `latitude` / `longitude` lorsque ces
 
 **`plans_travaux`** (1 ligne = la fiche du plan)
 
-| id | nom | budget_enveloppe | statut | est_fige | created_at | tarif_ml |
-|----|-----|------------------|--------|----------|------------|----------|
-| 42 | Plan du 28/05/2026 14:30 | 500000 | fige | 1 | 2026-05-28T14:30:00 | 1000 |
+| id | nom | budget_enveloppe | created_at | tarif_ml |
+|----|-----|------------------|------------|----------|
+| 42 | Plan du 28/05/2026 14:30 | 500000 | 2026-05-28T14:30:00 | 1000 |
 
 **`plans_travaux_lignes`** (1 ligne = une rangée du tableau)
 
@@ -217,8 +366,6 @@ Creees par `ensure_plans_travaux_schema()` dans `script/database/build-sqlite/bu
 - `id` (PK, autoincrement)
 - `nom` (NOT NULL) — libelle affiche (ex. « Plan du 28/05/2026 14:30 »)
 - `budget_enveloppe` (REAL, default 0) — enveloppe budgétaire saisie dans la sidebar
-- `statut` (TEXT NOT NULL) — `brouillon` | `fige` | `archive`
-- `est_fige` (INTEGER, default 0) — 1 si plan en lecture seule (equivalent UI « plan fige »)
 - `created_at` (TEXT NOT NULL) — horodatage ISO 8601 de la sauvegarde
 - `updated_at` (TEXT) — derniere modification
 - `note` (TEXT) — commentaire libre (optionnel)
