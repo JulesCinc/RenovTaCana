@@ -182,7 +182,7 @@ input {
 .site-header {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 200;
     height: var(--header-h);
     background: color-mix(in oklab, var(--c-surface) 90%, transparent);
     backdrop-filter: blur(16px);

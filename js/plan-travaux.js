@@ -858,6 +858,13 @@ function buildRow(item, index, displayOrder) {
         ? `<div class="row-order">${btnUp}${btnDown}</div>`
         : '';
     const actions = `
+        <button type="button" class="row-btn row-btn--detail" data-id="${item._id}" title="Voir le détail" aria-label="Voir le détail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+        </button>
         <button type="button" class="row-btn row-btn--map" data-id="${item._id}" title="Afficher sur la mini-carte" aria-label="Afficher sur la mini-carte">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -1031,6 +1038,14 @@ function bindEvents() {
         const down = e.target.closest('.row-btn--down');
         if (down) {
             moveItem(down.dataset.id, 1);
+            return;
+        }
+        const detailBtn = e.target.closest('.row-btn--detail');
+        if (detailBtn) {
+            const item = byId(detailBtn.dataset.id);
+            if (item?.facilityid && typeof window.rtcOpenCanalisationDetailModal === "function") {
+                window.rtcOpenCanalisationDetailModal(item.facilityid, { displayId: item.facilityid });
+            }
             return;
         }
         const mapBtn = e.target.closest('.row-btn--map');

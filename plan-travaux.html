@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/detail-modal.css">
     <link rel="stylesheet" href="css/plan-travaux.css">
 </head>
 
@@ -343,6 +344,23 @@
         </div>
     </div>
 
+    <div class="detail-modal" id="canalisation-modal" aria-hidden="true">
+        <div class="detail-modal__backdrop" id="canalisation-modal-backdrop"></div>
+        <div class="detail-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="canalisation-modal-title">
+            <div class="detail-modal__header">
+                <div>
+                    <div class="detail-modal__eyebrow">Détail canalisation</div>
+                    <h3 class="detail-modal__title" id="canalisation-modal-title">—</h3>
+                    <div class="detail-modal__subtitle" id="canalisation-modal-subtitle">—</div>
+                </div>
+                <button class="detail-modal__close" id="canalisation-modal-close" aria-label="Fermer">✕</button>
+            </div>
+            <div class="detail-modal__body" id="canalisation-modal-body">
+                <div class="detail-modal__loading">Chargement…</div>
+            </div>
+        </div>
+    </div>
+
     <div class="plan-confirm plan-canal-map-modal" id="plan-canal-map-modal" aria-hidden="true">
         <div class="plan-confirm__backdrop" id="plan-canal-map-backdrop"></div>
         <div class="plan-confirm__dialog plan-confirm__dialog--map" role="dialog" aria-modal="true"
@@ -422,6 +440,7 @@
     <script src="js/theme.js"></script>
     <script src="js/plan-nav-badge.js"></script>
     <script src="js/plan-canal-map-modal.js"></script>
+    <script src="js/canalisation-detail-modal.js"></script>
     <script src="js/plan-travaux.js"></script>
 
 </body>

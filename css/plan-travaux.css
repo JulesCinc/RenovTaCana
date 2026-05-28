@@ -445,6 +445,12 @@
 }
 .row-btn svg { width: 13px; height: 13px; }
 
+.row-btn--detail:hover {
+    border-color: var(--c-cyan);
+    color: var(--c-cyan);
+    background: var(--c-cyan-dim);
+}
+
 .row-btn--map:hover {
     border-color: var(--c-cyan);
     color: var(--c-cyan);

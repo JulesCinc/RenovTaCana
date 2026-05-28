@@ -1,0 +1,182 @@
+/* Modale détail canalisation (index, plan de travaux, …) */
+.detail-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    z-index: 9600;
+}
+
+.detail-modal--open { display: block; }
+
+.detail-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 12, 22, 0.75);
+    backdrop-filter: blur(2px);
+}
+
+.detail-modal__dialog {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--header-h, 64px) + 16px);
+    transform: translateX(-50%);
+    width: min(1100px, calc(100vw - 32px));
+    max-height: calc(100vh - var(--header-h, 64px) - 32px);
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.detail-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--c-border);
+    background: var(--c-surface-2);
+}
+
+.detail-modal__eyebrow {
+    font-size: 0.66rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--c-text-dim);
+}
+
+.detail-modal__title {
+    margin: 4px 0 0;
+    font-size: 1rem;
+    color: var(--c-text);
+}
+
+.detail-modal__subtitle {
+    margin-top: 4px;
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+    font-family: var(--font-mono);
+}
+
+.detail-modal__close {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--c-border-2);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--c-text-muted);
+    cursor: pointer;
+}
+
+.detail-modal__close:hover {
+    color: var(--c-text);
+    border-color: var(--c-border-2);
+}
+
+.detail-modal__body {
+    padding: 16px;
+    overflow: visible;
+    padding-bottom: 28px;
+    display: grid;
+    gap: 14px;
+}
+
+.detail-modal__loading,
+.detail-modal__error {
+    padding: 24px 8px;
+    text-align: center;
+    font-size: 0.86rem;
+    color: var(--c-text-muted);
+}
+
+.detail-section {
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.detail-section__header {
+    padding: 10px 12px;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--c-text-muted);
+    background: var(--c-surface-2);
+    border-bottom: 1px solid var(--c-border);
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px 14px;
+    padding: 12px;
+}
+
+.detail-item { min-width: 0; }
+
+.detail-item__k {
+    font-size: 0.64rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-text-dim);
+}
+
+.detail-item__v {
+    margin-top: 2px;
+    color: var(--c-text);
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    overflow-wrap: anywhere;
+}
+
+.detail-copy-btn {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border: 1px solid var(--c-border-2);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--c-text-muted);
+    font-size: 0.68rem;
+    cursor: pointer;
+}
+
+.detail-copy-btn:hover {
+    border-color: var(--c-cyan);
+    color: var(--c-cyan);
+    background: var(--c-cyan-dim);
+}
+
+.detail-long-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.detail-long-value__summary {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.detail-modal__dialog--small {
+    width: min(520px, calc(100vw - 32px));
+}
+
+.detail-modal__segment-note {
+    margin: 0;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+    background: var(--c-surface-2);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+}
+
+body.detail-modal-open {
+    overflow: hidden;
+}
