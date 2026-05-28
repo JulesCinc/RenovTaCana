@@ -6,12 +6,6 @@
     min-height: calc(100vh - var(--header-h));
 }
 
-.header-home--active {
-    border-color: var(--c-cyan);
-    color: var(--c-cyan);
-    background: var(--c-cyan-dim);
-}
-
 .database-intro {
     background: var(--c-surface);
     border: 1px solid var(--c-border);

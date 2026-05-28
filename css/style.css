@@ -294,6 +294,12 @@ body.theme-dark .site-header__logo {
     background: var(--c-cyan-dim);
 }
 
+.header-home--active {
+    border-color: rgba(34, 197, 94, 0.45);
+    color: var(--c-success);
+    background: rgba(34, 197, 94, 0.14);
+}
+
 .header-home svg {
     width: 16px;
     height: 16px;
