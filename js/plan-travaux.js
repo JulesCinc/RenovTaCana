@@ -1403,34 +1403,61 @@ function initPlanNameModal() {
 }
 
 // ── Export CSV ────────────────────────────────────────────
+function sanitizePlanExportBasename(name) {
+    const raw = (name || savedPlanNom || PLAN_TITLE_DEFAULT).trim() || PLAN_TITLE_DEFAULT;
+    const ascii = raw.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const safe = ascii
+        .replace(/[<>:"/\\|?*]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/ /g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    return safe.slice(0, 80) || 'plan-de-travaux';
+}
+
+function formatExportTimestamp(date = new Date()) {
+    const p = n => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}_${p(date.getHours())}-${p(date.getMinutes())}-${p(date.getSeconds())}`;
+}
+
+function buildPlanExportFilename() {
+    return `${sanitizePlanExportBasename(savedPlanNom)}-${formatExportTimestamp()}.csv`;
+}
+
+function getIncludedPlanItemsInOrder() {
+    return planItems.filter(i => i.inclus);
+}
+
 function exportCSV() {
     if (!planItems.length) { showToast('Le plan est vide', 'warn'); return; }
 
-    const rows = planItems.filter(i => i.inclus);
+    const rows = getIncludedPlanItemsInOrder();
     if (!rows.length) { showToast('Aucune ligne cochée à exporter', 'warn'); return; }
 
     const sep = ';';
-    const hdr = ['ID Canalisation', 'Adresse', 'Matériau', 'Ø (mm)', 'Longueur (m)', 'Coût estimé (€)'].join(sep);
-    const body = rows.map(i => [
+    const hdr = ['Ordre', 'ID Canalisation', 'Adresse', 'Matériau', 'Ø (mm)', 'Longueur (m)', 'Coût estimé (€)'].join(sep);
+    const body = rows.map((i, index) => [
+        index + 1,
         i.facilityid,
         `"${(i.adresse || '').replace(/"/g, '""')}"`,
         i.materiau,
         i.diametre ?? '',
-        i.longueur,
+        formatLengthInputValue(i.longueur),
         Math.round(i.longueur * tarifMl),
     ].join(sep)).join('\n');
 
-    const blob = new Blob(['﻿' + hdr + '\n' + body], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['\uFEFF' + hdr + '\n' + body], { type: 'text/csv;charset=utf-8;' });
     const url  = URL.createObjectURL(blob);
     const a    = Object.assign(document.createElement('a'), {
         href: url,
-        download: `plan_travaux_${new Date().toISOString().slice(0, 10)}.csv`,
+        download: buildPlanExportFilename(),
     });
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast('Export CSV téléchargé', 'ok');
+    showToast(`Export CSV — ${rows.length} ligne${rows.length !== 1 ? 's' : ''} cochée${rows.length !== 1 ? 's' : ''}`, 'ok');
 }
 
 // ── Modal de confirmation ─────────────────────────────────
