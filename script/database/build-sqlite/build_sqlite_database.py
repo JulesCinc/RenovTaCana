@@ -7,6 +7,7 @@ Tables generees :
 - communes (noms + codes postaux depuis data/geo_localisation.sql, code INSEE via url villedereve)
 - chantiers (depuis data/chantiers.xlsx)
 - operations (depuis data/Operations.xlsx)
+- plans_travaux / plans_travaux_lignes (saisie utilisateur ; repristines depuis l'archive si rebuild)
 
 A executer depuis la racine du projet :
 python script/database/build-sqlite/build_sqlite_database.py
@@ -184,9 +185,12 @@ def extract_year(value):
 
 
 def archive_existing_db(db_path, archive_dir):
-    """Archive la base existante dans database/outdated avec timestamp de derniere modif."""
+    """Archive la base existante dans database/outdated avec timestamp de derniere modif.
+
+    Retourne le chemin de l'archive creee, ou None si aucune base a archiver.
+    """
     if not os.path.exists(db_path):
-        return
+        return None
 
     os.makedirs(archive_dir, exist_ok=True)
     mtime = datetime.fromtimestamp(os.path.getmtime(db_path)).strftime("%Y%m%d_%H%M%S")
@@ -201,6 +205,130 @@ def archive_existing_db(db_path, archive_dir):
 
     shutil.move(db_path, archived_path)
     print("Ancienne base archivee:", archived_path)
+    return archived_path
+
+
+def ensure_plans_travaux_schema(cur):
+    """Tables applicatives : plans de travaux figes (voir database/MCD.md)."""
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS plans_travaux (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nom TEXT NOT NULL,
+            budget_enveloppe REAL NOT NULL DEFAULT 0,
+            statut TEXT NOT NULL DEFAULT 'fige',
+            est_fige INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            updated_at TEXT,
+            note TEXT,
+            tarif_ml REAL NOT NULL DEFAULT 1000
+        )
+        """
+    )
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS plans_travaux_lignes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            plan_id INTEGER NOT NULL,
+            ordre INTEGER NOT NULL,
+            facilityid TEXT NOT NULL,
+            parent_facilityid TEXT,
+            segment_label TEXT,
+            adresse TEXT,
+            materiau TEXT,
+            diametre REAL,
+            longueur REAL NOT NULL,
+            criticite_snapshot REAL,
+            inclus INTEGER NOT NULL DEFAULT 1,
+            cout_estime_ml REAL,
+            FOREIGN KEY (plan_id) REFERENCES plans_travaux(id) ON DELETE CASCADE
+        )
+        """
+    )
+    cur.execute(
+        "CREATE INDEX IF NOT EXISTS idx_plan_lignes_plan_id "
+        "ON plans_travaux_lignes(plan_id, ordre)"
+    )
+    cur.execute(
+        "CREATE INDEX IF NOT EXISTS idx_plan_lignes_facilityid "
+        "ON plans_travaux_lignes(facilityid)"
+    )
+
+
+def _archived_table_exists(db_path, table_name):
+    try:
+        conn = sqlite3.connect(db_path)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name=? LIMIT 1",
+            (table_name,),
+        )
+        ok = cur.fetchone() is not None
+        conn.close()
+        return ok
+    except sqlite3.Error:
+        return False
+
+
+def restore_plans_travaux_from_archive(cur, archived_db_path):
+    """Recopie plans_travaux (+ lignes) depuis la base archivee apres un rebuild."""
+    if not archived_db_path or not _archived_table_exists(archived_db_path, "plans_travaux"):
+        return 0, 0
+
+    cur.execute("ATTACH DATABASE ? AS rtc_old", (archived_db_path,))
+    try:
+        cur.execute("SELECT COUNT(*) FROM rtc_old.plans_travaux")
+        n_plans = int(cur.fetchone()[0] or 0)
+        if n_plans == 0:
+            return 0, 0
+
+        cur.execute(
+            """
+            INSERT INTO plans_travaux (
+                id, nom, budget_enveloppe, statut, est_fige,
+                created_at, updated_at, note, tarif_ml
+            )
+            SELECT
+                id, nom, budget_enveloppe, statut, est_fige,
+                created_at, updated_at, note, tarif_ml
+            FROM rtc_old.plans_travaux
+            """
+        )
+        n_lignes = 0
+        if _archived_table_exists(archived_db_path, "plans_travaux_lignes"):
+            cur.execute(
+                """
+                INSERT INTO plans_travaux_lignes (
+                    id, plan_id, ordre, facilityid, parent_facilityid, segment_label,
+                    adresse, materiau, diametre, longueur, criticite_snapshot,
+                    inclus, cout_estime_ml
+                )
+                SELECT
+                    id, plan_id, ordre, facilityid, parent_facilityid, segment_label,
+                    adresse, materiau, diametre, longueur, criticite_snapshot,
+                    inclus, cout_estime_ml
+                FROM rtc_old.plans_travaux_lignes
+                """
+            )
+            cur.execute("SELECT COUNT(*) FROM plans_travaux_lignes")
+            n_lignes = int(cur.fetchone()[0] or 0)
+
+        # Conserver les autoincrements SQLite alignes sur les ids importes
+        cur.execute("SELECT COALESCE(MAX(id), 0) FROM plans_travaux")
+        max_plan = int(cur.fetchone()[0] or 0)
+        cur.execute(
+            "INSERT OR REPLACE INTO sqlite_sequence (name, seq) VALUES ('plans_travaux', ?)",
+            (max_plan,),
+        )
+        cur.execute("SELECT COALESCE(MAX(id), 0) FROM plans_travaux_lignes")
+        max_ligne = int(cur.fetchone()[0] or 0)
+        cur.execute(
+            "INSERT OR REPLACE INTO sqlite_sequence (name, seq) VALUES ('plans_travaux_lignes', ?)",
+            (max_ligne,),
+        )
+        return n_plans, n_lignes
+    finally:
+        cur.execute("DETACH DATABASE rtc_old")
 
 
 def _tqdm(iterable, **kwargs):
@@ -336,11 +464,12 @@ def main():
 
     print("Creation de la base SQLite:", OUT_DB)
     os.makedirs(os.path.dirname(OUT_DB), exist_ok=True)
-    archive_existing_db(OUT_DB, OUTDATED_DIR)
+    archived_db_path = archive_existing_db(OUT_DB, OUTDATED_DIR)
     lap("archivage ancienne base SQLite (si existante)")
     conn = sqlite3.connect(OUT_DB)
     # row_factory defini plus tard, avant le geocodage chantiers (sqlite3.Row)
     cur = conn.cursor()
+    cur.execute("PRAGMA foreign_keys = ON")
 
     col_defs = ", ".join(f'"{c[0]}" {c[1]}' for c in CONDUITES_COLUMNS)
     cur.execute(f'CREATE TABLE IF NOT EXISTS conduites ({col_defs})')
@@ -589,6 +718,19 @@ def main():
         print("Attention: fichier manquant", GEO_LOCALISATION_SQL, "(table communes vide)")
     lap("table communes (import SQL ou DDL vide)")
 
+    ensure_plans_travaux_schema(cur)
+    n_plans_restored, n_lignes_restored = restore_plans_travaux_from_archive(
+        cur, archived_db_path
+    )
+    if n_plans_restored:
+        print(
+            f"  plans_travaux repristines depuis archive: {n_plans_restored} plan(s), "
+            f"{n_lignes_restored} ligne(s)"
+        )
+    else:
+        print("  plans_travaux: tables creees (vide ou pas d'archive a reprendre)")
+    lap("tables applicatives plans_travaux (+ reprise archive)")
+
     conn.commit()
     lap("COMMIT SQLite")
     cur.execute("SELECT COUNT(*) FROM conduites")
@@ -601,16 +743,25 @@ def main():
     n_operations = cur.fetchone()[0]
     cur.execute("SELECT COUNT(*) FROM communes")
     n_communes = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM plans_travaux")
+    n_plans_travaux = cur.fetchone()[0]
+    cur.execute("SELECT COUNT(*) FROM plans_travaux_lignes")
+    n_plans_lignes = cur.fetchone()[0]
     conn.close()
     lap("comptages par table + fermeture connexion")
 
-    print("Tables generees: conduites, canalisations, communes, chantiers, operations.")
+    print(
+        "Tables generees: conduites, canalisations, communes, chantiers, operations, "
+        "plans_travaux, plans_travaux_lignes."
+    )
     print("Base SQLite prete pour utilisation backend / frontend.")
     print(f"  conduites: {n_conduites}")
     print(f"  canalisations: {n_canalisations}")
     print(f"  chantiers: {n_chantiers}")
     print(f"  operations: {n_operations}")
     print(f"  communes: {n_communes}")
+    print(f"  plans_travaux: {n_plans_travaux}")
+    print(f"  plans_travaux_lignes: {n_plans_lignes}")
     total = time.perf_counter() - t_build0
     print(f"[build] TOTAL (tout le script): {total:.2f}s ({total/60:.2f} min)", flush=True)
     return 0
