@@ -12,7 +12,7 @@ const COMMUNE_LABELS = new Map();
 const selectedPlanRows = new Map();
 
 /** Cache localStorage plan de travaux (affichage immédiat même « périmé », refresh réseau en arrière-plan). */
-const DASH_CACHE_VER = 6;
+const DASH_CACHE_VER = 7;
 const DASH_CACHE_PREFIX = `rtc_dash_v${DASH_CACHE_VER}_`;
 
 let planTableOffset = 0;
@@ -37,7 +37,7 @@ function readDashPlanPayload(cacheKey) {
         if (!raw) return null;
         const o = JSON.parse(raw);
         const p = o?.payload;
-        if (!p || typeof p !== "object" || !Array.isArray(p.rues)) return null;
+        if (!p || typeof p !== "object" || !Array.isArray(p.canalisations)) return null;
         return p;
     } catch (_) {
         return null;
@@ -283,7 +283,7 @@ async function refreshPlanTravauxInBackground(cacheKey, qs, offset) {
         if (buildPlanTravauxQueryString(planCommune, offset) !== qs) return;
         applyPlanPayloadMeta(json);
         writeDashCache(cacheKey, { qs, payload: json });
-        planData = json.rues || [];
+        planData = json.canalisations || [];
         await hydrateCommuneLabels(planData.map(r => r.commune));
         planTableOffset = offset;
         renderPlanTable(planData, offset);
@@ -300,7 +300,7 @@ async function loadPlanTravaux(commune, offset = 0) {
 
     if (isPlanCacheUsable(cachedPayload)) {
         applyPlanPayloadMeta(cachedPayload);
-        planData = cachedPayload.rues || [];
+        planData = cachedPayload.canalisations || [];
         planTableOffset = offset;
         renderPlanTable(planData, offset);
         await hydrateCommuneLabels(planData.map(r => r.commune));
@@ -309,7 +309,7 @@ async function loadPlanTravaux(commune, offset = 0) {
         return;
     }
 
-    tbody.innerHTML = `<tr class="row-loading"><td colspan="11">Chargement…</td></tr>`;
+    tbody.innerHTML = `<tr class="row-loading"><td colspan="9">Chargement…</td></tr>`;
 
     try {
         const res = await fetch(`${API}/api/plan-travaux?${qs}`);
@@ -317,14 +317,14 @@ async function loadPlanTravaux(commune, offset = 0) {
         const json = await res.json();
         applyPlanPayloadMeta(json);
         writeDashCache(cacheKey, { qs, payload: json });
-        planData = json.rues || [];
+        planData = json.canalisations || [];
         planTableOffset = offset;
         renderPlanTable(planData, offset);
         await hydrateCommuneLabels(planData.map(r => r.commune));
         renderPlanTable(planData, offset);
     } catch (e) {
         togglePlanScoresMissing(false);
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="11">Erreur chargement</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="9">Erreur chargement</td></tr>`;
     }
 }
 
@@ -339,15 +339,17 @@ function renderPlanTable(data, offset = 0) {
     togglePlanScoresMissing(false);
 
     if (!data.length) {
-        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="11">Aucune donnée</td></tr>`;
+        tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="9">Aucune donnée</td></tr>`;
         return;
     }
     tbody.innerHTML = data.map((r, i) => {
         const rang = offset + i + 1;
-        const scoreVal = r.score_max ?? r.avg_score ?? 0;
+        const scoreVal = r.score_priorite ?? r.score_max ?? r.avg_score ?? 0;
         const scorePct = Math.min(Number(scoreVal) || 0, 100);
-        const critCls = r.crit_moy >= 70 ? "table-pill--danger" : r.crit_moy >= 40 ? "table-pill--warning" : "table-pill--success";
-        const mats = (r.materiaux || "").split(",").slice(0, 2).join(", ");
+        const crit = Number(r.criticite ?? r.crit_moy ?? 0);
+        const critCls = crit >= 70 ? "table-pill--danger" : crit >= 40 ? "table-pill--warning" : "table-pill--success";
+        const fuites = Number(r.nb_fuites ?? r.total_fuites ?? 0);
+        const longueur = r.longueur != null ? Number(r.longueur).toFixed(1) : "—";
         const communeCode = normalizeCommuneCode(r.commune);
         const communeLabel = COMMUNE_LABELS.get(communeCode) || communeCode || "—";
         const key = planRowKey(r);
@@ -355,24 +357,22 @@ function renderPlanTable(data, offset = 0) {
         return `<tr>
             <td style="text-align:center;width:64px">
                 <input type="checkbox" class="plan-row-check" data-plan-key="${escapeAttr(key)}" ${checked}
-                    aria-label="Selectionner ${escapeAttr(r.adresse || "cette ligne")}">
+                    aria-label="Selectionner ${escapeAttr(r.facilityid || r.adresse || "cette canalisation")}">
             </td>
             <td style="color:var(--c-text-dim);font-weight:600;width:50px">#${rang}</td>
-            <td style="color:var(--c-text);width:180px">${r.adresse}</td>
+            <td style="color:var(--c-text);width:180px">${escapeAttr(r.adresse || "—")}</td>
             <td style="color:var(--c-text-muted);width:130px">${communeLabel}</td>
-            <td style="text-align:center;width:80px">${r.nb_canalisations}</td>
             <td style="width:120px">
                 <div class="score-pill">
                     <div class="score-bar"><div class="score-bar__fill" style="width:${scorePct}%"></div></div>
                     <span style="font-size:0.8rem;color:var(--c-text)">${scoreVal}</span>
                 </div>
             </td>
-            <td style="width:90px"><span class="table-pill ${critCls}">${r.crit_moy}%</span></td>
-            <td style="text-align:center;width:60px;color:${r.total_fuites > 5 ? 'var(--c-danger)' : 'var(--c-text-muted)'}">${r.total_fuites}</td>
-            <td style="color:var(--c-text-muted);width:80px">${r.longueur_tot} m</td>
-            <td style="font-size:0.72rem;color:var(--c-text-dim);width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${mats}</td>
+            <td style="width:90px"><span class="table-pill ${critCls}">${crit}%</span></td>
+            <td style="text-align:center;width:60px;color:${fuites > 5 ? "var(--c-danger)" : "var(--c-text-muted)"}">${fuites}</td>
+            <td style="color:var(--c-text-muted);width:80px">${longueur} m</td>
             <td style="width:70px">
-                <a class="btn-view" href="index.html?adresse=${encodeURIComponent(r.adresse)}">Voir →</a>
+                <a class="btn-view" href="index.html?adresse=${encodeURIComponent(r.adresse || "")}">Voir →</a>
             </td>
         </tr>`;
     }).join("");
@@ -381,7 +381,7 @@ function renderPlanTable(data, offset = 0) {
 }
 
 function planRowKey(row) {
-    return `${row.adresse || ""}||${normalizeCommuneCode(row.commune)}`;
+    return String(row.facilityid || row.id || "").trim();
 }
 
 function bindPlanSelectionRows(data) {
@@ -434,28 +434,6 @@ function toWorkPlanItem(row) {
     };
 }
 
-async function fetchCanalisationsForPlanRow(row) {
-    const params = new URLSearchParams({
-        adresse: row.adresse || "",
-        sort_col: "score_priorite",
-        sort_dir: "desc",
-        limit: String(Math.max(Number(row.nb_canalisations) || 100, 100)),
-        offset: "0",
-    });
-    const commune = normalizeCommuneCode(row.commune);
-    if (commune) params.set("commune", commune);
-
-    const res = await fetch(`${API}/api/canalisations?${params}`);
-    if (!res.ok) throw new Error(String(res.status));
-    const json = await res.json();
-    const rows = json.canalisations || [];
-    return rows.filter(c => {
-        const sameAdresse = String(c.adresse || "") === String(row.adresse || "");
-        const sameCommune = !commune || normalizeCommuneCode(c.commune) === commune;
-        return sameAdresse && sameCommune;
-    });
-}
-
 async function validateSelectedWorkPlan() {
     if (!selectedPlanRows.size) return;
     const btn = document.getElementById("validate-work-plan");
@@ -467,12 +445,11 @@ async function validateSelectedWorkPlan() {
 
     try {
         const selectedRows = [...selectedPlanRows.values()];
-        const batches = await Promise.all(selectedRows.map(fetchCanalisationsForPlanRow));
         const current = readWorkPlanItems();
         const knownIds = new Set(current.map(item => item.facilityid));
         const additions = [];
 
-        batches.flat().forEach(row => {
+        selectedRows.forEach(row => {
             const id = row.facilityid || row.id;
             if (!id || knownIds.has(id)) return;
             knownIds.add(id);
@@ -608,13 +585,19 @@ async function exportPlanCSV() {
         if (planCommune) params.append("commune", planCommune);
         const res  = await fetch(`${API}/api/plan-travaux?${params}`);
         const json = await res.json();
-        const data = json.rues || [];
+        const data = json.canalisations || [];
 
-        const headers = ["Rang","Adresse","Commune","Nb canalisations","Score priorité",
-                         "Criticité moy. (%)","Fuites totales","Longueur (m)","Matériaux"];
+        const headers = ["Rang","Facility ID","Adresse","Commune","Score priorité",
+                         "Criticité (%)","Nb fuites","Longueur (m)"];
         const rows = data.map((r, i) => [
-            i+1, r.adresse, (COMMUNE_LABELS.get(normalizeCommuneCode(r.commune)) || normalizeCommuneCode(r.commune) || ""), r.nb_canalisations,
-            r.score_max ?? r.avg_score, r.crit_moy, r.total_fuites, r.longueur_tot, r.materiaux
+            i + 1,
+            r.facilityid || "",
+            r.adresse,
+            COMMUNE_LABELS.get(normalizeCommuneCode(r.commune)) || normalizeCommuneCode(r.commune) || "",
+            r.score_priorite ?? r.score_max ?? r.avg_score,
+            r.criticite ?? r.crit_moy,
+            r.nb_fuites ?? r.total_fuites,
+            r.longueur ?? r.longueur_tot,
         ]);
         const csv  = [headers, ...rows].map(r => r.map(v => `"${v ?? ""}"`).join(",")).join("\n");
         const blob = new Blob(["\uFEFF"+csv], { type: "text/csv;charset=utf-8;" });

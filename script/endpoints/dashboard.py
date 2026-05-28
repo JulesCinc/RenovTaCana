@@ -161,7 +161,7 @@ def get_plan_travaux(
     limit: int = Query(default=50),
     offset: int = Query(default=0),
 ):
-    """Priorités par rue à partir de score_priorite persisté en base."""
+    """Priorités par canalisation (score_priorite persisté en base)."""
     conn = get_db()
     cur = conn.cursor()
 
@@ -180,32 +180,19 @@ def get_plan_travaux(
     priority_scores_computed = (cur.fetchone()[0] or 0) > 0
 
     cur.execute(
-        f"""
-        SELECT COUNT(DISTINCT adresse || commune)
-        FROM (
-            SELECT adresse, commune
-            FROM canalisations
-            WHERE {where}
-        )
-        """,
+        f"SELECT COUNT(*) FROM canalisations WHERE {where}",
         params,
     )
     total = cur.fetchone()[0]
 
     cur.execute(
         f"""
-        SELECT adresse, commune,
-               COUNT(*) as nb_canalisations,
-               ROUND(AVG(criticite), 1) as crit_moy,
-               ROUND(AVG(score_priorite), 2) as score_max,
-               CAST(SUM(nb_fuites) AS INTEGER) as total_fuites,
-               ROUND(SUM(longueur), 0) as longueur_tot,
-               GROUP_CONCAT(DISTINCT materiau) as materiaux,
-               MIN(annee_pose) as plus_ancienne
+        SELECT facilityid, adresse, commune, materiau, diametre, longueur,
+               nb_fuites, ROUND(criticite, 1) as criticite,
+               ROUND(score_priorite, 2) as score_priorite
         FROM canalisations
         WHERE {where}
-        GROUP BY adresse, commune
-        ORDER BY score_max DESC
+        ORDER BY score_priorite DESC
         LIMIT ? OFFSET ?
         """,
         params + [limit, offset],
@@ -218,6 +205,6 @@ def get_plan_travaux(
         "total": total,
         "offset": offset,
         "limit": limit,
-        "rues": rows,
+        "canalisations": rows,
         "priority_scores_computed": priority_scores_computed,
     }
