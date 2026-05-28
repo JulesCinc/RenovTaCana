@@ -33,6 +33,33 @@
                     <line x1="16" y1="6" x2="16" y2="22" />
                 </svg>
             </a>
+            <a href="dashboard.html" class="header-home header-home--active" title="Dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+            </a>
+            <a href="plan-travaux.html" class="header-home header-home--plan" title="Plan de travaux">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="4" y="3" width="16" height="18" rx="2" />
+                    <line x1="8" y1="8" x2="16" y2="8" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <line x1="8" y1="16" x2="12" y2="16" />
+                </svg>
+                <span class="header-home__badge" id="plan-nav-count"></span>
+            </a>
+            <a href="database.html" class="header-home" title="Base de donnees">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+                    <path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path>
+                    <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path>
+                </svg>
+            </a>
         </div>
         <div class="site-header__right">
             <div class="header-badge"><span class="header-badge__dot"></span>Tableau de bord</div>
@@ -54,17 +81,6 @@
                 <div class="kpi-card__body">
                     <div class="kpi-card__value" id="kpi-total">—</div>
                     <div class="kpi-card__label">Canalisations</div>
-                </div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-card__icon kpi-card__icon--blue">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                    </svg>
-                </div>
-                <div class="kpi-card__body">
-                    <div class="kpi-card__value" id="kpi-km">—</div>
-                    <div class="kpi-card__label">km de réseau</div>
                 </div>
             </div>
             <div class="kpi-card kpi-card--danger">
@@ -105,16 +121,106 @@
                     <div class="kpi-card__label">Chantiers suivis</div>
                 </div>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-card__icon kpi-card__icon--green">
+            <div class="kpi-card kpi-card--warning">
+                <div class="kpi-card__icon kpi-card__icon--orange">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12" />
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                        <line x1="12" y1="14" x2="12" y2="21" />
                     </svg>
                 </div>
                 <div class="kpi-card__body">
-                    <div class="kpi-card__value" id="kpi-fuites">—</div>
-                    <div class="kpi-card__label">Fuites recensées</div>
+                    <div class="kpi-card__value" id="kpi-chantiers-missing">—</div>
+                    <div class="kpi-card__label">Chantiers · adresse manquante</div>
                 </div>
+            </div>
+            <div class="kpi-card kpi-card--warning">
+                <div class="kpi-card__icon kpi-card__icon--orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                        <line x1="12" y1="14" x2="12" y2="21" />
+                    </svg>
+                </div>
+                <div class="kpi-card__body">
+                    <div class="kpi-card__value" id="kpi-operations-missing">—</div>
+                    <div class="kpi-card__label">Opérations · adresse manquante</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Plan de travaux ───────────────────────────── -->
+        <section class="dash-card dash-card--full">
+            <div class="dash-card__header dash-card__header--plan">
+                <span class="plan-header-title">Top priorités par canalisation</span>
+                <div class="plan-filters">
+                    <form class="search-bar search-bar--address plan-search-bar" id="plan-search-form">
+                        <button type="submit" class="search-bar__icon-button" aria-label="Rechercher">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                        </button>
+                        <input type="text" name="adresse" class="search-bar__input" id="plan-search-input"
+                            placeholder="Rechercher une adresse" autocomplete="off">
+                        <button type="button"
+                            class="search-bar__icon-button search-bar__icon-button--small search-bar__clear-button"
+                            aria-label="Effacer la recherche">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </form>
+                    <select class="filter-select filter-select--sm" id="plan-commune">
+                        <option value="">Toutes communes</option>
+                    </select>
+                    <button type="button" class="plan-select-all-btn" id="plan-select-all" disabled
+                        title="Sélectionne ou désélectionne les 20 canalisations de la page affichée">
+                        Tout sélectionner
+                    </button>
+                    <button class="header-export" id="export-plan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Export CSV
+                    </button>
+                </div>
+            </div>
+            <div class="dash-card__body dash-card__body--notop">
+                <div class="plan-scores-missing" id="plan-scores-missing" hidden>
+                    <p class="plan-scores-missing__text">
+                        Le calcul du score de priorité n'a pas encore été lancé.
+                        Lancez-le au moins une fois pour afficher les priorités par canalisation.
+                    </p>
+                    <a href="database.html" class="plan-scores-missing__btn">
+                        Calculer le score de priorité
+                    </a>
+                </div>
+                <div class="table-scroll" id="plan-table-wrap">
+                    <table class="address-table" id="plan-table" aria-busy="false">
+                        <thead>
+                            <tr>
+                                <th class="plan-col-rang">Rang</th>
+                                <th class="plan-col-adresse">Adresse</th>
+                                <th class="plan-col-commune">Commune</th>
+                                <th class="plan-col-score">Score priorité</th>
+                                <th class="plan-col-crit">Criticité</th>
+                                <th class="plan-col-fuites">Fuites</th>
+                                <th class="plan-col-longueur">Longueur</th>
+                                <th class="plan-col-action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plan-body"></tbody>
+                    </table>
+                </div>
+                <nav class="plan-pagination pagination" id="plan-pagination"
+                    aria-label="Pagination des priorités par canalisation" hidden></nav>
             </div>
         </section>
 
@@ -191,52 +297,15 @@
 
         </section>
 
-        <!-- ── Plan de travaux ───────────────────────────── -->
-        <section class="dash-card dash-card--full">
-            <div class="dash-card__header">
-                <span>Plan de travaux — Top priorités par rue</span>
-                <div class="plan-filters">
-                    <select class="filter-select filter-select--sm" id="plan-commune">
-                        <option value="">Toutes communes</option>
-                    </select>
-                    <button class="header-export" id="export-plan">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
-                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                        Export CSV
-                    </button>
-                </div>
-            </div>
-            <div class="dash-card__body dash-card__body--notop">
-                <div class="table-scroll">
-                    <table class="address-table" id="plan-table">
-                        <thead>
-                            <tr>
-                                <th>Rang</th>
-                                <th>Adresse</th>
-                                <th>Commune</th>
-                                <th>Canalisations</th>
-                                <th>Score priorité</th>
-                                <th>Criticité moy.</th>
-                                <th>Fuites</th>
-                                <th>Longueur</th>
-                                <th>Matériaux</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="plan-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
     </main>
+
+    <button class="validate-work-plan" id="validate-work-plan" type="button">
+        Sélectionner pour le plan de travaux
+    </button>
 
     <script src="js/config.js"></script>
     <script src="js/theme.js"></script>
+    <script src="js/plan-nav-badge.js"></script>
     <script src="js/search.js"></script>
     <script src="js/dashboard.js"></script>
 </body>

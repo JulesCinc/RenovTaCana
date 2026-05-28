@@ -139,133 +139,14 @@ let totalResults = 0;
 let sortCol      = "criticite";
 let sortDir      = "desc";
 let currentAdresse = "";
-const COPY_PAYLOADS = new Map();
-let copyPayloadSeq = 0;
-
-const DETAIL_LABELS = {
-    facilityid: "ID canalisation",
-    adresse: "Adresse",
-    commune: "Commune",
-    commune_insee: "Code INSEE commune",
-    materiau: "Matériau",
-    diametre: "Diamètre (mm)",
-    longueur: "Longueur (m)",
-    annee_pose: "Année de pose",
-    nb_fuites: "Nombre de fuites",
-    vetuste: "Vétusté",
-    categorie: "Catégorie",
-    anciennete: "Ancienneté",
-    densite: "Densité",
-    criticite: "Criticité (%)",
-    score_priorite: "Score de priorité",
-
-    FACILITYID: "ID canalisation (source)",
-    abandoned: "Abandonnée",
-    COMMUNE: "Commune (source)",
-    INSEE: "Code INSEE (source)",
-    UDI: "UDI",
-    NUM_OP: "N° opération",
-    OBJECTID: "Identifiant objet",
-    DIAMETER: "Diamètre source (mm)",
-    DIAMEXT: "Diamètre externe",
-    PRECISIOND: "Précision diamètre",
-    MATERIAL: "Matériau source",
-    PRECISIONM: "Précision matériau",
-    INSTALLDAT: "Date de pose source",
-    WATERTYPE: "Type d'eau",
-    DOMAINE: "Domaine",
-    FONCTION: "Fonction",
-    ADRESSE: "Adresse source",
-    EMPLACEMEN: "Emplacement",
-    TXcasse: "Risque de casse (texte)",
-    Prediction: "Prédiction (identifiant modèle)",
-    Predicti_1: "Prédiction normalisée",
-    lat: "Latitude (source)",
-    lon: "Longitude (source)",
-    geometry: "Géométrie (WKT)",
-    PRECISIONI: "Précision date de pose",
-    PERIODE_PO: "Période de pose",
-    SENSIBILIT: "Sensibilité",
-    PRESSION: "Pression",
-    OSSATURE: "Ossature du réseau",
-    CONTRAT: "Contrat",
-    COTE_TN: "Cote terrain naturel",
-    PROFONDEUR: "Profondeur",
-    JOINT: "Type de joint",
-    LITDEPOSE: "Lit de pose",
-    TYPE_SOL: "Type de sol",
-    ETAT_SOL: "État du sol",
-    TRAFIC: "Trafic",
-    ENVIR_ELEC: "Environnement électrique",
-    NB_BRANCHE: "Nombre de branchements",
-    FABRICANT: "Fabricant",
-    TECHNIQUE_: "Technique",
-    PROTECT_IN: "Protection interne",
-    PROTECT_EX: "Protection externe",
-    PROTECT_CA: "Protection cathodique",
-    DEPOT: "Dépôt / dépose",
-    CORROSION: "Corrosion",
-    VALEUR_NEU: "Valeur à neuf",
-    TRANSMISS: "Transmissibilité",
-    LASTUPDATE: "Dernière mise à jour",
-    LASTEDITOR: "Dernier éditeur",
-    ENABLED: "Actif (enabled)",
-    ACTIVEFLAG: "Drapeau actif",
-    OWNEDBY: "Propriétaire",
-    MAINTBY: "Mainteneur",
-    LONGSYS: "Longueur système",
-    COMMENTA: "Commentaire",
-    MAJ: "Date MAJ",
-    ETAGPRESSI: "Étage de pression",
-    IDADRESS: "ID adresse",
-    SECTORISAT: "Sectorisation",
-    PRECISLOCA: "Précision localisation",
-    CLASSE_DIC: "Classe DIC",
-    NOMCANAUX: "Nom du canal",
-    SAISIE: "Saisie",
-    SYMBOLOGIE: "Symbologie",
-    TYPE_POSE: "Type de pose",
-    DN: "Diamètre nominal (DN)",
-    PROTECATHO: "Protection cathodique",
-    REGULATEUR: "Régulateur",
-    AGENCE: "Agence",
-    COMMENTA_D: "Commentaire détaillé",
-    PROSP_RENO: "Prospective rénovation",
-    MAJREFGEOM: "MAJ référence géométrie",
-    DATEMAJGEO: "Date MAJ géométrie",
-    CONVENTION: "Convention",
-    DATEMAJH: "Date MAJ historique",
-    SHAPE_Leng: "Longueur shape",
-    dense: "Niveau de densité",
-    ValoPat: "Valeur patrimoniale",
-    Vetuste: "Vétusté (source)",
-    nbFuites: "Nombre de fuites (source)",
-    nbAbo: "Nombre d'abonnés",
-    sumConso: "Consommation cumulée",
-    PRESSIONAV: "Pression moyenne",
-    DEM_EAU_LS: "Demande d'eau (L/s)",
-    CATEGORIE_: "Catégorie (source)",
-    Traffic: "Trafic (source)",
-    PrioMerlin: "Priorité Merlin",
-    Altimetrie: "Altimétrie",
-    ABANDATE: "Date d'abandon",
-    HS_CAUSE: "Cause hors service",
-    CAUSECOM: "Commentaire cause",
-    FACILITYKE: "Clé facility",
-    LINETYPE: "Type de ligne",
-};
-
-const BOOLEAN_KEYS = new Set([
-    "abandoned",
-    "ENABLED",
-    "ACTIVEFLAG",
-    "PROSP_RENO",
-]);
+let currentAdresseQuery = "";
+const ADRESSE_EDIT_STATE = { kind: "", ref: "", id: "", rowEl: null, cellEl: null, prevCellHtml: "" };
 
 // ── Init ──────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async function () {
     const params   = new URLSearchParams(window.location.search);
     currentAdresse = params.get("adresse") || "";
+    currentAdresseQuery = normalizeAdresseForApi(currentAdresse);
     const zoneMode = params.get("zone") === "1";
 
     if (zoneMode) {
@@ -293,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         await loadFiltres();
         await fetchPage(1);
-        await fetchStatsAdresse(currentAdresse);
+        await fetchStatsAdresse(currentAdresseQuery);
         await fetchChantiers(currentAdresse);
         await fetchOperations(currentAdresse);
     }
@@ -324,15 +205,51 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.querySelectorAll(".tab-btn")
         .forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
 
+    // Filtres chantiers
+    let chantierDebounce;
+    on("filter-chantiers-missing", "change", () => fetchChantiers(currentAdresse));
+    on("filter-chantiers-commune", "input", () => {
+        clearTimeout(chantierDebounce);
+        chantierDebounce = setTimeout(() => fetchChantiers(currentAdresse), 300);
+    });
+    on("filter-chantiers-search", "input", () => {
+        clearTimeout(chantierDebounce);
+        chantierDebounce = setTimeout(() => fetchChantiers(currentAdresse), 300);
+    });
+
+    // Filtres operations
+    let opsDebounce;
+    on("filter-operations-missing", "change", () => fetchOperations(currentAdresse));
+    on("filter-operations-commune", "input", () => {
+        clearTimeout(opsDebounce);
+        opsDebounce = setTimeout(() => fetchOperations(currentAdresse), 300);
+    });
+    on("filter-operations-search", "input", () => {
+        clearTimeout(opsDebounce);
+        opsDebounce = setTimeout(() => fetchOperations(currentAdresse), 300);
+    });
+
     // Export CSV
     on("btn-export", "click", exportCSV);
     initDetailModal();
+    initAdresseModal();
 
     // Formulaire recherche
     document.getElementById("search-form")?.addEventListener("submit", e => {
         e.preventDefault();
         const v = e.target.querySelector(".search-bar__input").value.trim();
         if (v) window.location.href = `index.html?adresse=${encodeURIComponent(v)}`;
+    });
+
+    // Clic sur une canalisation de la mini-heatmap: recharge la page de resultats sans full reload.
+    window.addEventListener("rtc:mini-map-address-select", async (e) => {
+        const adresse = e?.detail?.adresse ? String(e.detail.adresse).trim() : "";
+        if (!adresse) return;
+        if (adresse === currentAdresse) {
+            await updateSidebarStatsForAdresse(adresse);
+            return;
+        }
+        await applySelectedAddress(adresse);
     });
 
     markSortHeader("criticite", "desc");
@@ -360,7 +277,7 @@ function buildQueryParams(page) {
         sort_dir: sortDir,
     });
 
-    if (currentAdresse) p.append("adresse",   currentAdresse);
+    if (currentAdresseQuery) p.append("adresse", currentAdresseQuery);
     if (commune)        p.append("commune",   commune);
     if (mat)            p.append("materiau",  mat);
     if (statut)         p.append("statut",    statut);
@@ -370,6 +287,39 @@ function buildQueryParams(page) {
     if (onlyPrioriteNull) p.append("only_unknown_priorite", "true");
 
     return p.toString();
+}
+
+function normalizeAdresseForApi(adresse) {
+    const raw = String(adresse || "").trim();
+    if (!raw) return "";
+    const beforeComma = raw.split(",")[0].trim();
+    return beforeComma || raw;
+}
+
+async function applySelectedAddress(adresse) {
+    currentAdresse = adresse;
+    currentAdresseQuery = normalizeAdresseForApi(adresse);
+
+    const url = new URL(window.location.href);
+    url.searchParams.set("adresse", adresse);
+    url.searchParams.delete("zone");
+    window.history.replaceState({}, "", url.toString());
+
+    document.title = `RenovTaCana — ${currentAdresse}`;
+    setEl("adresse-titre", currentAdresse);
+    setEl("side-adresse", currentAdresse);
+    document.querySelectorAll(".search-bar__input").forEach(i => { i.value = currentAdresse; });
+
+    // Evite les incoherences de cache/memoire entre deux adresses.
+    CANAL_PAGE_MEMORY.clear();
+    lastCanalListSessionKey = "";
+    canalPrefetchGen++;
+
+    switchTab("canalisations");
+    await fetchPage(1);
+    await fetchStatsAdresse(currentAdresseQuery);
+    await fetchChantiers(currentAdresse);
+    await fetchOperations(currentAdresse);
 }
 
 // ── Fetch une page ────────────────────────────────────────
@@ -486,8 +436,8 @@ function renderTable(data) {
             <td>${row.longueur != null ? row.longueur.toFixed(1) + " m" : "—"}</td>
             <td>${row.annee_pose || "—"}</td>
             <td>${row.nb_fuites != null ? row.nb_fuites : "—"}</td>
-            <td>${row.criticite != null ? critBar(row.criticite) : unknownValueIcon("Criticité inconnue")}</td>
-            <td>${row.score_priorite != null ? row.score_priorite : unknownValueIcon("Score de priorité inconnu")}</td>
+            <td>${criticitePill(row.criticite)}</td>
+            <td>${priorityScoreBar(row.score_priorite)}</td>
             <td><div class="row-actions">
                 <button class="row-action-btn" type="button" title="Voir le détail" data-action="view" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Voir le détail">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -495,9 +445,11 @@ function renderTable(data) {
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-                <button class="row-action-btn row-action-btn--locate" type="button" title="Localiser sur la mini-carte" data-action="locate" data-facilityid="${escapeHtml(row.facilityid || "")}" aria-label="Localiser sur la mini-carte">
+                <button class="row-action-btn row-action-btn--map" type="button" title="Localiser sur la mini-carte" data-action="locate" data-facilityid="${escapeHtml(row.facilityid || "")}" data-adresse="${escapeHtml(row.adresse || "")}" aria-label="Localiser sur la mini-carte">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                        <line x1="8" y1="2" x2="8" y2="18"/>
+                        <line x1="16" y1="6" x2="16" y2="22"/>
                     </svg>
                 </button>
             </div></td>
@@ -674,6 +626,13 @@ async function loadFiltres() {
     }
 }
 
+async function updateSidebarStatsForAdresse(adresse) {
+    const trimmed = String(adresse || "").trim();
+    if (!trimmed) return;
+    setEl("side-adresse", trimmed);
+    await fetchStatsAdresse(normalizeAdresseForApi(trimmed));
+}
+
 // ── Stats adresse ─────────────────────────────────────────
 function applyStatsAdressePayload(data) {
     setEl("side-total", data.nb_canalisations || "—");
@@ -714,9 +673,13 @@ const PAGE_SIZE_CHANTIERS = 100;
 let chantierPage  = 1;
 let chantierTotal = 0;
 let chantierCommune = "";
+let chantierSearch = "";
+let chantierOnlyMissing = false;
 
 async function fetchChantiers(adresse) {
-    chantierCommune = adresse.split(',').pop().trim();
+    chantierCommune = val("filter-chantiers-commune") || adresse.split(',').pop().trim();
+    chantierSearch = val("filter-chantiers-search");
+    chantierOnlyMissing = !!document.getElementById("filter-chantiers-missing")?.checked;
     await fetchChantierPage(1);
 }
 
@@ -727,22 +690,62 @@ async function fetchChantierPage(page) {
     tbody.innerHTML = `<tr class="row-loading"><td colspan="6">Chargement…</td></tr>`;
     try {
         const offset = (page - 1) * PAGE_SIZE_CHANTIERS;
-        const url = `${API}/api/chantiers?commune=${encodeURIComponent(chantierCommune)}&limit=${PAGE_SIZE_CHANTIERS}&offset=${offset}`;
+        const p = new URLSearchParams({
+            commune: chantierCommune,
+            search: chantierSearch,
+            only_missing_adresse: chantierOnlyMissing ? "true" : "false",
+            limit: String(PAGE_SIZE_CHANTIERS),
+            offset: String(offset),
+        });
+        const url = `${API}/api/chantiers?${p.toString()}`;
         const res  = await fetch(url);
         const json = await res.json();
         chantierTotal = json.total || 0;
         renderChantiers(json.chantiers || []);
         setEl("chantiers-count", chantierTotal.toLocaleString("fr-FR"));
+        setEl("chantiers-missing-count", `⚠ ${Number(json.missing_count || 0).toLocaleString("fr-FR")} adresse(s) manquante(s)`);
         renderTabPagination("chantiers-pagination", chantierPage, chantierTotal, PAGE_SIZE_CHANTIERS, fetchChantierPage);
     } catch(e) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="6">Données non disponibles</td></tr>`;
     }
 }
 
-function formatChantierAdresseCell(adresse) {
+function formatChantierAdresseCell(adresse, numOp = "") {
     const s = adresse == null ? "" : String(adresse).trim();
     if (s) return escapeHtml(s);
-    return `<span class="cell-adresse-empty" title="Adresse non renseignée" aria-label="Adresse non renseignée"><i class="fa-solid fa-minus" aria-hidden="true"></i></span>`;
+    return buildAdresseMissingCell("chantier", numOp, numOp);
+}
+
+function chantierHasMissingAdresse(adresse) {
+    return !(adresse != null && String(adresse).trim());
+}
+
+function operationHasMissingLocalisation(localisation) {
+    return !(localisation != null && String(localisation).trim());
+}
+
+function buildAdresseMissingCell(kind, id = "", ref = "") {
+    const safeKind = escapeHtml(kind);
+    const safeId = escapeHtml(id);
+    const safeRef = escapeHtml(ref);
+    return `
+        <div class="cell-adresse-missing-wrap">
+            <button
+                class="cell-adresse-complete-btn"
+                type="button"
+                data-action="complete-address"
+                data-kind="${safeKind}"
+                data-id="${safeId}"
+                data-ref="${safeRef}"
+            >Completer l'adresse</button>
+        </div>
+    `;
+}
+
+function formatOperationAdresseCell(localisation, idProjet = "", ref = "") {
+    const s = localisation == null ? "" : String(localisation).trim();
+    if (s) return escapeHtml(s);
+    return buildAdresseMissingCell("operation", idProjet, ref);
 }
 
 function renderChantiers(data) {
@@ -752,11 +755,11 @@ function renderChantiers(data) {
         return;
     }
     tbody.innerHTML = data.map(row => `
-        <tr>
+        <tr class="${chantierHasMissingAdresse(row.adresse) ? "chantier-row--missing-address" : ""}">
             <td class="cell-id">${row.num_op}</td>
             <td>${row.libelle || "—"}</td>
             <td>${row.commune}</td>
-            <td class="cell-adresse">${formatChantierAdresseCell(row.adresse)}</td>
+            <td class="cell-adresse">${formatChantierAdresseCell(row.adresse, row.num_op || "")}</td>
             <td><span class="table-pill ${etatClass(row.etat)}">${row.etat}</span></td>
             <td>${row.date_debut} → ${row.date_fin}</td>
         </tr>
@@ -768,9 +771,13 @@ const PAGE_SIZE_OPS = 100;
 let opsPage    = 1;
 let opsTotal   = 0;
 let opsCommune = "";
+let opsSearch = "";
+let opsOnlyMissing = false;
 
 async function fetchOperations(adresse) {
-    opsCommune = adresse.split(',').pop().trim();
+    opsCommune = val("filter-operations-commune") || adresse.split(',').pop().trim();
+    opsSearch = val("filter-operations-search");
+    opsOnlyMissing = !!document.getElementById("filter-operations-missing")?.checked;
     await fetchOpsPage(1);
 }
 
@@ -781,12 +788,20 @@ async function fetchOpsPage(page) {
     tbody.innerHTML = `<tr class="row-loading"><td colspan="5">Chargement…</td></tr>`;
     try {
         const offset = (page - 1) * PAGE_SIZE_OPS;
-        const url = `${API}/api/operations?commune=${encodeURIComponent(opsCommune)}&limit=${PAGE_SIZE_OPS}&offset=${offset}`;
+        const p = new URLSearchParams({
+            commune: opsCommune,
+            search: opsSearch,
+            only_missing_adresse: opsOnlyMissing ? "true" : "false",
+            limit: String(PAGE_SIZE_OPS),
+            offset: String(offset),
+        });
+        const url = `${API}/api/operations?${p.toString()}`;
         const res  = await fetch(url);
         const json = await res.json();
         opsTotal = json.total || 0;
         renderOperations(json.operations || []);
         setEl("operations-count", opsTotal.toLocaleString("fr-FR"));
+        setEl("operations-missing-count", `⚠ ${Number(json.missing_count || 0).toLocaleString("fr-FR")} adresse(s) manquante(s)`);
         renderTabPagination("operations-pagination", opsPage, opsTotal, PAGE_SIZE_OPS, fetchOpsPage);
     } catch(e) {
         tbody.innerHTML = `<tr class="row-empty-msg"><td colspan="5">Données non disponibles</td></tr>`;
@@ -800,10 +815,10 @@ function renderOperations(data) {
         return;
     }
     tbody.innerHTML = data.map(row => `
-        <tr>
+        <tr class="${operationHasMissingLocalisation(row.localisation) ? "operation-row--missing-address" : ""}">
             <td>${row.titre || "—"}</td>
             <td>${row.commune || "—"}</td>
-            <td>${row.localisation || "—"}</td>
+            <td class="cell-adresse">${formatOperationAdresseCell(row.localisation, row.operation_rowid || "", row.titre || row.cpi || "")}</td>
             <td>${row.annee || "—"}</td>
             <td><span style="color:var(--c-cyan);font-weight:600">${row.cpi || "—"}</span></td>
         </tr>
@@ -899,13 +914,35 @@ function setEl(id, txt)     { const e = document.getElementById(id); if (e) e.te
 function setInputVal(id, v) { const e = document.getElementById(id); if (e) e.value = v; }
 function on(id, ev, fn)     { document.getElementById(id)?.addEventListener(ev, fn); }
 
-function critBar(value) {
-    const cls = value >= 70 ? "high" : value >= 40 ? "mid" : "low";
-    return `<div class="crit-cell">
-        <div class="crit-cell__bar">
-            <div class="crit-cell__fill crit-cell__fill--${cls}" style="width:${Math.min(value,100)}%"></div>
-        </div>
-        <span class="crit-cell__value">${value.toFixed(1)}%</span>
+/** Arrondi identique au dashboard (ROUND(x, 1) côté SQL). */
+function roundCriticite(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return null;
+    return Math.round(n * 10) / 10;
+}
+
+function criticitePill(criticite) {
+    const critVal = roundCriticite(criticite);
+    if (critVal == null) return unknownValueIcon("Criticité inconnue");
+    const critCls =
+        critVal >= 70 ? "table-pill--danger" : critVal >= 40 ? "table-pill--warning" : "table-pill--success";
+    return `<span class="table-pill ${critCls}">${critVal.toFixed(1)}%</span>`;
+}
+
+/** Arrondi identique au dashboard (ROUND(x, 2) côté SQL). */
+function roundPriorityScore(score) {
+    const n = Number(score);
+    if (!Number.isFinite(n)) return null;
+    return Math.round(n * 100) / 100;
+}
+
+function priorityScoreBar(score) {
+    const scoreVal = roundPriorityScore(score);
+    if (scoreVal == null) return unknownValueIcon("Score de priorité inconnu");
+    const scorePct = Math.min(scoreVal, 100);
+    return `<div class="score-pill">
+        <div class="score-bar"><div class="score-bar__fill" style="width:${scorePct}%"></div></div>
+        <span class="score-pill__value">${scoreVal.toFixed(2)}</span>
     </div>`;
 }
 
@@ -937,141 +974,124 @@ function etatClass(etat) {
 
 function initDetailModal() {
     const tbody = document.getElementById("table-body");
-    const modal = document.getElementById("canalisation-modal");
-    const closeBtn = document.getElementById("canalisation-modal-close");
-    const backdrop = document.getElementById("canalisation-modal-backdrop");
-    const body = document.getElementById("canalisation-modal-body");
-    if (!tbody || !modal) return;
+    if (!tbody) return;
 
     tbody.addEventListener("click", function (e) {
         const locateBtn = e.target.closest("button[data-action='locate'][data-facilityid]");
         if (locateBtn) {
             const id = locateBtn.dataset.facilityid;
-            if (id) focusCanalOnMiniMap(id);
+            const adresse = locateBtn.dataset.adresse || "";
+            if (id) void focusCanalOnMiniMap(id, adresse);
             return;
         }
         const btn = e.target.closest("button[data-action='view'][data-facilityid]");
         if (!btn) return;
         const facilityid = btn.dataset.facilityid;
         if (!facilityid) return;
-        openDetailModal(facilityid);
-    });
-
-    closeBtn?.addEventListener("click", closeDetailModal);
-    backdrop?.addEventListener("click", closeDetailModal);
-    body?.addEventListener("click", async function (e) {
-        const btn = e.target.closest("button[data-copy-id]");
-        if (!btn) return;
-        const raw = COPY_PAYLOADS.get(btn.dataset.copyId || "") || "";
-        if (!raw) return;
-        try {
-            await navigator.clipboard.writeText(raw);
-            const old = btn.textContent;
-            btn.textContent = "Copié";
-            setTimeout(() => { btn.textContent = old; }, 1100);
-        } catch (_) {}
-    });
-    document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") closeDetailModal();
+        window.rtcOpenCanalisationDetailModal?.(facilityid, { displayId: facilityid });
     });
 }
 
-async function openDetailModal(facilityid) {
-    const modal = document.getElementById("canalisation-modal");
-    const title = document.getElementById("canalisation-modal-title");
-    const subtitle = document.getElementById("canalisation-modal-subtitle");
-    const body = document.getElementById("canalisation-modal-body");
-    if (!modal || !title || !subtitle || !body) return;
-
-    title.textContent = "Chargement…";
-    subtitle.textContent = facilityid;
-    body.innerHTML = `<div class="row-loading">Chargement des détails…</div>`;
-    modal.classList.add("detail-modal--open");
-    modal.setAttribute("aria-hidden", "false");
-
-    try {
-        COPY_PAYLOADS.clear();
-        const res = await fetch(`${API}/api/canalisations/${encodeURIComponent(facilityid)}`);
-        if (!res.ok) throw new Error("detail fetch failed");
-        const detail = await res.json();
-
-        const communeName = detail.canalisation?.commune_display
-            || detail.conduite?.COMMUNE_DISPLAY
-            || detail.canalisation?.commune
-            || detail.conduite?.COMMUNE
-            || "";
-        const adresseTitle = detail.adresse || "Canalisation";
-        title.textContent = communeName ? `${adresseTitle}, ${communeName}` : adresseTitle;
-        subtitle.textContent = detail.facilityid || facilityid;
-        body.innerHTML = [
-            renderDetailSection("Canalisation (API)", detail.canalisation || {}),
-            renderDetailSection("Conduite (Source enrichie)", detail.conduite || {}),
-        ].join("");
-    } catch (e) {
-        body.innerHTML = `<div class="row-empty-msg">Impossible de charger le détail de la canalisation.</div>`;
-    }
-}
-
-function focusCanalOnMiniMap(facilityid) {
-    window.rtcMiniMapFocus?.(facilityid);
+async function focusCanalOnMiniMap(facilityid, adresseHint) {
+    const focusResult = window.rtcMiniMapFocus?.(facilityid);
     document.querySelector(".address-side-card")
         ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const adresse = String(adresseHint || focusResult?.adresse || "").trim();
+    if (adresse) await updateSidebarStatsForAdresse(adresse);
 }
 
-function closeDetailModal() {
-    const modal = document.getElementById("canalisation-modal");
-    if (!modal) return;
-    modal.classList.remove("detail-modal--open");
-    modal.setAttribute("aria-hidden", "true");
-}
+function initAdresseModal() {
+    const chantierBody = document.getElementById("chantiers-body");
+    const operationBody = document.getElementById("operations-body");
+    const modal = document.getElementById("adresse-modal");
+    const closeBtn = document.getElementById("adresse-modal-close");
+    const cancelBtn = document.getElementById("adresse-modal-cancel");
+    const validateBtn = document.getElementById("adresse-modal-validate");
+    const backdrop = document.getElementById("adresse-modal-backdrop");
+    const subtitle = document.getElementById("adresse-modal-subtitle");
+    const input = document.getElementById("adresse-modal-input");
+    if (!modal || !input || !subtitle) return;
 
-function renderDetailSection(title, obj) {
-    const entries = Object.entries(obj || {});
-    const content = entries.length
-        ? entries.map(([k, v]) => `
-            <div class="detail-item">
-                <div class="detail-item__k">${escapeHtml(prettyKey(k))}</div>
-                <div class="detail-item__v">${formatDetailValue(v, k)}</div>
-            </div>
-        `).join("")
-        : `<div class="detail-item"><div class="detail-item__v">Aucune donnée</div></div>`;
+    const openFromButton = (btn) => {
+        const kind = btn.dataset.kind || "";
+        const id = btn.dataset.id || "";
+        const ref = btn.dataset.ref || "";
+        const rowEl = btn.closest("tr");
+        const cellEl = btn.closest("td");
+        ADRESSE_EDIT_STATE.kind = kind;
+        ADRESSE_EDIT_STATE.id = id;
+        ADRESSE_EDIT_STATE.ref = ref;
+        ADRESSE_EDIT_STATE.rowEl = rowEl;
+        ADRESSE_EDIT_STATE.cellEl = cellEl;
+        ADRESSE_EDIT_STATE.prevCellHtml = cellEl ? cellEl.innerHTML : "";
+        subtitle.textContent = ref ? `${kind} — ${ref}` : kind;
+        input.value = "";
+        modal.classList.add("detail-modal--open");
+        modal.setAttribute("aria-hidden", "false");
+        setTimeout(() => input.focus(), 0);
+    };
 
-    return `
-        <section class="detail-section">
-            <div class="detail-section__header">${escapeHtml(title)}</div>
-            <div class="detail-grid">${content}</div>
-        </section>
-    `;
-}
+    const onBodyClick = (e) => {
+        const btn = e.target.closest("button[data-action='complete-address']");
+        if (!btn) return;
+        openFromButton(btn);
+    };
 
-function prettyKey(key) {
-    if (DETAIL_LABELS[key]) return DETAIL_LABELS[key];
-    return String(key)
-        .replaceAll("_", " ")
-        .replace(/([a-z])([A-Z])/g, "$1 $2")
-        .trim();
-}
+    chantierBody?.addEventListener("click", onBodyClick);
+    operationBody?.addEventListener("click", onBodyClick);
 
-function formatDetailValue(v, key = "") {
-    if (v == null || v === "") return "—";
-    if (BOOLEAN_KEYS.has(key)) {
-        if (v === true) return "Oui";
-        if (v === false) return "Non";
-        const n = Number(v);
-        if (!Number.isNaN(n)) {
-            if (n === 1) return "Oui";
-            if (n === 0) return "Non";
+    const close = () => {
+        modal.classList.remove("detail-modal--open");
+        modal.setAttribute("aria-hidden", "true");
+        ADRESSE_EDIT_STATE.kind = "";
+        ADRESSE_EDIT_STATE.id = "";
+        ADRESSE_EDIT_STATE.ref = "";
+        ADRESSE_EDIT_STATE.rowEl = null;
+        ADRESSE_EDIT_STATE.cellEl = null;
+        ADRESSE_EDIT_STATE.prevCellHtml = "";
+    };
+
+    closeBtn?.addEventListener("click", close);
+    cancelBtn?.addEventListener("click", close);
+    backdrop?.addEventListener("click", close);
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") close();
+    });
+
+    validateBtn?.addEventListener("click", async () => {
+        const adresse = String(input.value || "").trim();
+        if (!adresse) {
+            input.focus();
+            return;
         }
-    }
-    if (typeof v === "number") return Number.isInteger(v) ? String(v) : v.toFixed(4);
-    if (typeof v === "boolean") return v ? "true" : "false";
+        const { kind, id, rowEl, cellEl, prevCellHtml } = ADRESSE_EDIT_STATE;
+        if (!kind || !id || !rowEl || !cellEl) return;
 
-    const special = formatSpecialLongValue(String(v), key);
-    if (special) return special;
+        // 1) Mise a jour immediate en front
+        cellEl.textContent = adresse;
+        rowEl.classList.remove("chantier-row--missing-address", "operation-row--missing-address");
 
-    const formattedDate = formatDateTimeForHumans(v);
-    if (formattedDate) return escapeHtml(formattedDate);
-    return escapeHtml(String(v));
+        // 2) Persistance en base via endpoint dedie
+        try {
+            const isChantier = kind === "chantier";
+            const endpoint = isChantier ? `${API}/api/chantiers/adresse` : `${API}/api/operations/adresse`;
+            const payload = isChantier ? { num_op: id, adresse } : { operation_rowid: Number(id), adresse };
+            const res = await fetch(endpoint, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        } catch (e) {
+            // rollback front si l'API echoue
+            cellEl.innerHTML = prevCellHtml;
+            if (kind === "chantier") rowEl.classList.add("chantier-row--missing-address");
+            if (kind === "operation") rowEl.classList.add("operation-row--missing-address");
+            alert("La mise a jour de l'adresse a echoue cote serveur.");
+            return;
+        }
+        close();
+    });
 }
 
 function escapeHtml(str) {
@@ -1081,65 +1101,4 @@ function escapeHtml(str) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
-}
-
-function formatDateTimeForHumans(v) {
-    if (typeof v !== "string") return null;
-    const s = v.trim();
-    if (!s) return null;
-
-    // Formats fréquents observés: "YYYY/MM/DD HH:MM:SS(.sss)", "YYYY-MM-DDTHH:MM:SS+00:00"
-    let m = s.match(/^(\d{4})[/-](\d{2})[/-](\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?)?/);
-    if (!m) return null;
-
-    const [, y, mo, d, hh, mm, ss] = m;
-    if (!hh || !mm) return `${d}/${mo}/${y}`;
-    const sec = ss ?? "00";
-    return `${d}/${mo}/${y} ${hh}:${mm}:${sec}`;
-}
-
-function formatSpecialLongValue(raw, key) {
-    const isAlt = key === "Altimetrie";
-    const isGeom = key === "geometry";
-    if (!isAlt && !isGeom) return null;
-
-    const txt = String(raw).trim();
-    if (!txt) return null;
-
-    const summary = isAlt ? summarizeAltitude(txt) : summarizeGeometry(txt);
-    if (!summary) return null;
-
-    const copyId = `copy_${++copyPayloadSeq}`;
-    COPY_PAYLOADS.set(copyId, txt);
-    return `
-        <div class="detail-long-value">
-            <span class="detail-long-value__summary">${escapeHtml(summary)}</span>
-            <button class="detail-copy-btn" type="button" data-copy-id="${copyId}" title="Copier la valeur complète">Copier</button>
-        </div>
-    `;
-}
-
-function summarizeAltitude(txt) {
-    const clean = txt.replace(/^\[/, "").replace(/\]$/, "");
-    const values = clean.split(",").map(s => s.trim()).filter(Boolean);
-    if (values.length < 2) return txt;
-    return `${values[0]} ... ${values[values.length - 1]}`;
-}
-
-function summarizeGeometry(txt) {
-    const upper = txt.toUpperCase();
-    if (!upper.startsWith("LINESTRING")) return txt.length > 60 ? `${txt.slice(0, 18)} ... ${txt.slice(-18)}` : txt;
-    const body = txt.slice(txt.indexOf("(") + 1, txt.lastIndexOf(")"));
-    const pts = body.split(",").map(s => s.trim()).filter(Boolean);
-    if (pts.length < 2) return txt.length > 60 ? `${txt.slice(0, 18)} ... ${txt.slice(-18)}` : txt;
-    return `${shortPoint(pts[0])} ... ${shortPoint(pts[pts.length - 1])}`;
-}
-
-function shortPoint(p) {
-    const nums = p.split(/\s+/).filter(Boolean);
-    if (nums.length < 2) return p;
-    const x = Number(nums[0]);
-    const y = Number(nums[1]);
-    if (Number.isNaN(x) || Number.isNaN(y)) return p;
-    return `${x.toFixed(2)} ${y.toFixed(2)}`;
 }

@@ -93,20 +93,21 @@ if errorlevel 1 (
     exit /b 1
 )
 echo Verification des paquets pip...
-set "PYPKGLIST=fastapi uvicorn numpy pandas geopandas openpyxl"
-if defined RTC_WEB_DEPS_ONLY set "PYPKGLIST=fastapi uvicorn"
-set "REQMISS="
-for %%p in (!PYPKGLIST!) do (
-    "!PY!" -m pip show "%%p" >nul 2>&1
+if exist "%~dp0requirements.txt" (
+    echo.
+    echo Verification globale via requirements.txt...
+    "!PY!" -m pip install -r "%~dp0requirements.txt"
     if errorlevel 1 (
-        echo   Manquant : %%p
-        set "REQMISS=1"
+        echo.
+        echo Echec lors de la verification/installation des dependances.
+        echo Lance manuellement :
+        echo   "!PY!" -m pip install -r "%~dp0requirements.txt"
+        pause
+        exit /b 1
     )
 )
-if defined REQMISS (
-    echo.
-    echo Installe les dependances avec :
-    echo   "!PY!" -m pip install -r "%~dp0requirements.txt"
+if not exist "%~dp0requirements.txt" (
+    echo requirements.txt introuvable: "%~dp0requirements.txt"
     pause
     exit /b 1
 )

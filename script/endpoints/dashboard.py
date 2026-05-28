@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from database import get_db
 
@@ -118,6 +118,20 @@ def get_dashboard():
         for r in cur.fetchall()
     ]
 
+    cur.execute("PRAGMA table_info(chantiers)")
+    chantiers_cols = {row[1] for row in cur.fetchall()}
+    chantiers_missing_adresse = 0
+    if "adresse" in chantiers_cols:
+        cur.execute(
+            "SELECT COUNT(*) FROM chantiers WHERE (adresse IS NULL OR TRIM(adresse) = '')"
+        )
+        chantiers_missing_adresse = cur.fetchone()[0]
+
+    cur.execute(
+        "SELECT COUNT(*) FROM operations WHERE (localisation IS NULL OR TRIM(localisation) = '')"
+    )
+    operations_missing_adresse = cur.fetchone()[0]
+
     conn.close()
 
     return {
@@ -136,4 +150,66 @@ def get_dashboard():
         "annees": annees,
         "top_rues": top_rues,
         "chantiers_etat": chantiers_etat,
+        "chantiers_missing_adresse": chantiers_missing_adresse,
+        "operations_missing_adresse": operations_missing_adresse,
+    }
+
+
+@router.get("/plan-travaux")
+def get_plan_travaux(
+    commune: str = Query(default=""),
+    adresse: str = Query(default=""),
+    limit: int = Query(default=50),
+    offset: int = Query(default=0),
+):
+    """Priorités par canalisation (score_priorite persisté en base)."""
+    conn = get_db()
+    cur = conn.cursor()
+
+    filters = ["adresse != ''", "criticite IS NOT NULL", "score_priorite IS NOT NULL"]
+    params = []
+
+    if commune:
+        filters.append("LOWER(commune) LIKE LOWER(?)")
+        params.append(f"%{commune}%")
+
+    if adresse:
+        filters.append("LOWER(adresse) LIKE LOWER(?)")
+        params.append(f"%{adresse}%")
+
+    where = " AND ".join(filters)
+
+    cur.execute(
+        "SELECT COUNT(*) FROM canalisations WHERE score_priorite IS NOT NULL"
+    )
+    priority_scores_computed = (cur.fetchone()[0] or 0) > 0
+
+    cur.execute(
+        f"SELECT COUNT(*) FROM canalisations WHERE {where}",
+        params,
+    )
+    total = cur.fetchone()[0]
+
+    cur.execute(
+        f"""
+        SELECT facilityid, adresse, commune, materiau, diametre, longueur,
+               nb_fuites, ROUND(criticite, 1) as criticite,
+               ROUND(score_priorite, 2) as score_priorite
+        FROM canalisations
+        WHERE {where}
+        ORDER BY score_priorite DESC
+        LIMIT ? OFFSET ?
+        """,
+        params + [limit, offset],
+    )
+
+    rows = [dict(r) for r in cur.fetchall()]
+    conn.close()
+
+    return {
+        "total": total,
+        "offset": offset,
+        "limit": limit,
+        "canalisations": rows,
+        "priority_scores_computed": priority_scores_computed,
     }

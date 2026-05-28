@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/detail-modal.css">
     <link rel="stylesheet" href="css/adresses.css">
 </head>
 
@@ -20,6 +21,13 @@
     <header class="site-header site-header--address">
         <div class="site-header__left">
             <img src="assets/images/logo_entreprise.png" alt="Logo" class="site-header__logo">
+            <a href="index.html" class="header-home header-home--active" title="Accueil">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+            </a>
             <a href="carte.html" class="header-home" title="Carte interactive">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round">
@@ -37,13 +45,22 @@
                     <rect x="3" y="14" width="7" height="7" />
                 </svg>
             </a>
-            <a href="plan-travaux.html" class="header-home" title="Plan de travaux">
+            <a href="plan-travaux.html" class="header-home header-home--plan" title="Plan de travaux">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <line x1="8" y1="8" x2="13" y2="8" />
                     <line x1="8" y1="12" x2="16" y2="12" />
                     <line x1="8" y1="16" x2="11" y2="16" />
+                </svg>
+                <span class="header-home__badge" id="plan-nav-count"></span>
+            </a>
+            <a href="database.html" class="header-home" title="Base de donnees">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+                    <path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"></path>
+                    <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path>
                 </svg>
             </a>
         </div>
@@ -215,6 +232,23 @@
                 </div>
 
                 <div class="tab-panel" data-tab="chantiers" style="display:none">
+                    <div class="filters-bar filters-bar--subtab">
+                        <div class="filter-group">
+                            <label class="filter-label">Commune</label>
+                            <input type="text" class="filter-input" id="filter-chantiers-commune" placeholder="Ex: NICE">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Recherche adresse / N° operation</label>
+                            <input type="text" class="filter-input" id="filter-chantiers-search" placeholder="Adresse ou N° operation">
+                        </div>
+                        <div class="filter-group filter-group--checkbox">
+                            <label class="filter-label filter-label--checkbox" for="filter-chantiers-missing">
+                                <input type="checkbox" id="filter-chantiers-missing">
+                                Uniquement adresse manquante
+                            </label>
+                        </div>
+                        <div class="filters-warning-count" id="chantiers-missing-count">⚠ 0 adresse manquante</div>
+                    </div>
                     <div class="table-scroll">
                         <table class="address-table">
                             <thead>
@@ -237,6 +271,23 @@
                 </div>
 
                 <div class="tab-panel" data-tab="operations" style="display:none">
+                    <div class="filters-bar filters-bar--subtab">
+                        <div class="filter-group">
+                            <label class="filter-label">Commune</label>
+                            <input type="text" class="filter-input" id="filter-operations-commune" placeholder="Ex: NICE">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Recherche adresse / N° operation</label>
+                            <input type="text" class="filter-input" id="filter-operations-search" placeholder="Adresse ou N° operation">
+                        </div>
+                        <div class="filter-group filter-group--checkbox">
+                            <label class="filter-label filter-label--checkbox" for="filter-operations-missing">
+                                <input type="checkbox" id="filter-operations-missing">
+                                Uniquement adresse manquante
+                            </label>
+                        </div>
+                        <div class="filters-warning-count" id="operations-missing-count">⚠ 0 adresse manquante</div>
+                    </div>
                     <div class="table-scroll">
                         <table class="address-table">
                             <thead>
@@ -330,11 +381,37 @@
         </div>
     </div>
 
+    <div class="detail-modal" id="adresse-modal" aria-hidden="true">
+        <div class="detail-modal__backdrop" id="adresse-modal-backdrop"></div>
+        <div class="detail-modal__dialog detail-modal__dialog--small" role="dialog" aria-modal="true" aria-labelledby="adresse-modal-title">
+            <div class="detail-modal__header">
+                <div>
+                    <div class="detail-modal__eyebrow">Mise a jour</div>
+                    <h3 class="detail-modal__title" id="adresse-modal-title">Completer l'adresse</h3>
+                    <div class="detail-modal__subtitle" id="adresse-modal-subtitle">—</div>
+                </div>
+                <button class="detail-modal__close" id="adresse-modal-close" aria-label="Fermer">✕</button>
+            </div>
+            <div class="detail-modal__body">
+                <div class="adresse-modal-form">
+                    <label class="adresse-modal-label" for="adresse-modal-input">Adresse</label>
+                    <input class="adresse-modal-input" id="adresse-modal-input" type="text" placeholder="Saisir l'adresse">
+                </div>
+                <div class="adresse-modal-actions">
+                    <button class="adresse-modal-btn adresse-modal-btn--ghost" id="adresse-modal-cancel" type="button">Annuler</button>
+                    <button class="adresse-modal-btn adresse-modal-btn--primary" id="adresse-modal-validate" type="button">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="js/config.js"></script>
     <script src="js/theme.js"></script>
+    <script src="js/plan-nav-badge.js"></script>
     <script src="js/search.js"></script>
     <script src="js/mini-map.js"></script>
+    <script src="js/canalisation-detail-modal.js"></script>
     <script src="js/index.js"></script>
 
 </body>
