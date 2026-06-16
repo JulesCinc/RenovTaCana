@@ -337,6 +337,78 @@ def get_geojson_canalisations():
     return {"type": "FeatureCollection", "features": features}
 
 
+def _segment_feature_from_row(row, has_geo_4326: bool) -> dict | None:
+    """Construit un Feature GeoJSON depuis une ligne de la table segmentation."""
+    geom = None
+    if has_geo_4326:
+        raw_4326 = row["geometry_4326"]
+        if raw_4326 and raw_4326.strip():
+            geom = wkt_to_geojson_geometry_wgs84(raw_4326)
+    if geom is None:
+        geom = wkt_to_geojson_geometry(row["geometry"])
+    if geom is None:
+        return None
+    return {
+        "type": "Feature",
+        "geometry": geom,
+        "properties": {
+            "id":       row["pipe_id_original"],
+            "adr":      row["adresse"],
+            "mat":      row["materiau"],
+            "diam":     row["diametre"],
+            "long":     row["segment_length"],   # longueur réelle du segment (≤ 250 m)
+            "pipe_long": row["longueur"],         # longueur totale de la canalisation d'origine
+            "crit":     row["criticite"],
+        },
+    }
+
+
+@router.get("/geojson/segmentation")
+def get_geojson_segmentation():
+    """
+    GeoJSON depuis la table `segmentation` (segments ≤ 250 m).
+    Utilise la colonne geometry_4326 (WGS84 pré-convertie) si disponible,
+    sinon repli sur geometry (EPSG:2154) avec conversion à la volée.
+    Les propriétés sont identiques à /geojson/canalisations pour garantir
+    la compatibilité avec carte.js.
+    """
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("PRAGMA table_info(segmentation)")
+    pragma = cur.fetchall()
+    if not pragma:
+        conn.close()
+        raise HTTPException(
+            status_code=503,
+            detail="Table segmentation introuvable. Exécutez d'abord segment_pipes.py.",
+        )
+
+    col_names = {row[1] for row in pragma}
+    has_geo_4326 = "geometry_4326" in col_names
+
+    geom_filter_col = "geometry_4326" if has_geo_4326 else "geometry"
+    extra_col = ", geometry_4326" if has_geo_4326 else ""
+
+    cur.execute(
+        f"""
+        SELECT pipe_id_original, adresse, materiau, diametre, longueur, segment_length, criticite,
+               geometry{extra_col}
+        FROM segmentation
+        WHERE geometry IS NOT NULL AND TRIM(geometry) != ''
+        """
+    )
+
+    features = []
+    for row in cur.fetchall():
+        feature = _segment_feature_from_row(row, has_geo_4326)
+        if feature:
+            features.append(feature)
+
+    conn.close()
+    return {"type": "FeatureCollection", "features": features}
+
+
 @router.get("/geojson/canalisations/{facilityid}")
 def get_geojson_canalisation(facilityid: str):
     """GeoJSON d'une seule canalisation (tracé conduite + criticité)."""
@@ -414,6 +486,60 @@ def parse_multilinestring(wkt):
                     y = float(nums[1])
                     lon, lat = lambert93_to_wgs84(x, y)
                     coords.append([lon, lat])
+                if coords:
+                    lines.append(coords)
+    return lines
+
+
+# ── Parsers WGS84 (coordonnées déjà en lon/lat, pas de conversion) ──────────
+
+def wkt_to_geojson_geometry_wgs84(wkt: str):
+    """Convertit un WKT déjà en EPSG:4326 (lon lat) en géométrie GeoJSON."""
+    if not wkt:
+        return None
+    txt = wkt.strip()
+    upper = txt.upper()
+    if upper.startswith("LINESTRING"):
+        coords = _parse_linestring_wgs84(txt)
+        return {"type": "LineString", "coordinates": coords} if coords else None
+    if upper.startswith("MULTILINESTRING"):
+        lines = _parse_multilinestring_wgs84(txt)
+        return {"type": "MultiLineString", "coordinates": lines} if lines else None
+    return None
+
+
+def _parse_linestring_wgs84(wkt: str) -> list:
+    body = wkt[wkt.find("(") + 1 : wkt.rfind(")")]
+    coords = []
+    for part in [p.strip() for p in body.split(",") if p.strip()]:
+        nums = part.split()
+        if len(nums) < 2:
+            continue
+        coords.append([float(nums[0]), float(nums[1])])
+    return coords
+
+
+def _parse_multilinestring_wgs84(wkt: str) -> list:
+    body = wkt[wkt.find("(") + 1 : wkt.rfind(")")]
+    body = body.strip()
+    lines = []
+    level = 0
+    start = 0
+    for i, ch in enumerate(body):
+        if ch == "(":
+            if level == 0:
+                start = i + 1
+            level += 1
+        elif ch == ")":
+            level -= 1
+            if level == 0:
+                seg = body[start:i]
+                coords = []
+                for part in [p.strip() for p in seg.split(",") if p.strip()]:
+                    nums = part.split()
+                    if len(nums) < 2:
+                        continue
+                    coords.append([float(nums[0]), float(nums[1])])
                 if coords:
                     lines.append(coords)
     return lines

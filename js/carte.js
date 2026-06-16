@@ -4,7 +4,7 @@
  */
 
 function geoJsonCanalisationsUrl() {
-    return (window.__RTC_API_BASE__ || "http://127.0.0.1:8000") + "/api/geojson/canalisations";
+    return (window.__RTC_API_BASE__ || "http://127.0.0.1:8000") + "/api/geojson/segmentation";
 }
 
 let map, geoLayer, drawLayer, selectRectangle;
@@ -34,7 +34,7 @@ let chantierLayer = null;
 let chantiersLoaded = false;
 const CANA_CACHE_DB = "rtc_map_cache";
 const CANA_CACHE_STORE = "geojson";
-const CANA_CACHE_KEY = "canalisations_v1";
+const CANA_CACHE_KEY = "segmentation_v2";
 const CANA_CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24h
 
 // -- Init --------------------------------------------------
@@ -201,7 +201,10 @@ function renderLayer(features) {
         style: f => getPipeLayerStyle(f.properties),
         onEachFeature: function (feature, layer) {
             const p = feature.properties;
-            if (p.id) pipeLayersById.set(p.id, layer);
+            if (p.id) {
+                if (!pipeLayersById.has(p.id)) pipeLayersById.set(p.id, []);
+                pipeLayersById.get(p.id).push(layer);
+            }
             layer.on("mouseover", e => {
                 if (!selectedPipes.has(p.id)) layer.setStyle({ weight: 5, opacity: 1 });
                 showTooltip(e, p);
@@ -213,7 +216,7 @@ function renderLayer(features) {
             layer.on("click", e => {
                 if (zoneModeActive) return;
                 L.DomEvent.stopPropagation(e);
-                togglePipeSelection(p, layer);
+                togglePipeSelection(p);
                 hideTooltip();
             });
             layer.on("dblclick", e => {
@@ -241,15 +244,15 @@ function renderLayer(features) {
     requestAnimationFrame(addChunk);
 }
 
-function togglePipeSelection(p, layer) {
+function togglePipeSelection(p) {
     const id = p?.id;
     if (!id) return;
     if (selectedPipes.has(id)) {
         selectedPipes.delete(id);
-        if (geoLayer && layer) geoLayer.resetStyle(layer);
+        (pipeLayersById.get(id) || []).forEach(l => { if (geoLayer) geoLayer.resetStyle(l); });
     } else {
         selectedPipes.set(id, propsToPlanData(p));
-        if (layer) layer.setStyle(SELECTED_LINE_STYLE);
+        (pipeLayersById.get(id) || []).forEach(l => { l.setStyle(SELECTED_LINE_STYLE); });
     }
     syncZoneSessionStorage();
     updateCartePlanSubmitButton();
@@ -275,8 +278,7 @@ function removeFeaturesFromSelection(features) {
         const id = f.properties?.id;
         if (!id || !selectedPipes.has(id)) return;
         selectedPipes.delete(id);
-        const layer = pipeLayersById.get(id);
-        if (layer && geoLayer) geoLayer.resetStyle(layer);
+        (pipeLayersById.get(id) || []).forEach(l => { if (geoLayer) geoLayer.resetStyle(l); });
     });
     syncZoneSessionStorage();
     updateCartePlanSubmitButton();
@@ -450,9 +452,11 @@ function updateZonePanel(lastZoneFeatures, mode) {
 }
 
 function refreshAllSelectionStyles() {
-    pipeLayersById.forEach((layer, id) => {
-        if (selectedPipes.has(id)) layer.setStyle(SELECTED_LINE_STYLE);
-        else if (geoLayer) geoLayer.resetStyle(layer);
+    pipeLayersById.forEach((layers, id) => {
+        layers.forEach(layer => {
+            if (selectedPipes.has(id)) layer.setStyle(SELECTED_LINE_STYLE);
+            else if (geoLayer) geoLayer.resetStyle(layer);
+        });
     });
 }
 
