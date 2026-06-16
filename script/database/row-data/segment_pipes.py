@@ -3,7 +3,8 @@ Segment existing pipe geometries into sections of 250 meters maximum.
 
 This script has one responsibility: read pipe geometries, cut long pipes
 spatially, and store the resulting segments in a SQLite table named
-`segmentation` by default.
+`segmentation` by default. All non-geometry metadata columns from the source
+table are copied to each segment row.
 """
 from __future__ import annotations
 
@@ -23,7 +24,8 @@ DEFAULT_METRIC_CRS = "EPSG:2154"
 
 
 def _project_root() -> Path:
-    return Path(__file__).resolve().parents[2]
+    # parents[3]: row-data/ → database/ → script/ → RenovTaCana/
+    return Path(__file__).resolve().parents[3]
 
 
 def _default_sqlite_path() -> Path:
@@ -91,7 +93,35 @@ def _empty_geodataframe(df, gpd, crs: str):
     return gpd.GeoDataFrame(df.iloc[0:0].copy(), geometry="geometry", crs=crs)
 
 
-def _ensure_segmentation_table(conn: sqlite3.Connection, output_table: str) -> None:
+def _detect_source_extra_columns(
+    conn: sqlite3.Connection,
+    source_table: str,
+    id_col: str | None,
+    geometry_col: str | None,
+) -> list[tuple[str, str]]:
+    """Return [(col_name, col_type)] for all source columns except id and geometry."""
+    if not _table_exists(conn, source_table):
+        return []
+    pragma_rows = conn.execute(
+        f"PRAGMA table_info({_quote_identifier(source_table)})"
+    ).fetchall()
+    exclude = set()
+    if id_col:
+        exclude.add(id_col.lower())
+    if geometry_col:
+        exclude.add(geometry_col.lower())
+    return [
+        (row[1], row[2] or "TEXT")
+        for row in pragma_rows
+        if row[1].lower() not in exclude
+    ]
+
+
+def _ensure_segmentation_table(
+    conn: sqlite3.Connection,
+    output_table: str,
+    extra_columns: list[tuple[str, str]] | None = None,
+) -> None:
     table_sql = _quote_identifier(output_table)
     conn.execute(
         f"""
@@ -112,6 +142,14 @@ def _ensure_segmentation_table(conn: sqlite3.Connection, output_table: str) -> N
         ON {table_sql}(pipe_id_original)
         """
     )
+    if extra_columns:
+        existing = _table_columns(conn, output_table)
+        for col_name, col_type in extra_columns:
+            if col_name not in existing:
+                conn.execute(
+                    f"ALTER TABLE {table_sql} ADD COLUMN "
+                    f"{_quote_identifier(col_name)} {col_type}"
+                )
 
 
 def _clear_segmentation_table(conn: sqlite3.Connection, output_table: str) -> None:
@@ -137,6 +175,7 @@ def _read_pipes_from_sqlite(
     source_crs: str,
     metric_crs: str,
     skip_pipe_ids: set[str],
+    extra_col_names: list[str] | None = None,
     limit: Optional[int] = None,
 ):
     libs = _require_geo_libs()
@@ -161,17 +200,27 @@ def _read_pipes_from_sqlite(
                 if id_col
                 else "rowid AS pipe_id_original"
             )
+            extra_select = ""
+            if extra_col_names:
+                extra_select = ", " + ", ".join(
+                    _quote_identifier(c) for c in extra_col_names if c in columns
+                )
             query = f"""
-                SELECT {pipe_id_sql}, {_quote_identifier(geometry_col)} AS geometry_wkt
+                SELECT {pipe_id_sql}, {_quote_identifier(geometry_col)} AS geometry_wkt{extra_select}
                 FROM {_quote_identifier(source_table)}
                 WHERE {_quote_identifier(geometry_col)} IS NOT NULL
                   AND TRIM({_quote_identifier(geometry_col)}) != ''
             """
         elif source_table.lower() == "canalisations" and _table_exists(conn, "conduites"):
-            query = """
+            can_extra_select = ""
+            if extra_col_names:
+                can_extra_select = ", " + ", ".join(
+                    f"can.{_quote_identifier(c)}" for c in extra_col_names if c in columns
+                )
+            query = f"""
                 SELECT
                     COALESCE(can.facilityid, c.FACILITYID) AS pipe_id_original,
-                    c.geometry AS geometry_wkt
+                    c.geometry AS geometry_wkt{can_extra_select}
                 FROM canalisations can
                 JOIN conduites c ON c.FACILITYID = can.facilityid
                 WHERE c.geometry IS NOT NULL
@@ -282,21 +331,29 @@ def _split_geometry(geometry, max_segment_length: float) -> list[Any]:
     return pieces
 
 
-def _segment_rows(gdf, max_segment_length: float, created_at: str) -> list[tuple[Any, ...]]:
+def _segment_rows(
+    gdf,
+    max_segment_length: float,
+    created_at: str,
+    extra_col_names: list[str] | None = None,
+) -> list[tuple[Any, ...]]:
     rows = []
     for _, pipe in gdf.iterrows():
         pipe_id = str(pipe["pipe_id_original"])
         pieces = _split_geometry(pipe.geometry, max_segment_length)
+        extra_vals = tuple(
+            pipe[c] if c in pipe.index else None
+            for c in (extra_col_names or [])
+        )
         for segment_index, piece in enumerate(pieces, start=1):
-            rows.append(
-                (
-                    pipe_id,
-                    segment_index,
-                    round(float(piece.length), 3),
-                    piece.wkt,
-                    created_at,
-                )
-            )
+            rows.append((
+                pipe_id,
+                segment_index,
+                round(float(piece.length), 3),
+                piece.wkt,
+                created_at,
+                *extra_vals,
+            ))
     return rows
 
 
@@ -315,9 +372,10 @@ def segment_pipes_to_sqlite(
     Segment existing pipe geometries into sections of `max_segment_length`
     meters maximum and save the result in a SQLite table.
 
-    If `force_recompute` is False, pipes already present in the output table
-    are skipped to avoid duplicate segments. If True, the output table is
-    cleared and all segments are recomputed.
+    All non-geometry metadata columns from the source table are propagated to
+    every segment row. If `force_recompute` is False, pipes already present in
+    the output table are skipped. If True, the output table is cleared and all
+    segments are recomputed.
     """
     if max_segment_length <= 0:
         raise ValueError("max_segment_length must be positive")
@@ -325,8 +383,25 @@ def segment_pipes_to_sqlite(
     sqlite_path = str(sqlite_path)
     created_at = _utc_now_iso()
 
+    # Detect which metadata columns to carry over from the source table.
+    extra_columns: list[tuple[str, str]] = []
+    extra_col_names: list[str] = []
+    if not shapefile_path:
+        with sqlite3.connect(f"file:{sqlite_path}?mode=ro", uri=True) as ro_conn:
+            if _table_exists(ro_conn, source_table):
+                src_columns = _table_columns(ro_conn, source_table)
+                geometry_col = _first_existing(src_columns, ("geometry", "geom", "wkt", "the_geom"))
+                id_col = _first_existing(
+                    src_columns,
+                    ("pipe_id_original", "facilityid", "FACILITYID", "id", "OBJECTID"),
+                )
+                extra_columns = _detect_source_extra_columns(
+                    ro_conn, source_table, id_col, geometry_col
+                )
+                extra_col_names = [c[0] for c in extra_columns]
+
     with sqlite3.connect(sqlite_path) as conn:
-        _ensure_segmentation_table(conn, output_table)
+        _ensure_segmentation_table(conn, output_table, extra_columns)
         if force_recompute:
             _clear_segmentation_table(conn, output_table)
         skip_pipe_ids = set() if force_recompute else _existing_pipe_ids(conn, output_table)
@@ -347,23 +422,23 @@ def segment_pipes_to_sqlite(
             source_crs=source_crs,
             metric_crs=metric_crs,
             skip_pipe_ids=skip_pipe_ids,
+            extra_col_names=extra_col_names,
             limit=limit,
         )
 
-    rows = _segment_rows(pipes_gdf, max_segment_length, created_at)
+    rows = _segment_rows(pipes_gdf, max_segment_length, created_at, extra_col_names)
+
+    base_cols = ["pipe_id_original", "segment_index", "segment_length", "geometry", "created_at"]
+    all_cols = base_cols + extra_col_names
+    cols_sql = ", ".join(_quote_identifier(c) for c in all_cols)
+    placeholders = ", ".join(["?"] * len(all_cols))
 
     with sqlite3.connect(sqlite_path) as conn:
-        _ensure_segmentation_table(conn, output_table)
+        _ensure_segmentation_table(conn, output_table, extra_columns)
         conn.executemany(
             f"""
-            INSERT OR IGNORE INTO {_quote_identifier(output_table)} (
-                pipe_id_original,
-                segment_index,
-                segment_length,
-                geometry,
-                created_at
-            )
-            VALUES (?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO {_quote_identifier(output_table)} ({cols_sql})
+            VALUES ({placeholders})
             """,
             rows,
         )
@@ -383,6 +458,7 @@ def segment_pipes_to_sqlite(
         "segments_inserted": int(inserted_segments),
         "total_segments": int(total_segments),
         "force_recompute": bool(force_recompute),
+        "extra_columns_propagated": extra_col_names,
     }
 
 
