@@ -1044,7 +1044,11 @@ function bindEvents() {
         if (detailBtn) {
             const item = byId(detailBtn.dataset.id);
             if (item?.facilityid && typeof window.rtcOpenCanalisationDetailModal === "function") {
-                window.rtcOpenCanalisationDetailModal(item.facilityid, { displayId: item.facilityid });
+                window.rtcOpenCanalisationDetailModal(item.facilityid, {
+                    displayId: item.facilityid,
+                    // Longueur réelle du segment planifié (≠ longueur totale de la canalisation d'origine)
+                    segmentLength: item.longueur,
+                });
             }
             return;
         }

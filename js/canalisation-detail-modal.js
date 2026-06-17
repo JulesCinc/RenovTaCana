@@ -303,8 +303,22 @@ function shortPoint(p) {
                 ? `<p class="detail-modal__segment-note">Tronçon planifié <strong>${escapeHtml(segmentMatch[2])}</strong> — données de la canalisation d'origine <code>${escapeHtml(fetchId)}</code>.</p>`
                 : "";
 
+            // Ouverture depuis le plan de travaux : on dispose de la longueur réelle du
+            // segment planifié (≠ longueur totale de la canalisation d'origine renvoyée par
+            // l'API). On l'utilise pour la 1re boite et on la retitre « Segment de canalisation ».
+            const segmentLength = options ? Number(options.segmentLength) : NaN;
+            const isPlannedSegment = Number.isFinite(segmentLength) && segmentLength > 0;
+
+            const canalisationData = { ...(detail.canalisation || {}) };
+            if (isPlannedSegment) {
+                canalisationData.longueur = segmentLength;
+            }
+            const firstSectionTitle = isPlannedSegment
+                ? "Segment de canalisation"
+                : "Canalisation (API)";
+
             body.innerHTML = segmentNote + [
-                renderDetailSection("Canalisation (API)", detail.canalisation || {}),
+                renderDetailSection(firstSectionTitle, canalisationData),
                 renderDetailSection("Conduite (Source enrichie)", detail.conduite || {}),
             ].join("");
         } catch {
