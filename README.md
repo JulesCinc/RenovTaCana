@@ -10,6 +10,8 @@ L’objectif principal de cette version est l’**édition d’un plan de travau
 
 ## Lancer l’app
 
+Sous **Windows** : exécuter **`segment_pipes.py`** puis **`convert_epsg2154_to_epsg4326.py`**. Ce programme crée la table des canalisations segmentées. On peut ensuite lancer l'app.
+
 Sous **Windows** : exécuter **`demarrer-web-app.bat`** (double-clic, ou `.\demarrer-web-app.bat` dans PowerShell). Ce script lance **uvicorn** sur **`http://127.0.0.1:8000`** et ouvre le navigateur. **Il n’est utilisable que sous Windows** (fichier `.bat`).
 
 Autres OS ou lancement manuel : à la racine du dépôt,
